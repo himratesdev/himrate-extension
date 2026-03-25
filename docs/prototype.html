@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TASK-009 — Extension Scaffold Prototype</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  .shimmer { background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .tab-active { color: #2563eb; border-bottom: 2px solid #2563eb; font-weight: 600; }
+  .tab-inactive { color: #6b7280; border-bottom: 2px solid transparent; }
+  .popup-frame { width: 360px; min-height: 400px; }
+  .sidepanel-frame { width: 380px; min-height: 600px; }
+</style>
+</head>
+<body class="bg-gray-100 p-6">
+
+<h1 class="text-2xl font-bold mb-2">TASK-009 — Chrome Extension Scaffold Prototype</h1>
+<p class="text-gray-500 mb-6">Все экраны и состояния. Scaffold = placeholder данные.</p>
+
+<div class="flex flex-wrap gap-6">
+
+<!-- ===== POPUP: NOT LOGGED IN ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Popup: Not logged in</h2>
+<div class="popup-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="p-4">
+    <!-- Logo + Lang -->
+    <div class="flex items-center justify-between mb-6">
+      <div></div>
+      <div class="flex items-center gap-1">
+        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">HR</div>
+      </div>
+      <button class="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700 px-2 py-1 rounded-md hover:bg-gray-100">
+        <span>🌐</span><span class="font-medium">RU</span><span>▾</span>
+      </button>
+    </div>
+    <!-- Title -->
+    <h3 class="text-center text-lg font-bold text-gray-900 mb-1" data-i18n="popup.title">HimRate</h3>
+    <p class="text-center text-sm text-gray-500 mb-6" data-i18n="popup.subtitle">Анализ аудитории Twitch</p>
+    <!-- Auth buttons -->
+    <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg mb-3 flex items-center justify-center gap-2">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+      <span data-i18n="popup.authTwitch">Войти через Twitch</span>
+    </button>
+    <button class="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-lg border border-gray-300 mb-6 flex items-center justify-center gap-2">
+      <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      <span data-i18n="popup.authGoogle">Войти через Google</span>
+    </button>
+  </div>
+  <!-- Footer -->
+  <div class="border-t px-4 py-3 text-center">
+    <a href="#" class="text-xs text-gray-400 hover:text-indigo-500" data-i18n="footer.support">♥ Поддержать проект</a>
+  </div>
+</div>
+</div>
+
+<!-- ===== POPUP: LIVE GUEST ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Popup: Twitch LIVE, Guest</h2>
+<div class="popup-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="p-4">
+    <div class="flex items-center justify-between mb-4">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">HR</div>
+      <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md hover:bg-gray-100">
+        <span>🌐</span><span class="font-medium">RU</span><span>▾</span>
+      </button>
+    </div>
+    <!-- 2-column layout -->
+    <div class="flex gap-3 mb-4">
+      <!-- LEFT 1/4 -->
+      <div class="w-[90px] flex-shrink-0 flex flex-col items-center">
+        <div class="w-12 h-12 rounded-full bg-purple-200 mb-2"></div>
+        <p class="text-sm font-bold text-gray-900 truncate w-full text-center">StreamerN</p>
+        <a href="#" class="text-xs text-gray-500 underline hover:text-indigo-500">Рейтинг: 84</a>
+      </div>
+      <!-- RIGHT 3/4 -->
+      <div class="flex-1">
+        <p class="text-2xl font-bold text-green-600 mb-0.5">~4,200 <span class="text-sm font-normal text-gray-400">реальных зрителей</span></p>
+        <p class="text-sm text-gray-400 mb-2">из 5,000 CCV</p>
+        <div class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-sm cursor-pointer hover:bg-green-100">
+          🟢 Чистый канал · 85%
+        </div>
+        <p class="text-xs text-gray-400 mt-2">Рейтинг: 84</p>
+      </div>
+    </div>
+    <!-- CTA -->
+    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg mb-2" data-i18n="popup.guestCTA">Посмотреть полную аналитику →</button>
+    <button class="w-full bg-white hover:bg-gray-50 text-gray-600 font-medium py-2.5 px-4 rounded-lg border" data-i18n="popup.authTwitch">Войти</button>
+  </div>
+  <div class="border-t px-4 py-3 text-center">
+    <a href="#" class="text-xs text-gray-400 hover:text-indigo-500">♥ Поддержать проект</a>
+  </div>
+</div>
+</div>
+
+<!-- ===== POPUP: LIVE REGISTERED ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Popup: Twitch LIVE, Registered</h2>
+<div class="popup-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="p-4">
+    <!-- Search -->
+    <input type="text" disabled class="w-full px-3 py-2 border rounded-lg text-sm text-gray-400 bg-gray-50 mb-3" placeholder="🔍 Поиск стримера..." data-i18n-placeholder="popup.search">
+    <div class="flex items-center justify-between mb-4">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">HR</div>
+      <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md hover:bg-gray-100">
+        <span>🌐</span><span class="font-medium">RU</span><span>▾</span>
+      </button>
+    </div>
+    <div class="flex gap-3 mb-3">
+      <div class="w-[90px] flex-shrink-0 flex flex-col items-center">
+        <div class="w-12 h-12 rounded-full bg-purple-200 mb-2"></div>
+        <p class="text-sm font-bold text-gray-900 truncate w-full text-center">StreamerN</p>
+        <a href="#" class="text-xs text-gray-500 underline">Рейтинг: 84</a>
+      </div>
+      <div class="flex-1">
+        <p class="text-2xl font-bold text-green-600 mb-0.5">~4,200 <span class="text-sm font-normal text-gray-400">реальных зрителей</span></p>
+        <p class="text-sm text-gray-400">из 5,000 CCV</p>
+        <span class="inline-block text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded mt-1">confidence: высокий</span>
+        <div class="inline-flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-sm mt-2 cursor-pointer">
+          🟢 Чистый канал · 85%
+        </div>
+        <p class="text-xs text-gray-400 mt-1">Вы смотрите 40 мин</p>
+        <div class="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded mt-1">ℹ Данные в реальном времени</div>
+      </div>
+    </div>
+    <div class="flex gap-2 mb-2">
+      <button class="flex-1 bg-indigo-600 text-white text-sm py-2 rounded-lg">Аналитика канала</button>
+      <button class="flex-1 bg-white text-gray-600 text-sm py-2 rounded-lg border">Моя аналитика</button>
+    </div>
+    <button class="w-full bg-white text-gray-600 text-sm py-2 rounded-lg border flex items-center justify-center gap-1">★ В watchlist</button>
+  </div>
+  <div class="border-t px-4 py-3 text-center">
+    <a href="#" class="text-xs text-gray-400">♥ Поддержать проект</a>
+  </div>
+</div>
+</div>
+
+<!-- ===== POPUP: OFFLINE ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Popup: Twitch OFFLINE</h2>
+<div class="popup-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="p-4">
+    <div class="flex items-center justify-between mb-4">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">HR</div>
+      <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md hover:bg-gray-100">🌐 RU ▾</button>
+    </div>
+    <div class="flex gap-3 mb-4">
+      <div class="w-[90px] flex-shrink-0 flex flex-col items-center">
+        <div class="w-12 h-12 rounded-full bg-gray-200 mb-2"></div>
+        <p class="text-sm font-bold text-gray-900 truncate w-full text-center">StreamerN</p>
+        <a href="#" class="text-xs text-gray-500 underline">Рейтинг: 84</a>
+        <span class="text-xs text-green-600 mt-1">Порядочный</span>
+      </div>
+      <div class="flex-1">
+        <p class="text-lg font-semibold text-gray-400 mb-2" data-i18n="popup.offline">Стрим офлайн</p>
+        <p class="text-sm text-gray-500">Последний стрим:</p>
+        <p class="text-lg font-bold text-green-600">85% реальных</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button class="flex-1 bg-indigo-600 text-white text-sm py-2 rounded-lg">Аналитика канала</button>
+      <button class="flex-1 bg-white text-gray-600 text-sm py-2 rounded-lg border">Моя аналитика</button>
+    </div>
+  </div>
+  <div class="border-t px-4 py-3 text-center">
+    <a href="#" class="text-xs text-gray-400">♥ Поддержать проект</a>
+  </div>
+</div>
+</div>
+
+<!-- ===== POPUP: NOT ON TWITCH ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Popup: Не на Twitch</h2>
+<div class="popup-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="p-4">
+    <div class="flex items-center justify-between mb-4">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">HR</div>
+      <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md hover:bg-gray-100">🌐 RU ▾</button>
+    </div>
+    <div class="text-center py-8">
+      <p class="text-gray-500 mb-4" data-i18n="popup.notOnTwitch">Перейдите на Twitch для просмотра аналитики</p>
+      <input type="text" disabled class="w-full px-3 py-2 border rounded-lg text-sm text-gray-400 bg-gray-50" placeholder="🔍 Поиск стримера...">
+    </div>
+  </div>
+  <div class="border-t px-4 py-3 text-center">
+    <a href="#" class="text-xs text-gray-400">♥ Поддержать проект</a>
+  </div>
+</div>
+</div>
+
+<!-- ===== POPUP: SKELETON ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Popup: Skeleton (Loading)</h2>
+<div class="popup-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="p-4">
+    <div class="flex items-center justify-between mb-4">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">HR</div>
+      <div class="w-16 h-4 shimmer rounded"></div>
+    </div>
+    <div class="flex gap-3 mb-4">
+      <div class="w-[90px] flex-shrink-0 flex flex-col items-center">
+        <div class="w-12 h-12 rounded-full shimmer mb-2"></div>
+        <div class="w-16 h-3 shimmer rounded mb-1"></div>
+        <div class="w-12 h-3 shimmer rounded"></div>
+      </div>
+      <div class="flex-1 space-y-3">
+        <div class="w-44 h-6 shimmer rounded"></div>
+        <div class="w-28 h-4 shimmer rounded"></div>
+        <div class="w-48 h-8 shimmer rounded-full"></div>
+        <div class="w-20 h-3 shimmer rounded"></div>
+      </div>
+    </div>
+    <div class="w-full h-10 shimmer rounded-lg mb-2"></div>
+    <div class="w-full h-10 shimmer rounded-lg"></div>
+  </div>
+  <div class="border-t px-4 py-3 text-center">
+    <a href="#" class="text-xs text-gray-400">♥ Поддержать проект</a>
+  </div>
+</div>
+</div>
+
+<!-- ===== POPUP: ERROR ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Popup: Error</h2>
+<div class="popup-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="p-4">
+    <div class="flex items-center justify-between mb-4">
+      <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">HR</div>
+      <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md hover:bg-gray-100">🌐 RU ▾</button>
+    </div>
+    <div class="text-center py-8">
+      <div class="text-4xl mb-4">⚠️</div>
+      <p class="text-gray-500 mb-4" data-i18n="popup.error">Не удалось загрузить</p>
+      <button class="bg-indigo-600 text-white px-6 py-2 rounded-lg" data-i18n="popup.retry">Повторить</button>
+    </div>
+  </div>
+  <div class="border-t px-4 py-3 text-center">
+    <a href="#" class="text-xs text-gray-400">♥ Поддержать проект</a>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== SIDE PANEL ===== -->
+<h2 class="text-xl font-bold mt-10 mb-4">Side Panel</h2>
+<div class="flex flex-wrap gap-6">
+
+<!-- ===== SIDE PANEL: NOT LOGGED IN ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Side Panel: Not logged in</h2>
+<div class="sidepanel-frame bg-white rounded-xl shadow-lg border overflow-hidden">
+  <div class="flex items-center justify-between px-4 py-3 border-b">
+    <span class="font-semibold text-gray-900">HimRate</span>
+    <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md hover:bg-gray-100">🌐 RU ▾</button>
+  </div>
+  <div class="flex-1 flex flex-col items-center justify-center p-8" style="min-height:480px">
+    <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl mb-6">HR</div>
+    <p class="text-gray-500 text-center mb-6" data-i18n="sidepanel.notLoggedIn">Войдите для доступа к аналитике</p>
+    <button class="w-full max-w-xs bg-purple-600 text-white font-medium py-3 px-4 rounded-lg mb-3">Войти через Twitch</button>
+    <button class="w-full max-w-xs bg-white text-gray-700 font-medium py-3 px-4 rounded-lg border">Войти через Google</button>
+  </div>
+  <div class="border-t px-4 py-3 flex justify-between text-xs text-gray-400">
+    <a href="#">♥ Поддержать проект</a>
+    <a href="#">Обратная связь</a>
+  </div>
+</div>
+</div>
+
+<!-- ===== SIDE PANEL: CHANNEL SELECTED ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Side Panel: На Twitch, канал выбран</h2>
+<div class="sidepanel-frame bg-white rounded-xl shadow-lg border overflow-hidden flex flex-col">
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 py-3 border-b">
+    <div class="flex items-center gap-3">
+      <span class="font-semibold text-gray-900" id="sp-tab-name">Overview</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md hover:bg-gray-100">🌐 RU ▾</button>
+      <button class="text-gray-400 hover:text-gray-600">⚙️</button>
+      <div class="w-6 h-6 rounded-full bg-purple-200"></div>
+    </div>
+  </div>
+  <!-- Twitch banner -->
+  <div class="bg-blue-50 px-4 py-3 flex items-center justify-between text-sm text-blue-700 border-b">
+    <span>Привяжите Twitch — это поможет HimRate работать лучше</span>
+    <button class="text-blue-400 hover:text-blue-600 ml-2">×</button>
+  </div>
+  <!-- Tab Bar -->
+  <div class="flex overflow-x-auto border-b px-2 gap-1 no-scrollbar" id="sp-tabbar">
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-active" onclick="switchTab(this, 'Обзор')">Обзор</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive" onclick="switchTab(this, 'Тренды')">Тренды</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive" onclick="switchTab(this, 'Аудитория')">Аудитория</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive" onclick="switchTab(this, 'Списки')">Списки</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive" onclick="switchTab(this, 'Сравнение')">Сравнение</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive" onclick="switchTab(this, 'Пересечение')">Пересечение</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive" onclick="switchTab(this, 'Bot-Raid')">Bot-Raid</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive" onclick="switchTab(this, 'Настройки')">Настройки</button>
+  </div>
+  <!-- Content -->
+  <div class="flex-1 flex items-center justify-center p-8 text-gray-400" id="sp-content" style="min-height:350px">
+    Обзор — скоро
+  </div>
+  <!-- Footer -->
+  <div class="border-t px-4 py-3 flex justify-between text-xs text-gray-400">
+    <a href="#">♥ Поддержать проект</a>
+    <div class="flex gap-3">
+      <a href="#">Обратная связь</a>
+      <a href="#">YouTube</a>
+      <a href="#">Telegram</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SIDE PANEL: CHANNEL SWITCHING ===== -->
+<div>
+<h2 class="font-semibold mb-2 text-sm text-gray-500">Side Panel: Переключение канала</h2>
+<div class="sidepanel-frame bg-white rounded-xl shadow-lg border overflow-hidden flex flex-col">
+  <div class="flex items-center justify-between px-4 py-3 border-b">
+    <span class="font-semibold text-gray-900">Overview</span>
+    <div class="flex items-center gap-2">
+      <button class="flex items-center gap-1 text-xs text-gray-500 px-2 py-1 rounded-md">🌐 RU ▾</button>
+      <button class="text-gray-400">⚙️</button>
+      <div class="w-6 h-6 rounded-full bg-purple-200"></div>
+    </div>
+  </div>
+  <!-- Channel switch notice -->
+  <div class="bg-yellow-50 px-4 py-3 border-b">
+    <p class="text-sm text-yellow-800 mb-2">Вы открыли канал <strong>NewStreamer</strong>. Переключить аналитику?</p>
+    <div class="flex gap-2">
+      <button class="bg-yellow-500 text-white text-xs px-4 py-1.5 rounded-lg">Да</button>
+      <button class="bg-white text-gray-600 text-xs px-4 py-1.5 rounded-lg border">Нет</button>
+      <span class="text-xs text-gray-400 ml-auto">auto-dismiss 10с</span>
+    </div>
+  </div>
+  <!-- Tab Bar -->
+  <div class="flex overflow-x-auto border-b px-2 gap-1">
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-active">Обзор</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive">Тренды</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive">Аудитория</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive">Списки</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive">Сравнение</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive">Пересечение</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive">Bot-Raid</button>
+    <button class="px-3 py-2.5 text-xs whitespace-nowrap tab-inactive">Настройки</button>
+  </div>
+  <div class="flex-1 flex items-center justify-center p-8 text-gray-400" style="min-height:300px">
+    Обзор — скоро
+  </div>
+  <div class="border-t px-4 py-3 flex justify-between text-xs text-gray-400">
+    <a href="#">♥ Поддержать проект</a>
+    <div class="flex gap-3"><a href="#">Обратная связь</a><a href="#">YouTube</a><a href="#">Telegram</a></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<script>
+function switchTab(el, name) {
+  document.querySelectorAll('#sp-tabbar button').forEach(b => { b.className = 'px-3 py-2.5 text-xs whitespace-nowrap tab-inactive'; });
+  el.className = 'px-3 py-2.5 text-xs whitespace-nowrap tab-active';
+  document.getElementById('sp-tab-name').textContent = name;
+  document.getElementById('sp-content').textContent = name + ' — скоро';
+}
+</script>
+
+</body>
+</html>

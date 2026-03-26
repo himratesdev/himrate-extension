@@ -1,0 +1,40 @@
+{
+  "name": "himrate-extension",
+  "version": "0.1.0",
+  "description": "HimRate — Chrome Extension (MV3) for Twitch streamer audience analysis",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src/ --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "i18next": "^25.10.9",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-i18next": "^16.6.6"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/chrome": "^0.1.38",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.57.2",
+    "@typescript-eslint/parser": "^8.57.2",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.1.0",
+    "jsdom": "^29.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.2",
+    "vitest": "^4.1.1"
+  }
+}

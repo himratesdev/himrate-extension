@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  # === Lint (ESLint + TypeScript) — on every PR ===
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+
+  # === Build — on every PR ===
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Verify dist contents
+        run: |
+          test -f dist/manifest.json || (echo "FAIL: manifest.json missing" && exit 1)
+          test -f dist/popup.html || (echo "FAIL: popup.html missing" && exit 1)
+          test -f dist/sidepanel.html || (echo "FAIL: sidepanel.html missing" && exit 1)
+          test -f dist/background.js || (echo "FAIL: background.js missing" && exit 1)
+          test -f dist/content.js || (echo "FAIL: content.js missing" && exit 1)
+          test -f dist/popup.js || (echo "FAIL: popup.js missing" && exit 1)
+          test -f dist/sidepanel.js || (echo "FAIL: sidepanel.js missing" && exit 1)
+          echo "All required files present in dist/"
+      - name: Check manifest_version
+        run: |
+          MV=$(node -e "console.log(require('./dist/manifest.json').manifest_version)")
+          test "$MV" = "3" || (echo "FAIL: manifest_version is $MV, expected 3" && exit 1)
+          echo "manifest_version: 3 ✓"
+      - name: Check bundle size
+        run: |
+          SIZE=$(du -sk dist/ | cut -f1)
+          test "$SIZE" -lt 512 || (echo "FAIL: dist/ is ${SIZE}KB, limit 500KB" && exit 1)
+          echo "Bundle size: ${SIZE}KB ✓"
+
+  # === Security (npm audit) — on every PR ===
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm audit --audit-level=critical

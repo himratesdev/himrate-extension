@@ -4,6 +4,10 @@ import { LangSwitcher } from '../shared/components/LangSwitcher';
 
 type PopupState = 'not_logged_in' | 'live_guest' | 'live_registered' | 'offline' | 'not_twitch' | 'skeleton' | 'error';
 
+// Scaffold placeholder actions — Phase 2 will replace with real handlers
+// eslint-disable-next-line no-console
+const action = (name: string) => console.log(`action:${name}`);
+
 // S4: Search input in header for live states
 function SearchBar({ disabled = false }: { disabled?: boolean }) {
   const { t } = useTranslation();
@@ -27,7 +31,7 @@ function LeftColumn({ displayName = '', avatarLetter = '', isOffline = false }: 
       <div className={`avatar${isOffline ? ' gray' : ''}`} aria-label="Streamer avatar">{letter}</div>
       <div className="streamer-name">{name}</div>
       <div className="rating-wrap">
-        <div className="rating-btn" aria-label="Rating" onClick={() => void 0 /* Phase 2: open overview */}>
+        <div className="rating-btn" aria-label="Rating" onClick={() => action('placeholder')}>
           {t('placeholder.null')}
         </div>
         <span className="rating-label">{t('label.streamer_rating_short')}</span>
@@ -50,7 +54,7 @@ export function Popup() {
       <div className="screen-header">
         <div className="logo-header">{t('app.title')}</div>
         {showSearch ? (
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div className="header-right">
             <SearchBar disabled={state === 'live_guest'} />
             <LangSwitcher />
           </div>
@@ -72,7 +76,7 @@ export function Popup() {
 
       {/* Footer */}
       <div className="screen-footer">
-        <a href="#" className="footer-link" onClick={() => void 0 /* Phase 2: open support */}>{t('footer.support')}</a>
+        <a href="#" className="footer-link" onClick={() => action('open-support')}>{t('footer.support')}</a>
       </div>
     </div>
   );
@@ -82,13 +86,13 @@ function NotLoggedIn() {
   const { t } = useTranslation();
   return (
     <>
-      <h3 style={{ fontSize: '22px', marginBottom: '4px' }}>{t('app.title')}</h3>
-      <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '24px' }}>{t('app.subtitle')}</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-        <button className="btn btn-twitch" onClick={() => void 0 /* Phase 2: auth twitch */}>
+      <h3 className="auth-title">{t('app.title')}</h3>
+      <p className="auth-subtitle">{t('app.subtitle')}</p>
+      <div className="auth-buttons">
+        <button className="btn btn-twitch" onClick={() => action('auth-twitch')}>
           {t('auth.twitch')}
         </button>
-        <button className="btn btn-google" onClick={() => void 0 /* Phase 2: auth google */}>
+        <button className="btn btn-google" onClick={() => action('auth-google')}>
           {t('auth.google')}
         </button>
       </div>
@@ -133,7 +137,7 @@ function RightColumnLive({ isRegistered = false }: { isRegistered?: boolean }) {
         </span>
       </div>
       {isRegistered && (
-        <div style={{ marginTop: '6px' }}>
+        <div className="realtime-tag-wrap">
           <span className="tag">{t('popup.realtime')}</span>
         </div>
       )}
@@ -149,10 +153,10 @@ function LiveGuest() {
         <LeftColumn />
         <RightColumnLive isRegistered={false} />
       </div>
-      <button className="btn btn-primary" onClick={() => void 0 /* Phase 2: open sidepanel */}>
+      <button className="btn btn-primary" onClick={() => action('open-sidepanel')}>
         {t('popup.cta_guest')}
       </button>
-      <button className="btn btn-secondary" onClick={() => void 0 /* Phase 2: auth twitch */}>
+      <button className="btn btn-secondary" onClick={() => action('auth-login')}>
         {t('auth.login')}
       </button>
     </>
@@ -168,14 +172,14 @@ function LiveRegistered() {
         <RightColumnLive isRegistered={true} />
       </div>
       <div className="btn-row">
-        <button className="btn btn-primary" onClick={() => void 0 /* Phase 2: open channel */}>
+        <button className="btn btn-primary" onClick={() => action('open-channel')}>
           {t('popup.cta_channel')}
         </button>
-        <button className="btn btn-secondary" onClick={() => void 0 /* Phase 2: open my analytics */}>
+        <button className="btn btn-secondary" onClick={() => action('open-my')}>
           {t('popup.cta_my')}
         </button>
       </div>
-      <button className="btn btn-tertiary" onClick={() => void 0 /* Phase 2: add to watchlist */}>
+      <button className="btn btn-tertiary" onClick={() => action('watchlist-add')}>
         {t('popup.watchlist')}
       </button>
     </>
@@ -218,7 +222,7 @@ function Offline() {
           </div>
         </div>
       </div>
-      <button className="btn btn-primary" onClick={() => void 0 /* Phase 2: open last stream */}>
+      <button className="btn btn-primary" onClick={() => action('last-stream')}>
         {t('btn.last_stream_analytics')}
       </button>
     </>
@@ -229,13 +233,12 @@ function NotTwitch() {
   const { t } = useTranslation();
   return (
     <>
-      <h3 style={{ fontSize: '20px' }}>{t('popup.go_twitch')}</h3>
+      <h3 className="not-twitch-title">{t('popup.go_twitch')}</h3>
       <input
         type="text"
-        className="search-input"
+        className="search-input not-twitch-search"
         placeholder={t('search.placeholder')}
         disabled
-        style={{ marginTop: '16px' }}
       />
     </>
   );
@@ -243,17 +246,21 @@ function NotTwitch() {
 
 function SkeletonState() {
   return (
-    <div className="two-col" aria-busy="true" aria-label="Loading">
-      <div className="col-left">
-        <div className="skeleton" style={{ width: '48px', height: '48px', borderRadius: '50%', border: '2.5px solid var(--border-dark)' }} />
-        <div className="skeleton" style={{ width: '60px', height: '12px' }} />
+    <>
+      <div className="two-col" aria-busy="true" aria-label="Loading">
+        <div className="col-left">
+          <div className="skeleton skeleton-avatar" />
+          <div className="skeleton skeleton-name" />
+        </div>
+        <div className="col-right">
+          <div className="skeleton skeleton-status" />
+          <div className="skeleton skeleton-hero" />
+          <div className="skeleton skeleton-badge" />
+        </div>
       </div>
-      <div className="col-right">
-        <div className="skeleton" style={{ width: '80px', height: '24px', marginBottom: '8px' }} />
-        <div className="skeleton" style={{ width: '40px', height: '12px', marginBottom: '8px' }} />
-        <div className="skeleton" style={{ width: '60px', height: '16px' }} />
-      </div>
-    </div>
+      <div className="skeleton skeleton-btn" />
+      <div className="skeleton skeleton-btn" />
+    </>
   );
 }
 
@@ -261,9 +268,9 @@ function ErrorState() {
   const { t } = useTranslation();
   return (
     <>
-      <div style={{ fontSize: '24px', marginBottom: '12px' }}>&#9888;&#65039;</div>
-      <p style={{ fontSize: '14px', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>{t('popup.error')}</p>
-      <button className="btn btn-secondary" style={{ width: 'auto', padding: '10px 32px' }} onClick={() => void 0 /* Phase 2: retry */}>
+      <div className="error-icon">&#9888;&#65039;</div>
+      <p className="error-text">{t('popup.error')}</p>
+      <button className="btn btn-secondary btn-retry" onClick={() => action('retry')}>
         {t('popup.retry')}
       </button>
     </>

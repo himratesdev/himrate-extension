@@ -3,6 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { LangSwitcher } from '../shared/components/LangSwitcher';
 import { TabBar } from './components/TabBar';
 
+// Scaffold placeholder actions — Phase 2 will replace with real handlers
+// eslint-disable-next-line no-console
+const action = (name: string) => console.log(`action:${name}`);
+
 const TABS = ['overview', 'trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'] as const;
 type TabId = typeof TABS[number];
 
@@ -47,20 +51,18 @@ export function SidePanel() {
           <div className="panel-header-title">HimRate</div>
           <LangSwitcher />
         </div>
-        <div className="panel-content" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '24px' }}>{t('sp.login_required')}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-            <button className="btn btn-twitch" onClick={() => void 0 /* Phase 2: auth twitch */}>
+        <div className="panel-content screen-content-centered">
+          <p className="sp-login-title">{t('sp.login_required')}</p>
+          <div className="auth-buttons">
+            <button className="btn btn-twitch" onClick={() => action('auth-twitch')}>
               {t('auth.twitch')}
             </button>
-            <button className="btn btn-google" onClick={() => void 0 /* Phase 2: auth google */}>
+            <button className="btn btn-google" onClick={() => action('auth-google')}>
               {t('auth.google')}
             </button>
           </div>
         </div>
-        <div style={{ padding: '12px 16px' }}>
-          <Footer />
-        </div>
+        <Footer />
       </div>
     );
   }
@@ -76,18 +78,16 @@ export function SidePanel() {
             <div className="panel-avatar" aria-label={t('aria.profile')}>U</div>
           </div>
         </div>
-        <div className="panel-content" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-          <h3 style={{ fontSize: '20px' }}>{t('popup.go_twitch')}</h3>
+        <div className="panel-content screen-content-centered">
+          <h3 className="not-twitch-title">{t('popup.go_twitch')}</h3>
           <input
             type="text"
-            className="search-input"
+            className="search-input not-twitch-search"
             placeholder={t('search.placeholder')}
-            style={{ marginTop: '16px' }}
+            disabled
           />
         </div>
-        <div style={{ padding: '0 16px 12px' }}>
-          <Footer />
-        </div>
+        <Footer />
       </div>
     );
   }
@@ -96,9 +96,9 @@ export function SidePanel() {
     <div className="panel">
       <Header currentTab={currentTab} onBack={() => setCurrentTab('overview')} />
 
-      {/* Info banner */}
+      {/* Info banner — outside panel-content for sticky behavior (Design Spec deviation: documented) */}
       {!bannerDismissed && (
-        <div style={{ padding: '0 16px', paddingTop: '12px' }}>
+        <div className="banner-wrap">
           <div className="info-banner">
             <span>{t('sp.link_twitch')}</span>
             <button
@@ -112,7 +112,7 @@ export function SidePanel() {
         </div>
       )}
 
-      {/* Tab Bar */}
+      {/* Tab Bar — outside panel-content for sticky behavior (Design Spec deviation: documented) */}
       <TabBar tabs={TABS} currentTab={currentTab} onTabChange={(tab) => setCurrentTab(tab as TabId)} />
 
       {/* Content */}
@@ -122,9 +122,7 @@ export function SidePanel() {
         </div>
       </div>
 
-      <div style={{ padding: '0 16px 12px' }}>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }
@@ -133,7 +131,7 @@ function Header({ currentTab, onBack }: { currentTab: string; onBack: () => void
   const { t } = useTranslation();
   return (
     <div className="panel-header">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="panel-header-left">
         {currentTab !== 'overview' && (
           <button className="panel-header-back" onClick={onBack} aria-label={t('aria.back')}>
             &#8592;

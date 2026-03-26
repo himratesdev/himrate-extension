@@ -39,7 +39,7 @@ export function LangSwitcher({ compact = false }: LangSwitcherProps) {
       >
         <span className="globe" style={compact ? { fontSize: '12px' } : undefined}>&#127760;</span>
         <span className="lang-code" style={compact ? { fontSize: '11px' } : undefined}>{current.toUpperCase()}</span>
-        {!compact && <span className="chevron">&#9662;</span>}
+        <span className="chevron" style={compact ? { fontSize: '9px' } : undefined}>&#9662;</span>
       </div>
       {open && (
         <div className="lang-dropdown">

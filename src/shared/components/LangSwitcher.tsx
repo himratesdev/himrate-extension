@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '../i18n';
 
@@ -6,6 +6,17 @@ export function LangSwitcher() {
   const { i18n, t } = useTranslation();
   const [open, setOpen] = useState(false);
   const current = i18n.language;
+  const ref = useRef<HTMLDivElement>(null);
+
+  // N2: Close dropdown on click outside
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
 
   const handleChange = async (locale: string) => {
     await changeLanguage(locale);
@@ -13,7 +24,7 @@ export function LangSwitcher() {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div ref={ref} style={{ position: 'relative' }}>
       <button
         onClick={() => setOpen(!open)}
         aria-label={t('aria.lang')}

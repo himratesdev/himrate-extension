@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
+const COLOR_PRIMARY = '#3B82F6';
+const COLOR_INACTIVE = '#525252';
+
 interface TabBarProps {
   tabs: readonly string[];
   currentTab: string;
@@ -24,13 +27,14 @@ export function TabBar({ tabs, currentTab, onTabChange }: TabBarProps) {
               padding: '8px 12px',
               fontSize: '11px',
               fontWeight: isActive ? 600 : 400,
-              color: isActive ? '#4F36EE' : '#525252',
-              borderBottom: isActive ? '2px solid #4F36EE' : '2px solid transparent',
+              color: isActive ? COLOR_PRIMARY : COLOR_INACTIVE,
               background: 'none',
-              border: 'none',
+              borderTop: 'none',
+              borderLeft: 'none',
+              borderRight: 'none',
               borderBottomWidth: '2px',
               borderBottomStyle: 'solid',
-              borderBottomColor: isActive ? '#4F36EE' : 'transparent',
+              borderBottomColor: isActive ? COLOR_PRIMARY : 'transparent',
               cursor: 'pointer',
               transition: 'all 150ms ease',
               whiteSpace: 'nowrap',

@@ -4,7 +4,6 @@ import ru from '../locales/ru.json';
 import en from '../locales/en.json';
 
 const STORAGE_KEY = 'himrate_locale';
-const DEFAULT_LOCALE = 'ru';
 
 async function getStoredLocale(): Promise<string> {
   try {
@@ -27,7 +26,7 @@ export async function initI18n(): Promise<typeof i18n> {
       en: { translation: en },
     },
     lng,
-    fallbackLng: DEFAULT_LOCALE,
+    fallbackLng: 'en',
     interpolation: { escapeValue: false },
   });
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LangSwitcher } from '../shared/components/LangSwitcher';
 import { TabBar } from './components/TabBar';
@@ -6,12 +6,39 @@ import { TabBar } from './components/TabBar';
 const TABS = ['overview', 'trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'] as const;
 type TabId = typeof TABS[number];
 
+const BANNER_STORAGE_KEY = 'himrate_banner_dismissed_at';
+const BANNER_TTL_MS = 24 * 60 * 60 * 1000; // 1 day
+
+// S3: persist banner dismiss in chrome.storage.local with 1 day TTL
+async function isBannerDismissed(): Promise<boolean> {
+  try {
+    const result = await chrome.storage.local.get(BANNER_STORAGE_KEY);
+    const dismissedAt = result[BANNER_STORAGE_KEY] as number | undefined;
+    if (dismissedAt && Date.now() - dismissedAt < BANNER_TTL_MS) return true;
+  } catch {
+    // chrome.storage not available
+  }
+  return false;
+}
+
+async function dismissBanner(): Promise<void> {
+  try {
+    await chrome.storage.local.set({ [BANNER_STORAGE_KEY]: Date.now() });
+  } catch {
+    // chrome.storage not available
+  }
+}
+
 export function SidePanel() {
   const { t } = useTranslation();
   const [currentTab, setCurrentTab] = useState<TabId>('overview');
   const [loggedIn] = useState(true); // Scaffold: always logged in for demo
   const [onTwitch] = useState(true); // Scaffold: always on Twitch
   const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  useEffect(() => {
+    isBannerDismissed().then(setBannerDismissed);
+  }, []);
 
   if (!loggedIn) {
     return (
@@ -54,7 +81,7 @@ export function SidePanel() {
       {!bannerDismissed && (
         <div style={{ background: '#EFF6FF', padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #DBEAFE' }}>
           <span style={{ fontSize: '12px', color: '#1D4ED8' }}>{t('sp.link_twitch')}</span>
-          <button onClick={() => setBannerDismissed(true)} aria-label={t('aria.dismiss')} style={{ background: 'none', border: 'none', color: '#93C5FD', cursor: 'pointer', fontSize: '16px' }}>×</button>
+          <button onClick={() => { setBannerDismissed(true); dismissBanner(); }} aria-label={t('aria.dismiss')} style={{ background: 'none', border: 'none', color: '#93C5FD', cursor: 'pointer', fontSize: '16px' }}>×</button>
         </div>
       )}
 
@@ -88,9 +115,9 @@ function Header({ currentTab, onBack }: { currentTab: string; onBack: () => void
       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
         <LangSwitcher />
         <button aria-label={t('aria.settings')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#525252' }}>⚙</button>
-        <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} aria-label={t('aria.profile')}>
+        <button aria-label={t('aria.profile')} style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: 'none', padding: 0 }}>
           <span style={{ color: '#fff', fontWeight: 700, fontSize: '10px' }}>U</span>
-        </div>
+        </button>
       </div>
     </div>
   );

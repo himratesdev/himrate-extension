@@ -3,10 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { LangSwitcher } from '../shared/components/LangSwitcher';
 import { TabBar } from './components/TabBar';
 
-// Scaffold placeholder actions — Phase 2 will replace with real handlers
-// eslint-disable-next-line no-console
-const action = (name: string) => console.log(`action:${name}`);
-
 const TABS = ['overview', 'trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'] as const;
 type TabId = typeof TABS[number];
 
@@ -54,10 +50,10 @@ export function SidePanel() {
         <div className="panel-content screen-content-centered">
           <p className="sp-login-title">{t('sp.login_required')}</p>
           <div className="auth-buttons">
-            <button className="btn btn-twitch" onClick={() => action('auth-twitch')}>
+            <button className="btn btn-twitch">
               {t('auth.twitch')}
             </button>
-            <button className="btn btn-google" onClick={() => action('auth-google')}>
+            <button className="btn btn-google">
               {t('auth.google')}
             </button>
           </div>

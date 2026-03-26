@@ -243,6 +243,11 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
 .lang-switch:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--border-dark); }
 .lang-switch .globe { font-size: 14px; }
 .lang-switch .chevron { font-size: 10px; color: var(--ink-50); }
+.lang-switch-wrapper { position: relative; }
+.lang-switch-compact { padding: 4px 8px; }
+.lang-switch-compact .globe { font-size: 12px; }
+.lang-switch-compact .lang-code { font-size: 11px; }
+.lang-switch-compact .chevron { font-size: 9px; }
 
 /* === LANG DROPDOWN === */
 .lang-dropdown {

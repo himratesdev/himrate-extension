@@ -4,10 +4,6 @@ import { LangSwitcher } from '../shared/components/LangSwitcher';
 
 type PopupState = 'not_logged_in' | 'live_guest' | 'live_registered' | 'offline' | 'not_twitch' | 'skeleton' | 'error';
 
-// Scaffold placeholder actions — Phase 2 will replace with real handlers
-// eslint-disable-next-line no-console
-const action = (name: string) => console.log(`action:${name}`);
-
 // S4: Search input in header for live states
 function SearchBar({ disabled = false }: { disabled?: boolean }) {
   const { t } = useTranslation();
@@ -31,7 +27,7 @@ function LeftColumn({ displayName = '', avatarLetter = '', isOffline = false }: 
       <div className={`avatar${isOffline ? ' gray' : ''}`} aria-label="Streamer avatar">{letter}</div>
       <div className="streamer-name">{name}</div>
       <div className="rating-wrap">
-        <div className="rating-btn" aria-label="Rating" onClick={() => action('placeholder')}>
+        <div className="rating-btn" aria-label="Rating">
           {t('placeholder.null')}
         </div>
         <span className="rating-label">{t('label.streamer_rating_short')}</span>
@@ -76,7 +72,7 @@ export function Popup() {
 
       {/* Footer */}
       <div className="screen-footer">
-        <a href="#" className="footer-link" onClick={() => action('open-support')}>{t('footer.support')}</a>
+        <a href="#" className="footer-link">{t('footer.support')}</a>
       </div>
     </div>
   );
@@ -89,10 +85,10 @@ function NotLoggedIn() {
       <h3 className="auth-title">{t('app.title')}</h3>
       <p className="auth-subtitle">{t('app.subtitle')}</p>
       <div className="auth-buttons">
-        <button className="btn btn-twitch" onClick={() => action('auth-twitch')}>
+        <button className="btn btn-twitch">
           {t('auth.twitch')}
         </button>
-        <button className="btn btn-google" onClick={() => action('auth-google')}>
+        <button className="btn btn-google">
           {t('auth.google')}
         </button>
       </div>
@@ -153,10 +149,10 @@ function LiveGuest() {
         <LeftColumn />
         <RightColumnLive isRegistered={false} />
       </div>
-      <button className="btn btn-primary" onClick={() => action('open-sidepanel')}>
+      <button className="btn btn-primary">
         {t('popup.cta_guest')}
       </button>
-      <button className="btn btn-secondary" onClick={() => action('auth-login')}>
+      <button className="btn btn-secondary">
         {t('auth.login')}
       </button>
     </>
@@ -172,14 +168,14 @@ function LiveRegistered() {
         <RightColumnLive isRegistered={true} />
       </div>
       <div className="btn-row">
-        <button className="btn btn-primary" onClick={() => action('open-channel')}>
+        <button className="btn btn-primary">
           {t('popup.cta_channel')}
         </button>
-        <button className="btn btn-secondary" onClick={() => action('open-my')}>
+        <button className="btn btn-secondary">
           {t('popup.cta_my')}
         </button>
       </div>
-      <button className="btn btn-tertiary" onClick={() => action('watchlist-add')}>
+      <button className="btn btn-tertiary">
         {t('popup.watchlist')}
       </button>
     </>
@@ -222,7 +218,7 @@ function Offline() {
           </div>
         </div>
       </div>
-      <button className="btn btn-primary" onClick={() => action('last-stream')}>
+      <button className="btn btn-primary">
         {t('btn.last_stream_analytics')}
       </button>
     </>
@@ -270,7 +266,7 @@ function ErrorState() {
     <>
       <div className="error-icon">&#9888;&#65039;</div>
       <p className="error-text">{t('popup.error')}</p>
-      <button className="btn btn-secondary btn-retry" onClick={() => action('retry')}>
+      <button className="btn btn-secondary btn-retry">
         {t('popup.retry')}
       </button>
     </>

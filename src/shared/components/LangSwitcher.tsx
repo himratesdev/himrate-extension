@@ -28,18 +28,17 @@ export function LangSwitcher({ compact = false }: LangSwitcherProps) {
   };
 
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div ref={ref} className="lang-switch-wrapper">
       <div
-        className="lang-switch"
+        className={`lang-switch${compact ? ' lang-switch-compact' : ''}`}
         onClick={() => setOpen(!open)}
         aria-label={t('aria.lang')}
         role="button"
         tabIndex={0}
-        style={compact ? { padding: '4px 8px' } : undefined}
       >
-        <span className="globe" style={compact ? { fontSize: '12px' } : undefined}>&#127760;</span>
-        <span className="lang-code" style={compact ? { fontSize: '11px' } : undefined}>{current.toUpperCase()}</span>
-        <span className="chevron" style={compact ? { fontSize: '9px' } : undefined}>&#9662;</span>
+        <span className="globe">&#127760;</span>
+        <span className="lang-code">{current.toUpperCase()}</span>
+        <span className="chevron">&#9662;</span>
       </div>
       {open && (
         <div className="lang-dropdown">

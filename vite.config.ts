@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import { promises as fs } from 'fs';
 
 // Plugin to copy HTML outputs to dist root (Chrome Extension expects popup.html and sidepanel.html at root)
+// Also removes .woff (legacy) files — Chrome Extension only needs .woff2
 function chromeExtensionHtml(): Plugin {
   return {
     name: 'chrome-extension-html',
@@ -20,6 +21,18 @@ function chromeExtensionHtml(): Plugin {
             // Source file doesn't exist — skip
           }
         }
+      }
+      // Remove .woff (legacy) files — Chrome only needs .woff2
+      const assetsDir = resolve(outDir, 'assets');
+      try {
+        const files = await fs.readdir(assetsDir);
+        for (const file of files) {
+          if (file.endsWith('.woff') && !file.endsWith('.woff2')) {
+            await fs.unlink(resolve(assetsDir, file));
+          }
+        }
+      } catch {
+        // assets dir may not exist
       }
     },
   };

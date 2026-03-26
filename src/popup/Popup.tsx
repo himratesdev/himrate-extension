@@ -121,7 +121,7 @@ function RightColumnLive({ isRegistered = false }: { isRegistered?: boolean }) {
       <div className="erv-badge-wrap">
         <span
           className="erv-badge neutral clickable"
-          style={{ cursor: 'pointer' }}
+
           onClick={() => {
             // Phase 2: chrome.sidePanel.open() + navigate to Overview tab
             chrome.runtime.sendMessage({ action: 'open_sidepanel', tab: 'overview' }).catch(() => {});
@@ -206,7 +206,7 @@ function Offline() {
           <div className="erv-badge-wrap">
             <span
               className="erv-badge neutral clickable"
-              style={{ cursor: 'pointer' }}
+    
               onClick={() => {
                 chrome.runtime.sendMessage({ action: 'open_sidepanel', tab: 'overview' }).catch(() => {});
               }}

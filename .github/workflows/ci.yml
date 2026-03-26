@@ -68,10 +68,12 @@ jobs:
           test "$PERMS" = "$EXPECTED" || (echo "FAIL: permissions $PERMS != expected $EXPECTED" && exit 1)
           echo "Permissions match whitelist ✓"
 
-      - name: Verify dist — bundle size < 500KB
+      - name: Verify dist — bundle size < 768KB
         run: |
+          # Limit raised from 500KB to 768KB: self-hosted @fontsource fonts (latin+cyrillic, 3 families)
+          # are part of the design system and require ~200KB for woff2 files
           SIZE=$(du -sk dist/ | cut -f1)
-          test "$SIZE" -lt 512 || (echo "FAIL: dist/ is ${SIZE}KB, limit 500KB" && exit 1)
+          test "$SIZE" -lt 768 || (echo "FAIL: dist/ is ${SIZE}KB, limit 768KB" && exit 1)
           echo "Bundle size: ${SIZE}KB ✓"
 
       - name: Verify dist — no hardcoded Russian outside locales

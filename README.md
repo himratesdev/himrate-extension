@@ -99,6 +99,14 @@ public/
 - **CI:** GitHub Actions — lint + build + security on every PR
 - **Protection:** main + production branches protected
 
+## Permissions
+
+| Permission | Why | CWS Justification |
+|-----------|-----|-------------------|
+| `sidePanel` | Side Panel API for 8-tab analytics dashboard | Core product feature — analytics displayed in Chrome Side Panel alongside Twitch pages |
+| `activeTab` | Content script needs current tab URL to detect which Twitch channel user is watching | Required to identify streamer channel for real-time audience analysis (Phase 2) |
+| `storage` | Persist user language preference and UI state (banner dismiss) | Settings persistence between Extension sessions, no sensitive data stored |
+
 ## Related
 
 - **Backend API:** [himrate-platform](https://github.com/himratesdev/himrate-platform)

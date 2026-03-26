@@ -1,21 +1,23 @@
 import { defineConfig, Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { copyFileSync, existsSync } from 'fs';
+import { promises as fs } from 'fs';
 
 // Plugin to copy HTML outputs to dist root (Chrome Extension expects popup.html and sidepanel.html at root)
 function chromeExtensionHtml(): Plugin {
   return {
     name: 'chrome-extension-html',
-    writeBundle(options, bundle) {
+    async writeBundle(options, bundle) {
       const outDir = options.dir || 'dist';
-      for (const [fileName, chunk] of Object.entries(bundle)) {
+      for (const [fileName] of Object.entries(bundle)) {
         if (fileName.endsWith('.html') && fileName.includes('/')) {
           const baseName = fileName.split('/').pop()!;
           const src = resolve(outDir, fileName);
           const dest = resolve(outDir, baseName);
-          if (existsSync(src)) {
-            copyFileSync(src, dest);
+          try {
+            await fs.copyFile(src, dest);
+          } catch {
+            // Source file doesn't exist — skip
           }
         }
       }

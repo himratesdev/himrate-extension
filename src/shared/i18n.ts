@@ -30,11 +30,14 @@ export async function initI18n(): Promise<typeof i18n> {
     interpolation: { escapeValue: false },
   });
 
+  document.documentElement.lang = lng;
+
   return i18n;
 }
 
 export async function changeLanguage(locale: string): Promise<void> {
   await i18n.changeLanguage(locale);
+  document.documentElement.lang = locale;
   try {
     await chrome.storage.local.set({ [STORAGE_KEY]: locale });
   } catch {

@@ -4,6 +4,9 @@
   "description": "HimRate — Chrome Extension (MV3) for Twitch streamer audience analysis",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

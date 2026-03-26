@@ -68,12 +68,12 @@ jobs:
           test "$PERMS" = "$EXPECTED" || (echo "FAIL: permissions $PERMS != expected $EXPECTED" && exit 1)
           echo "Permissions match whitelist ✓"
 
-      - name: Verify dist — bundle size < 768KB
+      - name: Verify dist — bundle size < 1024KB
         run: |
-          # Limit raised from 500KB to 768KB: self-hosted @fontsource fonts (latin+cyrillic, 3 families)
-          # are part of the design system and require ~200KB for woff2 files
+          # Limit: 1024KB (1MB). Includes self-hosted @fontsource fonts (~200KB woff2).
+          # Headroom for Phase 2 (API client, auth) and Phase 3 (charts, tab content).
           SIZE=$(du -sk dist/ | cut -f1)
-          test "$SIZE" -lt 768 || (echo "FAIL: dist/ is ${SIZE}KB, limit 768KB" && exit 1)
+          test "$SIZE" -lt 1024 || (echo "FAIL: dist/ is ${SIZE}KB, limit 1024KB (1MB)" && exit 1)
           echo "Bundle size: ${SIZE}KB ✓"
 
       - name: Verify dist — no hardcoded Russian outside locales

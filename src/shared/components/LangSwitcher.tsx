@@ -2,7 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '../i18n';
 
-export function LangSwitcher() {
+interface LangSwitcherProps {
+  compact?: boolean;
+}
+
+export function LangSwitcher({ compact = false }: LangSwitcherProps) {
   const { i18n, t } = useTranslation();
   const [open, setOpen] = useState(false);
   const current = i18n.language;
@@ -25,45 +29,31 @@ export function LangSwitcher() {
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      <button
+      <div
+        className="lang-switch"
         onClick={() => setOpen(!open)}
         aria-label={t('aria.lang')}
-        style={{
-          display: 'flex', alignItems: 'center', gap: '4px',
-          fontSize: '11px', color: '#525252', cursor: 'pointer',
-          background: 'none', border: 'none', padding: '4px 8px',
-          borderRadius: '4px',
-        }}
+        role="button"
+        tabIndex={0}
+        style={compact ? { padding: '4px 8px' } : undefined}
       >
-        <span>🌐</span>
-        <span>{current.toUpperCase()}</span>
-        <span>▾</span>
-      </button>
+        <span className="globe" style={compact ? { fontSize: '12px' } : undefined}>&#127760;</span>
+        <span className="lang-code" style={compact ? { fontSize: '11px' } : undefined}>{current.toUpperCase()}</span>
+        {!compact && <span className="chevron">&#9662;</span>}
+      </div>
       {open && (
-        <div style={{
-          position: 'absolute', top: '100%', right: 0, zIndex: 10,
-          background: '#fff', border: '1.5px solid #e5e5e5', borderRadius: '8px',
-          padding: '4px', minWidth: '140px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        }}>
+        <div className="lang-dropdown">
           <button
+            className={`lang-dropdown-item${current === 'ru' ? ' active' : ''}`}
             onClick={() => handleChange('ru')}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px', width: '100%',
-              padding: '6px 8px', border: 'none', background: current === 'ru' ? '#F3F4F6' : 'transparent',
-              cursor: 'pointer', borderRadius: '4px', fontSize: '12px',
-            }}
           >
-            🇷🇺 Русский {current === 'ru' && '✓'}
+            &#127479;&#127482; Русский {current === 'ru' && '\u2713'}
           </button>
           <button
+            className={`lang-dropdown-item${current === 'en' ? ' active' : ''}`}
             onClick={() => handleChange('en')}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px', width: '100%',
-              padding: '6px 8px', border: 'none', background: current === 'en' ? '#F3F4F6' : 'transparent',
-              cursor: 'pointer', borderRadius: '4px', fontSize: '12px',
-            }}
           >
-            🇬🇧 English {current === 'en' && '✓'}
+            &#127468;&#127463; English {current === 'en' && '\u2713'}
           </button>
         </div>
       )}

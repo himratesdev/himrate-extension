@@ -42,46 +42,73 @@ export function SidePanel() {
 
   if (!loggedIn) {
     return (
-      <div style={{ fontFamily: 'Inter, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header currentTab="overview" onBack={() => {}} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔒</div>
-          <p style={{ fontSize: '18px', fontWeight: 600, marginBottom: '24px' }}>{t('sp.login_required')}</p>
-          <button style={{ width: '100%', maxWidth: '280px', padding: '10px', marginBottom: '8px', background: '#9146FF', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
-            {t('auth.twitch')}
-          </button>
-          <button style={{ width: '100%', maxWidth: '280px', padding: '10px', background: '#fff', color: '#0a0a0a', border: '1.5px solid #e5e5e5', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
-            {t('auth.google')}
-          </button>
+      <div className="panel">
+        <div className="panel-header">
+          <div className="panel-header-title">HimRate</div>
+          <LangSwitcher />
         </div>
-        <Footer />
+        <div className="panel-content" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+          <p style={{ fontSize: '18px', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '24px' }}>{t('sp.login_required')}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+            <button className="btn btn-twitch" onClick={() => void 0 /* Phase 2: auth twitch */}>
+              {t('auth.twitch')}
+            </button>
+            <button className="btn btn-google" onClick={() => void 0 /* Phase 2: auth google */}>
+              {t('auth.google')}
+            </button>
+          </div>
+        </div>
+        <div style={{ padding: '12px 16px' }}>
+          <Footer />
+        </div>
       </div>
     );
   }
 
   if (!onTwitch) {
     return (
-      <div style={{ fontFamily: 'Inter, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Header currentTab="overview" onBack={() => {}} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>📺</div>
-          <p style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>{t('popup.go_twitch')}</p>
-          <input type="text" placeholder={t('search.placeholder')} style={{ width: '100%', maxWidth: '280px', padding: '10px', border: '1.5px solid #e5e5e5', borderRadius: '8px', fontSize: '13px', marginTop: '16px' }} />
+      <div className="panel">
+        <div className="panel-header">
+          <div className="panel-header-title">HimRate</div>
+          <div className="panel-header-right">
+            <LangSwitcher compact />
+            <span className="panel-settings" aria-label={t('aria.settings')}>&#9881;&#65039;</span>
+            <div className="panel-avatar" aria-label={t('aria.profile')}>U</div>
+          </div>
         </div>
-        <Footer />
+        <div className="panel-content" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+          <h3 style={{ fontSize: '20px' }}>{t('popup.go_twitch')}</h3>
+          <input
+            type="text"
+            className="search-input"
+            placeholder={t('search.placeholder')}
+            style={{ marginTop: '16px' }}
+          />
+        </div>
+        <div style={{ padding: '0 16px 12px' }}>
+          <Footer />
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ fontFamily: 'Inter, sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="panel">
       <Header currentTab={currentTab} onBack={() => setCurrentTab('overview')} />
 
       {/* Info banner */}
       {!bannerDismissed && (
-        <div style={{ background: '#EFF6FF', padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #DBEAFE' }}>
-          <span style={{ fontSize: '12px', color: '#1D4ED8' }}>{t('sp.link_twitch')}</span>
-          <button onClick={() => { setBannerDismissed(true); dismissBanner(); }} aria-label={t('aria.dismiss')} style={{ background: 'none', border: 'none', color: '#93C5FD', cursor: 'pointer', fontSize: '16px' }}>×</button>
+        <div style={{ padding: '0 16px', paddingTop: '12px' }}>
+          <div className="info-banner">
+            <span>{t('sp.link_twitch')}</span>
+            <button
+              className="info-banner-close"
+              aria-label={t('aria.dismiss')}
+              onClick={() => { setBannerDismissed(true); dismissBanner(); }}
+            >
+              &#10005;
+            </button>
+          </div>
         </div>
       )}
 
@@ -89,13 +116,15 @@ export function SidePanel() {
       <TabBar tabs={TABS} currentTab={currentTab} onTabChange={(tab) => setCurrentTab(tab as TabId)} />
 
       {/* Content */}
-      <div role="tabpanel" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <p style={{ fontSize: '14px', color: '#a3a3a3' }}>
-          {t(`tab.${currentTab}`)} {t('tab.placeholder_suffix')}
-        </p>
+      <div className="panel-content" role="tabpanel">
+        <div className="content-placeholder">
+          <span>{t(`tab.${currentTab}`)} {t('tab.placeholder_suffix')}</span>
+        </div>
       </div>
 
-      <Footer />
+      <div style={{ padding: '0 16px 12px' }}>
+        <Footer />
+      </div>
     </div>
   );
 }
@@ -103,21 +132,19 @@ export function SidePanel() {
 function Header({ currentTab, onBack }: { currentTab: string; onBack: () => void }) {
   const { t } = useTranslation();
   return (
-    <div style={{ padding: '8px 12px', borderBottom: '2px solid #0a0a0a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="panel-header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {currentTab !== 'overview' && (
-          <button onClick={onBack} aria-label={t('aria.back')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#525252', padding: '4px' }}>
-            ←
+          <button className="panel-header-back" onClick={onBack} aria-label={t('aria.back')}>
+            &#8592;
           </button>
         )}
-        <span style={{ fontSize: '14px', fontWeight: 600 }}>{t(`tab.${currentTab}`)}</span>
+        <span className="panel-header-title">{t(`tab.${currentTab}`)}</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        <LangSwitcher />
-        <button aria-label={t('aria.settings')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#525252' }}>⚙</button>
-        <button aria-label={t('aria.profile')} style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', border: 'none', padding: 0 }}>
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: '10px' }}>U</span>
-        </button>
+      <div className="panel-header-right">
+        <LangSwitcher compact />
+        <span className="panel-settings" aria-label={t('aria.settings')}>&#9881;&#65039;</span>
+        <div className="panel-avatar" aria-label={t('aria.profile')}>U</div>
       </div>
     </div>
   );
@@ -126,14 +153,13 @@ function Header({ currentTab, onBack }: { currentTab: string; onBack: () => void
 function Footer() {
   const { t } = useTranslation();
   return (
-    <div style={{ borderTop: '1px solid #e5e5e5', padding: '8px 12px', display: 'flex', justifyContent: 'center', gap: '12px', fontSize: '9px', color: '#a3a3a3' }}>
-      <a href="#" style={{ color: '#a3a3a3', textDecoration: 'none' }}>{t('footer.support')}</a>
-      <span>·</span>
-      <a href="#" style={{ color: '#a3a3a3', textDecoration: 'none' }}>{t('footer.feedback')}</a>
-      <span>·</span>
-      <span>{t('footer.youtube')}</span>
-      <span>·</span>
-      <span>{t('footer.telegram')}</span>
+    <div className="panel-footer">
+      <a href="#" className="footer-link">{t('footer.support')}</a>
+      <div className="panel-footer-right">
+        <a href="#" className="footer-link">{t('footer.feedback')}</a>
+        <a href="#" className="footer-link">{t('footer.youtube')}</a>
+        <a href="#" className="footer-link">{t('footer.telegram')}</a>
+      </div>
     </div>
   );
 }

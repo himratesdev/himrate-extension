@@ -1,4 +1,3 @@
 // HimRate Content Script — injected on twitch.tv pages
-// Scaffold: empty. Phase 2: Badge injection, page URL detection, channel identification.
-
-console.log('HimRate content script loaded on', window.location.href);
+// Phase 2: Badge injection, page URL detection, channel identification.
+// Phase 2: Send current channel info to background via chrome.runtime.sendMessage

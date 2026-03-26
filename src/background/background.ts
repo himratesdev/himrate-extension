@@ -2,7 +2,7 @@
 // Scaffold: empty. Phase 2: EventSub message routing, badge updates, side panel communication.
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('HimRate Extension installed');
+  // Phase 2: initialize default settings, register EventSub listeners
 });
 
 // Enable side panel on all URLs

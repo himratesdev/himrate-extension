@@ -17,15 +17,17 @@ function SearchBar({ disabled = false }: { disabled?: boolean }) {
   );
 }
 
-// S2: Shared left column component (DRY)
-function LeftColumn() {
+// Shared left column: avatar + name + rating
+function LeftColumn({ displayName = '', avatarLetter = '' }: { displayName?: string; avatarLetter?: string }) {
   const { t } = useTranslation();
+  const name = displayName || t('placeholder.null');
+  const letter = avatarLetter || (displayName ? displayName[0].toUpperCase() : t('placeholder.null'));
   return (
     <div style={{ flex: '0 0 80px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
       <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ color: '#fff', fontWeight: 700, fontSize: '20px' }}>S</span>
+        <span style={{ color: '#fff', fontWeight: 700, fontSize: '20px' }}>{letter}</span>
       </div>
-      <span style={{ fontSize: '13px', fontWeight: 500, color: '#0a0a0a', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80px' }}>StreamerName</span>
+      <span style={{ fontSize: '13px', fontWeight: 500, color: '#0a0a0a', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80px' }}>{name}</span>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
         <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '13px', fontWeight: 700, color: '#a3a3a3' }}>
           {t('placeholder.null')}
@@ -38,28 +40,15 @@ function LeftColumn() {
 
 export function Popup() {
   const { t } = useTranslation();
-  const [state, setState] = useState<PopupState>('not_logged_in');
+  // Phase 2: state computed from auth status + content script URL + API stream status
+  // Scaffold: defaults to not_logged_in (no auth implemented yet)
+  const [state] = useState<PopupState>('not_logged_in');
 
   const showSearch = ['live_guest', 'live_registered', 'offline'].includes(state);
 
   return (
     <div style={{ width: '360px', minHeight: '440px', fontFamily: 'Inter, sans-serif', display: 'flex', flexDirection: 'column' }}>
-      {/* Dev state switcher - remove in production */}
-      <select
-        value={state}
-        onChange={(e) => setState(e.target.value as PopupState)}
-        style={{ fontSize: '10px', padding: '2px', margin: '4px', opacity: 0.5 }}
-      >
-        <option value="not_logged_in">Not Logged In</option>
-        <option value="live_guest">Live Guest</option>
-        <option value="live_registered">Live Registered</option>
-        <option value="offline">Offline</option>
-        <option value="not_twitch">Not on Twitch</option>
-        <option value="skeleton">Skeleton</option>
-        <option value="error">Error</option>
-      </select>
-
-      {/* Header with search (S4) */}
+      {/* Header with search */}
       <div style={{ padding: '16px', borderBottom: '2px solid #0a0a0a' }}>
         {showSearch && <SearchBar disabled={state === 'live_guest'} />}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -121,7 +110,10 @@ function RightColumnLive({ isRegistered = false }: { isRegistered?: boolean }) {
       <span style={{ fontSize: '14px', color: '#525252' }}>{t('label.twitch_online')} {t('placeholder.null')}</span>
       <div
         style={{ padding: '6px 10px', borderRadius: '8px', background: '#ECFDF5', cursor: 'pointer', display: 'inline-block' }}
-        onClick={() => console.log('open:sidepanel')}
+        onClick={() => {
+          // Phase 2: chrome.sidePanel.open() + navigate to Overview tab
+          chrome.runtime.sendMessage({ action: 'open_sidepanel', tab: 'overview' }).catch(() => {});
+        }}
         role="button"
         tabIndex={0}
         aria-label={t('erv_label.green')}

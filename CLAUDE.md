@@ -49,7 +49,7 @@ dist/                 — Build output (gitignored)
 | Параметр | Правило |
 |---|---|
 | Линтер | ESLint (flat config `eslint.config.js`) + `tsc --noEmit` |
-| Тесты | Manual testing in Chrome (scaffold). Phase 2: Vitest |
+| Тесты | Vitest + jsdom + @testing-library/react. `npm run test`. Тесты: i18n ключи, manifest, API stubs. Плюс ручная проверка в Chrome |
 | Коммиты | Conventional Commits: `feat(TASK-009): описание` |
 | Ветки | `feature/TASK-{id}-{slug}` от main |
 | Merge | Squash merge, ветки сохраняются |

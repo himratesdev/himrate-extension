@@ -8,7 +8,7 @@
 
 Chrome Extension (MV3) для анализа аудитории Twitch-стримеров. Popup с 7 состояниями, Side Panel с 8 табами. Общается с himrate-platform через REST API `/api/v1/*` (JWT Bearer auth).
 
-**Стек:** React 18 + TypeScript 5 + Vite + react-i18next
+**Стек:** React 19 + TypeScript 5 + Vite + react-i18next
 **Target:** Chrome 114+ (Side Panel API)
 **Repo:** himratesdev/himrate-extension
 

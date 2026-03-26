@@ -1,7 +1,7 @@
 import { defineConfig, Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { copyFileSync, existsSync, mkdirSync } from 'fs';
+import { copyFileSync, existsSync } from 'fs';
 
 // Plugin to copy HTML outputs to dist root (Chrome Extension expects popup.html and sidepanel.html at root)
 function chromeExtensionHtml(): Plugin {

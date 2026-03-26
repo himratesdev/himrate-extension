@@ -4,7 +4,7 @@ Twitch streamer audience analysis. Detects viewer anomalies, calculates Estimate
 
 ## Tech Stack
 
-- **Framework:** React 18 + TypeScript 5
+- **Framework:** React 19 + TypeScript 5
 - **Build:** Vite
 - **i18n:** react-i18next (RU/EN)
 - **Target:** Chrome Extension Manifest V3

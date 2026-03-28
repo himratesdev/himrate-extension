@@ -29,6 +29,9 @@ vi.stubGlobal('chrome', {
       }),
     },
   },
+  runtime: {
+    getManifest: () => ({ version: '0.1.0' }),
+  },
 });
 
 // Must re-import after mocking chrome

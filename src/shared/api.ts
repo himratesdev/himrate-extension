@@ -1,7 +1,7 @@
 // TASK-018: Real API client with Bearer token + 401 auto-refresh
 // All API calls go through apiFetch which handles auth transparently.
 
-const API_BASE = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_API_BASE || 'https://staging.himrate.com';
+import { API_BASE } from './config';
 
 export class AuthError extends Error {
   constructor(message: string) {

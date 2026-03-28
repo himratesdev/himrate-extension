@@ -1,8 +1,7 @@
 // HimRate Background Service Worker (MV3)
 // TASK-018: OAuth flows, token management, message routing, auth event tracking
 
-const API_BASE = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_API_BASE || 'https://staging.himrate.com';
-const EXT_VERSION = chrome.runtime.getManifest().version;
+import { API_BASE, EXT_VERSION } from '../shared/config';
 
 // === Auth Event Tracking (v1.1) ===
 
@@ -77,8 +76,9 @@ async function authTwitch(): Promise<AuthResponse> {
 
     if (!code) return { success: false, error: 'cancelled' };
 
+    const cbParams = new URLSearchParams({ code: code!, state: state || '' });
     const cbRes = await fetch(
-      `${API_BASE}/api/v1/auth/twitch/callback?code=${code}&state=${state}`
+      `${API_BASE}/api/v1/auth/twitch/callback?${cbParams}`
     );
 
     if (!cbRes.ok) {

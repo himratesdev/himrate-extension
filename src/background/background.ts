@@ -1,7 +1,26 @@
 // HimRate Background Service Worker (MV3)
-// TASK-018: OAuth flows, token management, message routing
+// TASK-018: OAuth flows, token management, message routing, auth event tracking
 
 const API_BASE = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_API_BASE || 'https://staging.himrate.com';
+const EXT_VERSION = chrome.runtime.getManifest().version;
+
+// === Auth Event Tracking (v1.1) ===
+
+function trackAuthEvent(provider: string, result: string, errorType?: string): void {
+  const payload = {
+    provider,
+    result,
+    error_type: errorType || null,
+    extension_version: EXT_VERSION,
+  };
+
+  // Fire-and-forget: never block auth flow
+  fetch(`${API_BASE}/api/v1/analytics/auth_events`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {}); // silently ignore if backend unavailable
+}
 
 interface AuthResponse {
   success: boolean;
@@ -35,6 +54,7 @@ async function getAuthState(): Promise<{ loggedIn: boolean; user: Record<string,
 // === OAuth Flows ===
 
 async function authTwitch(): Promise<AuthResponse> {
+  trackAuthEvent('twitch', 'attempt');
   try {
     // Step 1: Get redirect URL from backend
     const initRes = await fetch(`${API_BASE}/api/v1/auth/twitch`, { method: 'POST' });
@@ -63,21 +83,26 @@ async function authTwitch(): Promise<AuthResponse> {
 
     if (!cbRes.ok) {
       const err = await cbRes.json().catch(() => ({}));
+      trackAuthEvent('twitch', 'failure', err.error || 'auth_failed');
       return { success: false, error: err.error || 'auth_failed', message: err.message };
     }
 
     const data = await cbRes.json();
     await saveTokens(data.access_token, data.refresh_token, data.user);
+    trackAuthEvent('twitch', 'success');
     return { success: true, user: data.user };
   } catch (e) {
     if (e instanceof Error && e.message.includes('user')) {
+      trackAuthEvent('twitch', 'failure', 'cancelled');
       return { success: false, error: 'cancelled' };
     }
+    trackAuthEvent('twitch', 'failure', 'network');
     return { success: false, error: 'network' };
   }
 }
 
 async function authGoogle(): Promise<AuthResponse> {
+  trackAuthEvent('google', 'attempt');
   try {
     // Step 1: Get Google token via chrome.identity (1-click)
     const googleToken = await chrome.identity.getAuthToken({ interactive: true });
@@ -93,16 +118,20 @@ async function authGoogle(): Promise<AuthResponse> {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
+      trackAuthEvent('google', 'failure', err.error || 'auth_failed');
       return { success: false, error: err.error || 'auth_failed', message: err.message };
     }
 
     const data = await res.json();
     await saveTokens(data.access_token, data.refresh_token, data.user);
+    trackAuthEvent('google', 'success');
     return { success: true, user: data.user };
   } catch (e) {
     if (e instanceof Error && e.message.includes('user')) {
+      trackAuthEvent('google', 'failure', 'cancelled');
       return { success: false, error: 'cancelled' };
     }
+    trackAuthEvent('google', 'failure', 'network');
     return { success: false, error: 'network' };
   }
 }

@@ -62,5 +62,6 @@
   "auth.error.email_exists": "Этот email уже зарегистрирован через другой сервис",
   "auth.error.network": "Сервер недоступен",
   "auth.retry": "Попробовать снова",
-  "auth.logout": "Выйти"
+  "auth.logout": "Выйти",
+  "badge.offline": "офф"
 }

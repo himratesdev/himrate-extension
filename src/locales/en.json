@@ -62,5 +62,6 @@
   "auth.error.email_exists": "This email is registered with another provider",
   "auth.error.network": "Server unavailable",
   "auth.retry": "Try again",
-  "auth.logout": "Sign out"
+  "auth.logout": "Sign out",
+  "badge.offline": "OFF"
 }

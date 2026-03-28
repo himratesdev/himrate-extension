@@ -2,6 +2,8 @@
 // TASK-018: OAuth flows, token management, message routing, auth event tracking
 
 import { API_BASE, EXT_VERSION } from '../shared/config';
+import { extractChannel, formatCCV, getBadgeColor } from '../shared/utils';
+import { api } from '../shared/api';
 
 // === Auth Event Tracking (v1.1) ===
 
@@ -174,13 +176,76 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     return true;
   }
 
+  if (action === 'CHANNEL_CHANGED') {
+    handleChannelChanged(message.channel).then(sendResponse);
+    return true;
+  }
+
+  if (action === 'GET_CURRENT_CHANNEL') {
+    chrome.storage.session.get('currentChannel').then(sendResponse);
+    return true;
+  }
+
   return false;
 });
+
+// === Badge ===
+
+async function handleChannelChanged(channel: string | null): Promise<void> {
+  await chrome.storage.session.set({ currentChannel: channel });
+
+  if (!channel) {
+    await clearBadge();
+    return;
+  }
+
+  try {
+    const channelData = await api.getChannel(channel);
+    if (!channelData) {
+      await updateBadge('—', null);
+      return;
+    }
+
+    const trust = await api.getTrust(channelData.id);
+    if (!trust) {
+      await updateBadge('—', null);
+      return;
+    }
+
+    if (channelData.is_live && trust.ccv !== null) {
+      await updateBadge(formatCCV(trust.ccv), trust.trust_index);
+    } else {
+      // Offline — use i18n would require async, use short text
+      await updateBadge('OFF', trust.trust_index);
+    }
+  } catch {
+    await updateBadge('—', null);
+  }
+}
+
+async function updateBadge(text: string, ti: number | null): Promise<void> {
+  const color = getBadgeColor(ti);
+  await chrome.action.setBadgeText({ text });
+  await chrome.action.setBadgeBackgroundColor({ color });
+}
+
+async function clearBadge(): Promise<void> {
+  await chrome.action.setBadgeText({ text: '' });
+}
+
+// === webNavigation backup (FR-003) ===
+
+chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+  if (details.frameId !== 0) return; // main frame only
+  const channel = extractChannel(details.url);
+  handleChannelChanged(channel);
+}, { url: [{ hostContains: 'twitch.tv' }] });
 
 // === Init ===
 
 chrome.runtime.onInstalled.addListener(() => {
-  // Phase 2: initialize default settings
+  // Clear badge on install/update
+  clearBadge();
 });
 
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false }).catch(() => {});

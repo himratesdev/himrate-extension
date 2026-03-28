@@ -33,7 +33,9 @@ describe('formatCCV', () => {
     expect(formatCCV(999)).toBe('999');
     expect(formatCCV(1000)).toBe('1.0K');
     expect(formatCCV(3200)).toBe('3.2K');
-    expect(formatCCV(9999)).toBe('10.0K');
+    expect(formatCCV(9949)).toBe('9.9K');
+    expect(formatCCV(9950)).toBe('10K');
+    expect(formatCCV(9999)).toBe('10K');
     expect(formatCCV(10000)).toBe('10K');
     expect(formatCCV(42000)).toBe('42K');
     expect(formatCCV(999999)).toBe('1000K');

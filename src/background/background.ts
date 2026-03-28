@@ -191,7 +191,16 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
 // === Badge ===
 
+let lastHandledChannel: string | null = null;
+let lastHandledAt = 0;
+const DEBOUNCE_MS = 3000;
+
 async function handleChannelChanged(channel: string | null): Promise<void> {
+  const now = Date.now();
+  if (channel === lastHandledChannel && now - lastHandledAt < DEBOUNCE_MS) return;
+  lastHandledChannel = channel;
+  lastHandledAt = now;
+
   await chrome.storage.session.set({ currentChannel: channel });
 
   if (!channel) {
@@ -215,8 +224,9 @@ async function handleChannelChanged(channel: string | null): Promise<void> {
     if (channelData.is_live && trust.ccv !== null) {
       await updateBadge(formatCCV(trust.ccv), trust.trust_index);
     } else {
-      // Offline — use i18n would require async, use short text
-      await updateBadge('OFF', trust.trust_index);
+      const locale = ((await chrome.storage.local.get('himrate_locale')).himrate_locale as string) || 'en';
+      const offlineText = locale === 'ru' ? 'офф' : 'OFF';
+      await updateBadge(offlineText, trust.trust_index);
     }
   } catch {
     await updateBadge('—', null);

@@ -10,7 +10,7 @@ export const BADGE_COLORS = {
 
 export function formatCCV(ccv: number): string {
   if (ccv < 1000) return ccv.toString();
-  if (ccv < 10000) return (ccv / 1000).toFixed(1) + 'K';
+  if (ccv < 9950) return (ccv / 1000).toFixed(1) + 'K';
   if (ccv < 1000000) return Math.round(ccv / 1000) + 'K';
   return (ccv / 1000000).toFixed(1) + 'M';
 }

@@ -35,9 +35,17 @@ if (titleEl) {
 
 // Fallback: poll URL every 2s (MutationObserver may miss some navigations)
 let lastUrl = window.location.href;
-setInterval(() => {
+const pollId = setInterval(() => {
   if (window.location.href !== lastUrl) {
     lastUrl = window.location.href;
     detectAndNotify();
   }
 }, 2000);
+
+// Cleanup on page hide (tab closed / navigated away)
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    clearInterval(pollId);
+    observer.disconnect();
+  }
+});

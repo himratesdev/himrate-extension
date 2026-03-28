@@ -64,7 +64,7 @@ jobs:
       - name: Verify dist — permissions whitelist
         run: |
           PERMS=$(node -e "console.log(JSON.stringify(require('./dist/manifest.json').permissions.sort()))")
-          EXPECTED='["activeTab","alarms","sidePanel","storage","webNavigation"]'
+          EXPECTED='["activeTab","alarms","identity","sidePanel","storage","webNavigation"]'
           test "$PERMS" = "$EXPECTED" || (echo "FAIL: permissions $PERMS != expected $EXPECTED" && exit 1)
           echo "Permissions match whitelist ✓"
 

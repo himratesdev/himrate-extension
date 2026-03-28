@@ -4,7 +4,7 @@
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkB9iBR3mzXDX1pvJSyvSmIVZmePLHIA/i+dmzVFbTwVbRunor5A8TPfiZpw3ZYj2TubFlRl+4mihoyVz7aeR+i4ZjcKf08yLHz+AL3J93oRYVSDPJpgQONzYJ3DGNI6upcRcNnbH5OcAEYCxUr92K3ywdY/+28YmZk0DEvZ8eRHZhr+z2x9VZZPgDSCM6df616Y2f2EJUdcWcYklv1UstrQ729bCFgPEMbd31g/JzRIy+pQQ5IQixCyww0wjeFtBKCZ3GRH4bYlz3AQ2Ua1MXV2Qr6wJzByKkGnmSaPvzQw9h/LbWe7X+e3q6HwCiinasGRcwLA3VkmEEqGvsAoOXwIDAQAB",
   "version": "0.1.0",
   "description": "Twitch audience analysis",
-  "permissions": ["sidePanel", "activeTab", "storage", "alarms", "webNavigation"],
+  "permissions": ["sidePanel", "activeTab", "storage", "alarms", "webNavigation", "identity"],
   "optional_permissions": ["notifications", "offscreen"],
   "host_permissions": [
     "*://*.twitch.tv/*",

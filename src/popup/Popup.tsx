@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LangSwitcher } from '../shared/components/LangSwitcher';
 
-type PopupState = 'not_logged_in' | 'live_guest' | 'live_registered' | 'offline' | 'not_twitch' | 'skeleton' | 'error';
+type PopupState = 'not_logged_in' | 'auth_loading' | 'auth_error' | 'live_guest' | 'live_registered' | 'offline' | 'not_twitch' | 'skeleton' | 'error';
+type AuthProvider = 'twitch' | 'google' | null;
 
 // S4: Search input in header for live states
 function SearchBar({ disabled = false }: { disabled?: boolean }) {
@@ -38,9 +39,44 @@ function LeftColumn({ displayName = '', avatarLetter = '', isOffline = false }: 
 
 export function Popup() {
   const { t } = useTranslation();
-  // Phase 2: state computed from auth status + content script URL + API stream status
-  // Scaffold: defaults to not_logged_in (no auth implemented yet)
-  const [state] = useState<PopupState>('not_logged_in');
+  const [state, setState] = useState<PopupState>('skeleton');
+  const [authProvider, setAuthProvider] = useState<AuthProvider>(null);
+  const [authError, setAuthError] = useState<string>('');
+
+  // Check auth state on mount
+  useEffect(() => {
+    chrome.runtime.sendMessage({ action: 'GET_AUTH_STATE' }, (response) => {
+      if (response?.loggedIn) {
+        setState('offline'); // TASK-019 will add live detection
+      } else {
+        setState('not_logged_in');
+      }
+    });
+  }, []);
+
+  const handleAuth = useCallback((provider: 'twitch' | 'google') => {
+    setState('auth_loading');
+    setAuthProvider(provider);
+    setAuthError('');
+
+    const action = provider === 'twitch' ? 'AUTH_TWITCH' : 'AUTH_GOOGLE';
+    chrome.runtime.sendMessage({ action }, (response) => {
+      if (response?.success) {
+        setState('offline'); // TASK-019 will add live detection
+      } else if (response?.error === 'cancelled') {
+        setState('not_logged_in');
+      } else {
+        const errorKey = response?.error === 'email_exists'
+          ? 'auth.error.email_exists'
+          : response?.error === 'network'
+            ? 'auth.error.network'
+            : 'auth.error.failed';
+        setAuthError(errorKey);
+        setState('auth_error');
+      }
+      setAuthProvider(null);
+    });
+  }, []);
 
   const showSearch = ['live_guest', 'live_registered'].includes(state);
 
@@ -60,8 +96,10 @@ export function Popup() {
       </div>
 
       {/* Content */}
-      <div className={`screen-content${['not_logged_in', 'not_twitch', 'error'].includes(state) ? ' screen-content-centered' : ''}`}>
-        {state === 'not_logged_in' && <NotLoggedIn />}
+      <div className={`screen-content${['not_logged_in', 'auth_loading', 'auth_error', 'not_twitch', 'error'].includes(state) ? ' screen-content-centered' : ''}`}>
+        {state === 'not_logged_in' && <NotLoggedIn onAuth={handleAuth} />}
+        {state === 'auth_loading' && <AuthLoading provider={authProvider} />}
+        {state === 'auth_error' && <AuthError errorKey={authError} onRetry={() => setState('not_logged_in')} />}
         {state === 'live_guest' && <LiveGuest />}
         {state === 'live_registered' && <LiveRegistered />}
         {state === 'offline' && <Offline />}
@@ -78,20 +116,52 @@ export function Popup() {
   );
 }
 
-function NotLoggedIn() {
+function NotLoggedIn({ onAuth }: { onAuth: (provider: 'twitch' | 'google') => void }) {
   const { t } = useTranslation();
   return (
     <>
       <h3 className="auth-title">{t('app.title')}</h3>
       <p className="auth-subtitle">{t('app.subtitle')}</p>
       <div className="auth-buttons">
-        <button className="btn btn-twitch">
+        <button className="btn btn-twitch" onClick={() => onAuth('twitch')}>
           {t('auth.twitch')}
         </button>
-        <button className="btn btn-google">
+        <button className="btn btn-google" onClick={() => onAuth('google')}>
           {t('auth.google')}
         </button>
       </div>
+    </>
+  );
+}
+
+function AuthLoading({ provider }: { provider: AuthProvider }) {
+  const { t } = useTranslation();
+  return (
+    <>
+      <h3 className="auth-title">{t('app.title')}</h3>
+      <p className="auth-subtitle">{t('app.subtitle')}</p>
+      <div className="auth-buttons">
+        <button className="btn btn-twitch btn-loading" disabled aria-busy={provider === 'twitch'}>
+          {provider === 'twitch' ? <><span className="spinner" />{t('auth.signing_in')}</> : t('auth.twitch')}
+        </button>
+        <button className="btn btn-google btn-loading" disabled aria-busy={provider === 'google'}>
+          {provider === 'google' ? <><span className="spinner dark" />{t('auth.signing_in')}</> : t('auth.google')}
+        </button>
+      </div>
+    </>
+  );
+}
+
+function AuthError({ errorKey, onRetry }: { errorKey: string; onRetry: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <>
+      <div className="auth-error-icon" role="alert">!</div>
+      <div className="auth-error-title">{t('auth.error.failed')}</div>
+      <p className="auth-error-message">{t(errorKey)}</p>
+      <button className="btn btn-primary" onClick={onRetry}>
+        {t('auth.retry')}
+      </button>
     </>
   );
 }

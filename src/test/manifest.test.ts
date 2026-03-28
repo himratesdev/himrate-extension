@@ -11,7 +11,7 @@ describe('manifest.json', () => {
   });
 
   it('has exactly the required permissions', () => {
-    const expected = ['sidePanel', 'activeTab', 'storage', 'alarms', 'webNavigation'];
+    const expected = ['sidePanel', 'activeTab', 'storage', 'alarms', 'webNavigation', 'identity'];
     expect([...manifest.permissions].sort()).toEqual([...expected].sort());
   });
 

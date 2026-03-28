@@ -56,5 +56,11 @@
   "aria.back": "Назад",
   "aria.lang": "Сменить язык",
   "aria.dismiss": "Закрыть",
-  "aria.loading": "Загрузка"
+  "aria.loading": "Загрузка",
+  "auth.signing_in": "Вход...",
+  "auth.error.failed": "Не удалось войти",
+  "auth.error.email_exists": "Этот email уже зарегистрирован через другой сервис",
+  "auth.error.network": "Сервер недоступен",
+  "auth.retry": "Попробовать снова",
+  "auth.logout": "Выйти"
 }

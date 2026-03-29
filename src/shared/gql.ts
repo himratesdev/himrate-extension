@@ -11,10 +11,16 @@ const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 
 let cachedToken: string | null = null;
 let tokenExpiration = 0;
+let cachedDeviceId: string | null = null;
 
 function generateDeviceId(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   return Array.from({ length: 32 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+function getDeviceId(): string {
+  if (!cachedDeviceId) cachedDeviceId = generateDeviceId();
+  return cachedDeviceId;
 }
 
 export async function getIntegrityToken(): Promise<string | null> {
@@ -28,7 +34,7 @@ export async function getIntegrityToken(): Promise<string | null> {
       headers: {
         'Client-ID': CLIENT_ID,
         'Content-Type': 'text/plain;charset=UTF-8',
-        'X-Device-Id': generateDeviceId(),
+        'X-Device-Id': getDeviceId(),
       },
     });
 
@@ -49,6 +55,13 @@ export async function getIntegrityToken(): Promise<string | null> {
 function invalidateToken(): void {
   cachedToken = null;
   tokenExpiration = 0;
+}
+
+// Exported for test isolation only
+export function _resetForTests(): void {
+  cachedToken = null;
+  tokenExpiration = 0;
+  cachedDeviceId = null;
 }
 
 // === GQL with Integrity (FR-019) ===

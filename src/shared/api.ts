@@ -1,7 +1,7 @@
-// TASK-018: Real API client with Bearer token + 401 auto-refresh
-// All API calls go through apiFetch which handles auth transparently.
+// TASK-018: Real API client with Bearer token + 401 auto-refresh.
+// TASK-034: Extended with trust data types, request tracking, search enrichment.
 
-import { API_BASE } from './config';
+import { API_BASE, API_TIMEOUT_MS } from './config';
 
 export class AuthError extends Error {
   constructor(message: string) {
@@ -43,74 +43,208 @@ async function tryRefresh(): Promise<boolean> {
   return refreshPromise;
 }
 
-export async function apiFetch(path: string, options: RequestInit = {}): Promise<Response> {
+export async function apiFetch(
+  path: string,
+  options: RequestInit = {},
+  signal?: AbortSignal
+): Promise<Response> {
   const tokenData = await chrome.storage.session.get('access_token');
   const token = tokenData.access_token;
+  const installData = await chrome.storage.local.get('extension_install_id');
 
   const headers = new Headers(options.headers);
   if (token) headers.set('Authorization', `Bearer ${token}`);
   headers.set('Content-Type', 'application/json');
-
-  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
-
-  if (response.status === 401 && token) {
-    const refreshed = await tryRefresh();
-    if (refreshed) {
-      // Retry with new token
-      const newTokenData = await chrome.storage.session.get('access_token');
-      const newHeaders = new Headers(options.headers);
-      newHeaders.set('Authorization', `Bearer ${newTokenData.access_token}`);
-      newHeaders.set('Content-Type', 'application/json');
-      return fetch(`${API_BASE}${path}`, { ...options, headers: newHeaders });
-    }
-    // Refresh failed — logout
-    await chrome.storage.session.clear();
-    await chrome.storage.local.remove(['refresh_token', 'user']);
-    throw new AuthError('session_expired');
+  if (installData.extension_install_id) {
+    headers.set('X-Extension-Install-Id', String(installData.extension_install_id));
   }
 
-  return response;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+  const mergedSignal = signal || controller.signal;
+
+  try {
+    const response = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+      signal: mergedSignal,
+    });
+
+    if (response.status === 401 && token) {
+      const refreshed = await tryRefresh();
+      if (refreshed) {
+        const newTokenData = await chrome.storage.session.get('access_token');
+        const newHeaders = new Headers(options.headers);
+        newHeaders.set('Authorization', `Bearer ${newTokenData.access_token}`);
+        newHeaders.set('Content-Type', 'application/json');
+        if (installData.extension_install_id) {
+          newHeaders.set('X-Extension-Install-Id', String(installData.extension_install_id));
+        }
+        return fetch(`${API_BASE}${path}`, { ...options, headers: newHeaders, signal: mergedSignal });
+      }
+      await chrome.storage.session.clear();
+      await chrome.storage.local.remove(['refresh_token', 'user']);
+      throw new AuthError('session_expired');
+    }
+
+    return response;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+// === TypeScript interfaces ===
+
+export interface StreamerRating {
+  score: number;
+  streams_count: number;
+  classification: string;
+}
+
+export interface TrustData {
+  ti_score: number | null;
+  classification: string | null;
+  erv_percent: number | null;
+  erv_count: number | null;
+  erv_label: string | null;
+  erv_label_color: string | null;
+  ccv: number | null;
+  confidence: number | null;
+  cold_start_status: string | null;
+  is_live: boolean;
+  streamer_rating: StreamerRating | null;
+  category_avg_ti: number | null;
+  percentile_in_category: number | null;
+  post_stream_expires_at: string | null;
+}
+
+export interface ChannelData {
+  id: string;
+  login: string;
+  twitch_id: string;
+  display_name: string;
+  profile_image_url: string | null;
+  is_monitored: boolean;
+  is_live: boolean;
+}
+
+export interface TrustCache {
+  channel_id: string | null;
+  login: string;
+  display_name: string;
+  avatar_url: string | null;
+  ti_score: number | null;
+  classification: string | null;
+  erv_percent: number | null;
+  erv_count: number | null;
+  erv_label: string | null;
+  erv_label_color: string | null;
+  ccv: number | null;
+  confidence: number | null;
+  cold_start_status: string | null;
+  is_live: boolean;
+  is_tracked: boolean;
+  streamer_rating: StreamerRating | null;
+  category_avg_ti: number | null;
+  percentile_in_category: number | null;
+  expires_at: string | null;
+  previous_ti_score: number | null;
+  ws_connected: boolean;
+  error: string | null;
+  loading: boolean;
+  fetched_at: number;
+}
+
+export type PopupScreen =
+  | 'skeleton'
+  | 'live'
+  | 'offline'
+  | 'not_tracked_live'
+  | 'not_tracked_offline'
+  | 'not_twitch'
+  | 'error';
+
+export interface SearchResult {
+  login: string;
+  display_name: string;
+  avatar_url: string | null;
+  is_live: boolean;
+  viewers_count: number | null;
+  game_name: string | null;
+  // Enriched from our API (may be null if channel not tracked)
+  ti_score: number | null;
+  erv_percent: number | null;
+  erv_label: string | null;
+  erv_label_color: string | null;
+  rating_score: number | null;
 }
 
 // === Typed API methods ===
 
-export interface Channel {
-  id: string;
-  twitch_id: string;
-  display_name: string;
-  avatar_url: string | null;
-  is_live: boolean;
-}
-
-export interface TrustData {
-  erv_number: number | null;
-  erv_percent: number | null;
-  erv_label: string | null;
-  ccv: number | null;
-  trust_index: number | null;
-  rating: number | null;
-  confidence: number | null;
-}
-
 export const api = {
-  getChannel: async (twitchId: string): Promise<Channel | null> => {
+  /** Get channel by login. Returns null if not found (404 = not tracked). */
+  getChannel: async (login: string, signal?: AbortSignal): Promise<ChannelData | null> => {
     try {
-      const res = await apiFetch(`/api/v1/channels?twitch_id=${twitchId}`);
+      const res = await apiFetch(`/api/v1/channels/${encodeURIComponent(login)}`, {}, signal);
       if (!res.ok) return null;
-      const data = await res.json();
-      return data.channel || data;
+      const json = await res.json();
+      return json.data || null;
     } catch {
       return null;
     }
   },
 
-  getTrust: async (channelId: string): Promise<TrustData | null> => {
+  /** Get trust data for channel. */
+  getTrust: async (channelIdOrLogin: string, signal?: AbortSignal): Promise<TrustData | null> => {
     try {
-      const res = await apiFetch(`/api/v1/channels/${channelId}/trust`);
+      const res = await apiFetch(
+        `/api/v1/channels/${encodeURIComponent(channelIdOrLogin)}/trust`,
+        {},
+        signal
+      );
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch {
+      return null;
+    }
+  },
+
+  /** Request tracking for an untracked channel. */
+  requestTracking: async (channelLogin: string): Promise<{ status: string } | null> => {
+    try {
+      const res = await apiFetch(
+        `/api/v1/channels/${encodeURIComponent(channelLogin)}/request_tracking`,
+        { method: 'POST' }
+      );
+      if (res.status === 409) return { status: 'already_requested' };
       if (!res.ok) return null;
       return res.json();
     } catch {
       return null;
+    }
+  },
+
+  /** Track a channel (watchlist). Requires Premium or owns_channel. */
+  trackChannel: async (channelId: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await apiFetch(`/api/v1/channels/${channelId}/track`, { method: 'POST' });
+      if (res.status === 409) return { success: false, error: 'already_tracked' };
+      if (res.status === 403) return { success: false, error: 'subscription_required' };
+      if (!res.ok) return { success: false, error: 'unknown' };
+      return { success: true };
+    } catch {
+      return { success: false, error: 'network' };
+    }
+  },
+
+  /** Untrack a channel. */
+  untrackChannel: async (channelId: string): Promise<{ success: boolean }> => {
+    try {
+      const res = await apiFetch(`/api/v1/channels/${channelId}/track`, { method: 'DELETE' });
+      return { success: res.ok };
+    } catch {
+      return { success: false };
     }
   },
 };

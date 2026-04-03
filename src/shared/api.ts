@@ -122,6 +122,7 @@ export interface ChannelData {
   profile_image_url: string | null;
   is_monitored: boolean;
   is_live: boolean;
+  is_watched_by_user: boolean;
 }
 
 export interface TrustCache {
@@ -145,6 +146,7 @@ export interface TrustCache {
   percentile_in_category: number | null;
   expires_at: string | null;
   previous_ti_score: number | null;
+  is_watched_by_user: boolean;
   ws_connected: boolean;
   error: string | null;
   loading: boolean;

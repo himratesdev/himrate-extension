@@ -153,7 +153,7 @@ function makeEmptyCache(login: string): TrustCache {
     erv_label: null, erv_label_color: null, ccv: null, confidence: null,
     cold_start_status: null, is_live: false, is_tracked: false,
     streamer_rating: null, category_avg_ti: null, percentile_in_category: null,
-    expires_at: null, previous_ti_score: null, ws_connected: false,
+    expires_at: null, previous_ti_score: null, is_watched_by_user: false, ws_connected: false,
     error: null, loading: false, fetched_at: 0,
   };
 }
@@ -223,6 +223,7 @@ async function fetchTrustData(login: string): Promise<void> {
       percentile_in_category: trustData?.percentile_in_category ?? null,
       expires_at: trustData?.post_stream_expires_at ?? null,
       previous_ti_score: previousTi,
+      is_watched_by_user: channelData.is_watched_by_user ?? false,
       ws_connected: false,
       error: null,
       loading: false,

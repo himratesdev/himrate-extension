@@ -1,7 +1,7 @@
 // TASK-034: Action buttons row — Channel Analytics, My Analytics, Watchlist.
 // Guest: "View full analytics" + "Sign in".
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../shared/api';
 
@@ -9,31 +9,16 @@ interface Props {
   isGuest: boolean;
   isLive: boolean;
   channelId: string | null;
+  isWatchedByUser: boolean;
 }
 
-export function ActionButtons({ isGuest, isLive: _isLive, channelId }: Props) {
+export function ActionButtons({ isGuest, isLive: _isLive, channelId, isWatchedByUser }: Props) {
   const { t } = useTranslation();
-  const [watchlisted, setWatchlisted] = useState(false);
+  const [watchlisted, setWatchlisted] = useState(isWatchedByUser);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
-
-  // Load watchlist status from local storage on mount
-  useEffect(() => {
-    if (!channelId || isGuest) return;
-    chrome.storage.local.get('watchlist_channels').then(data => {
-      const watchlist = (data.watchlist_channels as string[]) || [];
-      if (watchlist.includes(channelId)) setWatchlisted(true);
-    });
-  }, [channelId, isGuest]);
 
   const openSidePanel = (tab: string) => {
     chrome.runtime.sendMessage({ action: 'OPEN_SIDE_PANEL', tab });
-  };
-
-  const updateWatchlistStorage = async (id: string, add: boolean) => {
-    const data = await chrome.storage.local.get('watchlist_channels');
-    const watchlist = new Set<string>((data.watchlist_channels as string[]) || []);
-    if (add) watchlist.add(id); else watchlist.delete(id);
-    await chrome.storage.local.set({ watchlist_channels: [...watchlist] });
   };
 
   const handleWatchlist = async () => {
@@ -42,16 +27,10 @@ export function ActionButtons({ isGuest, isLive: _isLive, channelId }: Props) {
 
     if (watchlisted) {
       const result = await api.untrackChannel(channelId);
-      if (result.success) {
-        setWatchlisted(false);
-        await updateWatchlistStorage(channelId, false);
-      }
+      if (result.success) setWatchlisted(false);
     } else {
       const result = await api.trackChannel(channelId);
-      if (result.success) {
-        setWatchlisted(true);
-        await updateWatchlistStorage(channelId, true);
-      }
+      if (result.success) setWatchlisted(true);
     }
     setWatchlistLoading(false);
   };

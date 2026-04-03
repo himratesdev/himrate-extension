@@ -76,7 +76,7 @@ export function OfflineScreen({ cache, isGuest, tier }: Props) {
           <button className="btn btn-primary" onClick={() => chrome.runtime.sendMessage({ action: 'OPEN_SIDE_PANEL', tab: 'overview' })}>
             {t('btn.last_stream_analytics')}
           </button>
-          <ActionButtons isGuest={isGuest} isLive={false} channelId={cache.channel_id} />
+          <ActionButtons isGuest={isGuest} isLive={false} channelId={cache.channel_id} isWatchedByUser={cache.is_watched_by_user} />
         </>
       )}
     </div>

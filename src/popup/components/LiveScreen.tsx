@@ -98,7 +98,7 @@ export function LiveScreen({ cache, isGuest, tier: _tier }: Props) {
         </div>
       </div>
 
-      <ActionButtons isGuest={isGuest} isLive={true} channelId={cache.channel_id} />
+      <ActionButtons isGuest={isGuest} isLive={true} channelId={cache.channel_id} isWatchedByUser={cache.is_watched_by_user} />
     </div>
   );
 }

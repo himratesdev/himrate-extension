@@ -1,5 +1,4 @@
-// TASK-034: Main Popup component — state machine + screen routing.
-// Replaces TASK-009 scaffold with real data from API + WebSocket.
+// TASK-034/077: Main Popup component — state machine + screen routing.
 
 import { useState, useEffect, useCallback } from 'react';
 import { type TrustCache, type PopupScreen } from '../shared/api';
@@ -14,7 +13,6 @@ import { NotTwitchScreen } from './components/NotTwitchScreen';
 import { ErrorScreen } from './components/ErrorScreen';
 import { SkeletonScreen } from './components/SkeletonScreen';
 import { SearchOverlay } from './components/SearchOverlay';
-import { AlertBanner } from './components/AlertBanner';
 
 function determineScreen(
   currentChannel: string | null,
@@ -38,7 +36,6 @@ export default function Popup() {
   const [locale, setLocale] = useState<string>('ru');
   const [i18nReady, setI18nReady] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [streamExpiring, setStreamExpiring] = useState(false);
 
   // Init i18n
   useEffect(() => {
@@ -70,9 +67,6 @@ export default function Popup() {
     const listener = (message: Record<string, unknown>) => {
       if (message.action === 'TRUST_DATA_UPDATED') {
         setCache(message.data as TrustCache);
-      }
-      if (message.action === 'STREAM_EXPIRING') {
-        setStreamExpiring(true);
       }
     };
     chrome.runtime.onMessage.addListener(listener);
@@ -107,7 +101,6 @@ export default function Popup() {
   const screen = determineScreen(currentChannel, cache);
   const isGuest = !authState.loggedIn;
   const tier = (authState.user?.tier as string) || 'free';
-  const showSearch = !isGuest || screen === 'not_twitch';
 
   return (
     <div className="screen">
@@ -116,21 +109,18 @@ export default function Popup() {
         <SearchOverlay onClose={() => setSearchOpen(false)} isGuest={isGuest} tier={tier} />
       )}
 
-      {/* Header */}
+      {/* Header — FR-012: search bar on ALL screens */}
       <div className="screen-header">
         <div className="logo-header">{t('app.title')}</div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          {showSearch && (
-            <input
-              type="text"
-              className="search-input"
-              placeholder={t('search.placeholder')}
-              disabled={isGuest && screen !== 'not_twitch'}
-              style={{ width: '150px', padding: '6px 10px', fontSize: '12px', boxShadow: '1px 1px 0 var(--border-dark)' }}
-              onFocus={() => setSearchOpen(true)}
-              readOnly
-            />
-          )}
+          <input
+            type="text"
+            className="search-input"
+            placeholder={t('search.placeholder')}
+            style={{ width: '150px', padding: '6px 10px', fontSize: '12px', boxShadow: '1px 1px 0 var(--border-dark)' }}
+            onFocus={() => setSearchOpen(true)}
+            readOnly
+          />
           <div className="lang-switch" onClick={handleLanguageChange} role="button" tabIndex={0}
             onKeyDown={e => e.key === 'Enter' && handleLanguageChange()}
             aria-label={t('aria.lang')}>
@@ -149,9 +139,6 @@ export default function Popup() {
       {screen === 'offline' && cache && <OfflineScreen cache={cache} isGuest={isGuest} tier={tier} />}
       {screen === 'not_tracked_live' && cache && <NotTrackedScreen cache={cache} isGuest={isGuest} isLive={true} />}
       {screen === 'not_tracked_offline' && cache && <NotTrackedScreen cache={cache} isGuest={isGuest} isLive={false} />}
-
-      {/* Alert Banner: stream expiring warning */}
-      <AlertBanner visible={streamExpiring} message={t('popup.stream_expiring', { nick: cache?.display_name ?? '' })} />
 
       {/* Footer M4 */}
       <div className="screen-footer">

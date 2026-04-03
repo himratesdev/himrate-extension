@@ -1,15 +1,15 @@
-// TASK-034: Live screen — tracked channel, stream is live.
+// TASK-034/077: Live screen — tracked channel, stream is live.
 // Guest: headline only + Sign In CTA.
-// Registered: + confidence, watchlist, analytics buttons.
+// Registered: + confidence human-readable, watchlist, analytics buttons.
 
 import { type TrustCache } from '../../shared/api';
 import { formatCCV } from '../../shared/utils';
 import { useTranslation } from 'react-i18next';
 import { ErvBadge } from './ErvBadge';
 import { RatingButton } from './RatingButton';
-import { TrendIndicator } from './TrendIndicator';
 import { FreshnessIndicator } from './FreshnessIndicator';
 import { AnimatedNumber } from './AnimatedNumber';
+import { CollectingStatus } from './CollectingStatus';
 import { ActionButtons } from './ActionButtons';
 
 interface Props {
@@ -21,11 +21,13 @@ interface Props {
 export function LiveScreen({ cache, isGuest, tier: _tier }: Props) {
   const { t } = useTranslation();
   const ervColor = cache.erv_label_color || 'neutral';
+  const isColdStart = cache.cold_start_status === 'insufficient' || cache.erv_count === null;
 
+  // FR-005: Human-readable confidence (replaces numeric high/medium/low)
   const confidenceText = cache.confidence !== null
-    ? cache.confidence >= 0.7 ? t('popup.confidence_high')
-    : cache.confidence >= 0.3 ? t('popup.confidence_medium')
-    : t('popup.confidence_low')
+    ? cache.confidence >= 0.7 ? t('confidence.sufficient')
+    : cache.confidence >= 0.3 ? t('confidence.moderate')
+    : t('confidence.insufficient')
     : null;
 
   const confidenceColor = cache.confidence !== null
@@ -73,30 +75,35 @@ export function LiveScreen({ cache, isGuest, tier: _tier }: Props) {
             <AnimatedNumber value={cache.ccv} formatter={formatCCV} nullText={t('placeholder.null')} />
           </div>
 
-          {/* Confidence (registered only) */}
-          {!isGuest && confidenceText && (
-            <div className="data-label" style={{ color: confidenceColor, fontSize: '11px' }}>
-              {confidenceText}
+          {/* FR-007: Cold Start — CollectingStatus spinner */}
+          {isColdStart && (
+            <CollectingStatus message={t('collecting.status')} />
+          )}
+
+          {/* FR-005: Confidence human-readable (registered only, not cold start) */}
+          {!isGuest && !isColdStart && confidenceText && (
+            <div className="meta-row">
+              <span className={`confidence ${cache.confidence !== null && cache.confidence >= 0.7 ? 'high' : cache.confidence !== null && cache.confidence >= 0.3 ? 'medium' : 'low'}`}
+                style={{ color: confidenceColor }}>
+                {confidenceText}
+              </span>
+              <FreshnessIndicator fetchedAt={cache.fetched_at} />
             </div>
           )}
 
-          <ErvBadge
-            label={cache.erv_label}
-            percent={cache.erv_percent}
-            color={ervColor}
-          />
-
-          {/* Percentile */}
-          {cache.percentile_in_category !== null && (
-            <div className="data-label" style={{ fontSize: '10px', color: 'var(--ink-30)' }}>
-              {t('popup.percentile', { N: Math.round(cache.percentile_in_category) })}
-            </div>
+          {/* ERV badge (not shown on cold start) */}
+          {!isColdStart && (
+            <ErvBadge
+              label={cache.erv_label}
+              percent={cache.erv_percent}
+              color={ervColor}
+            />
           )}
-
-          {/* Trend */}
-          {!isGuest && <TrendIndicator current={cache.ti_score} previous={cache.previous_ti_score} />}
         </div>
       </div>
+
+      {/* ViewerTime: shown only when real viewing session data is available.
+         Requires Viewer Analytics pipeline (not yet implemented) — hidden until then. */}
 
       <ActionButtons isGuest={isGuest} isLive={true} channelId={cache.channel_id} isWatchedByUser={cache.is_watched_by_user} />
     </div>

@@ -18,8 +18,7 @@
   "search.error": "Failed to load results",
   "search.retry": "Try again",
   "search.cta.navigate": "Go to channel",
-  "search.cta.report": "Report $4.99",
-  "search.cta.track": "Track $9.99/mo",
+  "search.cta.report": "Report",
   "search.cta.add_channel": "Add channel",
   "search.cta.full_analytics": "View full analytics",
 

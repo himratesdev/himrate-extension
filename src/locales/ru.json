@@ -18,8 +18,7 @@
   "search.error": "Не удалось загрузить результаты",
   "search.retry": "Попробовать снова",
   "search.cta.navigate": "Перейти к\u00a0каналу",
-  "search.cta.report": "Отчёт $4.99",
-  "search.cta.track": "Отслеживать $9.99/мес",
+  "search.cta.report": "Отчёт",
   "search.cta.add_channel": "Добавить канал",
   "search.cta.full_analytics": "Посмотреть полную аналитику",
 

@@ -9,6 +9,7 @@ import { ErvBadge } from './ErvBadge';
 import { RatingButton } from './RatingButton';
 import { TrendIndicator } from './TrendIndicator';
 import { FreshnessIndicator } from './FreshnessIndicator';
+import { AnimatedNumber } from './AnimatedNumber';
 import { ActionButtons } from './ActionButtons';
 
 interface Props {
@@ -61,11 +62,15 @@ export function LiveScreen({ cache, isGuest, tier: _tier }: Props) {
           </div>
           <div className={`erv-hero${cache.erv_count === null ? ' placeholder' : ''}`}
             style={{ color: cache.erv_count !== null ? `var(--color-erv-${ervColor})` : undefined }}>
-            {cache.erv_count !== null ? `~${formatCCV(cache.erv_count)}` : t('placeholder.null')}
+            {cache.erv_count !== null
+              ? <>~<AnimatedNumber value={cache.erv_count} formatter={formatCCV} /></>
+              : t('placeholder.null')
+            }
           </div>
 
           <div className="data-label data-label-secondary">
-            {t('label.twitch_online')} {cache.ccv !== null ? formatCCV(cache.ccv) : t('placeholder.null')}
+            {t('label.twitch_online')}{' '}
+            <AnimatedNumber value={cache.ccv} formatter={formatCCV} nullText={t('placeholder.null')} />
           </div>
 
           {/* Confidence (registered only) */}

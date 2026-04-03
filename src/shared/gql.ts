@@ -147,6 +147,25 @@ const QUERIES = {
       }
     }
   `,
+  searchUsers: `
+    query SearchUsers($query: String!) {
+      searchFor(userQuery: $query, platform: "web") {
+        channels {
+          items {
+            id
+            login
+            displayName
+            profileImageURL(width: 70)
+            stream {
+              id
+              viewersCount
+              game { name }
+            }
+          }
+        }
+      }
+    }
+  `,
 };
 
 export async function getChattersCount(channelLogin: string): Promise<number | null> {
@@ -199,6 +218,34 @@ export interface UserFollowsResult {
   totalCount: number;
   follows: Array<{ login: string; cursor: string }>;
   hasNextPage: boolean;
+}
+
+export interface SearchChannelResult {
+  login: string;
+  displayName: string;
+  profileImageURL: string;
+  stream: { viewersCount: number; game: { name: string } | null } | null;
+}
+
+export async function searchUsers(query: string, maxResults = 5): Promise<SearchChannelResult[]> {
+  const result = await gqlWithIntegrity(QUERIES.searchUsers, { query });
+  const items = (result?.data?.searchFor as Record<string, Record<string, unknown>> | undefined)
+    ?.channels?.items;
+  if (!Array.isArray(items)) return [];
+
+  return items.slice(0, maxResults).map((item: Record<string, unknown>) => ({
+    login: (item.login as string) || '',
+    displayName: (item.displayName as string) || (item.login as string) || '',
+    profileImageURL: (item.profileImageURL as string) || '',
+    stream: item.stream
+      ? {
+          viewersCount: ((item.stream as Record<string, unknown>).viewersCount as number) || 0,
+          game: (item.stream as Record<string, Record<string, unknown>>).game
+            ? { name: ((item.stream as Record<string, Record<string, unknown>>).game.name as string) || '' }
+            : null,
+        }
+      : null,
+  }));
 }
 
 export async function getUserFollowsPaginated(

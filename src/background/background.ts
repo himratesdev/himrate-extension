@@ -5,6 +5,7 @@
 import { API_BASE, EXT_VERSION, WS_URL, TRUST_CACHE_TTL_MS, WS_RECONNECT_BASE_MS, WS_RECONNECT_MAX_MS, WS_MAX_RECONNECT_ATTEMPTS, REST_POLLING_INTERVAL_MS } from '../shared/config';
 import { extractChannel, formatCCV, getBadgeColor } from '../shared/utils';
 import { api, type TrustCache } from '../shared/api';
+import { searchUsers } from '../shared/gql';
 
 // =============================================
 // AUTH (unchanged from TASK-018)
@@ -612,6 +613,13 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         sendResponse(null);
       }
     });
+    return true;
+  }
+
+  if (action === 'SEARCH_STREAMERS') {
+    const query = message.query as string;
+    if (!query) { sendResponse({ results: [] }); return false; }
+    searchUsers(query, 5).then(results => sendResponse({ results }));
     return true;
   }
 

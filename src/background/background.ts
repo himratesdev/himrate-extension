@@ -419,6 +419,7 @@ async function handleWsMessage(data: Record<string, unknown>): Promise<void> {
       classification: (message.classification as string) ?? cache.classification,
       erv_percent: (message.erv_percent as number) ?? cache.erv_percent,
       erv_count: (message.erv_count as number) ?? cache.erv_count,
+      erv_label: (message.erv_label as string) ?? cache.erv_label,
       erv_label_color: (message.erv_label_color as string) ?? cache.erv_label_color,
       ccv: (message.ccv as number) ?? cache.ccv,
       confidence: (message.confidence as number) ?? cache.confidence,

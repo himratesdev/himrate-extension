@@ -16,16 +16,24 @@ export function ActionButtons({ isGuest, isLive: _isLive, channelId }: Props) {
   const [watchlisted, setWatchlisted] = useState(false);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
 
-  // Load actual watchlist status on mount
+  // Load watchlist status from local storage on mount
   useEffect(() => {
     if (!channelId || isGuest) return;
-    chrome.runtime.sendMessage({ action: 'GET_TRUST_DATA' }, (cache) => {
-      if (cache?.is_tracked) setWatchlisted(true);
+    chrome.storage.local.get('watchlist_channels').then(data => {
+      const watchlist = (data.watchlist_channels as string[]) || [];
+      if (watchlist.includes(channelId)) setWatchlisted(true);
     });
   }, [channelId, isGuest]);
 
   const openSidePanel = (tab: string) => {
     chrome.runtime.sendMessage({ action: 'OPEN_SIDE_PANEL', tab });
+  };
+
+  const updateWatchlistStorage = async (id: string, add: boolean) => {
+    const data = await chrome.storage.local.get('watchlist_channels');
+    const watchlist = new Set<string>((data.watchlist_channels as string[]) || []);
+    if (add) watchlist.add(id); else watchlist.delete(id);
+    await chrome.storage.local.set({ watchlist_channels: [...watchlist] });
   };
 
   const handleWatchlist = async () => {
@@ -34,13 +42,15 @@ export function ActionButtons({ isGuest, isLive: _isLive, channelId }: Props) {
 
     if (watchlisted) {
       const result = await api.untrackChannel(channelId);
-      if (result.success) setWatchlisted(false);
+      if (result.success) {
+        setWatchlisted(false);
+        await updateWatchlistStorage(channelId, false);
+      }
     } else {
       const result = await api.trackChannel(channelId);
       if (result.success) {
         setWatchlisted(true);
-      } else if (result.error === 'subscription_required') {
-        // TODO: show upgrade CTA
+        await updateWatchlistStorage(channelId, true);
       }
     }
     setWatchlistLoading(false);

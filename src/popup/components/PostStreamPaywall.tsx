@@ -18,7 +18,7 @@ export function PostStreamPaywall({ cache }: Props) {
           {cache.erv_percent !== null ? `${cache.erv_percent}%` : '—'}
         </div>
         <div className="data-label" style={{ fontSize: '11px', color: 'var(--ink-30)' }}>
-          {t('label.streamer_rating')} {cache.streamer_rating?.score ?? '—'}
+          {t('label.streamer_rating', { N: cache.streamer_rating?.score ?? '—' })}
         </div>
       </div>
 

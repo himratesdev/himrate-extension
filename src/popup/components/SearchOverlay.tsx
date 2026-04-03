@@ -13,7 +13,7 @@ interface Props {
   tier: string;
 }
 
-export function SearchOverlay({ onClose, isGuest: _isGuest, tier: _tier }: Props) {
+export function SearchOverlay({ onClose, isGuest, tier }: Props) {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -169,7 +169,7 @@ export function SearchOverlay({ onClose, isGuest: _isGuest, tier: _tier }: Props
 
         {/* Results */}
         {results.map((r) => (
-          <div key={r.login} className="search-result-item" onClick={() => handleNavigate(r.login)}>
+          <div key={r.login} className="search-result-item">
             <div className="search-avatar-wrap">
               <div className="search-avatar" style={{ background: r.avatar_url ? undefined : 'var(--color-avatar-fallback)' }}>
                 {r.avatar_url
@@ -196,6 +196,27 @@ export function SearchOverlay({ onClose, isGuest: _isGuest, tier: _tier }: Props
                   <span className={`search-result-erv ${ervColorClass(r.erv_label_color)}`} style={{ marginLeft: '4px' }}>
                     {Math.round(r.erv_percent)}%
                   </span>
+                )}
+              </div>
+              <div className="search-result-cta">
+                {isGuest && (
+                  <button className="btn-search-cta" onClick={() => handleNavigate(r.login)}>
+                    {t('search.cta.full_analytics')}
+                  </button>
+                )}
+                {!isGuest && (
+                  <button className="btn-search-cta" onClick={() => handleNavigate(r.login)}>
+                    {t('search.cta.navigate')}
+                  </button>
+                )}
+                {!isGuest && tier !== 'business' && (
+                  <button className="btn-search-cta secondary">{t('search.cta.report')}</button>
+                )}
+                {tier === 'free' && (
+                  <button className="btn-search-cta secondary">{t('search.cta.track')}</button>
+                )}
+                {tier === 'premium' && (
+                  <button className="btn-search-cta secondary">{t('search.cta.add_channel')}</button>
                 )}
               </div>
             </div>

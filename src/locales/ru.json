@@ -26,7 +26,9 @@
   "label.real_viewers": "Онлайн (HimRate):",
   "label.twitch_online": "Twitch онлайн:",
   "label.erv_suffix": "% реального онлайна",
-  "label.streamer_rating": "Рейтинг стримера:",
+  "label.streamer_rating": "Рейтинг стримера: {N}",
+  "label.streamer_rating_live": "Рейтинг стримера: {N}",
+  "label.streamer_rating_offline": "Рейтинг стримера: {N}\u00a0— {cls}",
   "label.streamer_rating_short": "рейтинг стримера",
   "label.live": "LIVE",
   "label.offline_indicator": "Offline",
@@ -75,6 +77,7 @@
   "not_tracked.submitted_btn": "Заявка отправлена",
   "not_tracked.toast": "Заявка принята",
   "not_tracked.analysis_unavailable": "Анализ недоступен",
+  "not_tracked.platform_viewers": "Текущие зрители: {N}",
 
   "not_twitch.title": "Вы не на Twitch",
   "not_twitch.subtitle": "Откройте канал стримера на\u00a0twitch.tv или\u00a0найдите его через поиск",

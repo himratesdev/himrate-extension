@@ -26,7 +26,9 @@
   "label.real_viewers": "Viewers (HimRate):",
   "label.twitch_online": "Twitch online:",
   "label.erv_suffix": "% real audience",
-  "label.streamer_rating": "Streamer rating:",
+  "label.streamer_rating": "Streamer rating: {N}",
+  "label.streamer_rating_live": "Streamer rating: {N}",
+  "label.streamer_rating_offline": "Streamer rating: {N} — {cls}",
   "label.streamer_rating_short": "streamer rating",
   "label.live": "LIVE",
   "label.offline_indicator": "Offline",
@@ -75,6 +77,7 @@
   "not_tracked.submitted_btn": "Request submitted",
   "not_tracked.toast": "Request accepted",
   "not_tracked.analysis_unavailable": "Analysis unavailable",
+  "not_tracked.platform_viewers": "Platform viewers: {N}",
 
   "not_twitch.title": "You're not on Twitch",
   "not_twitch.subtitle": "Open a streamer's channel on\u00a0twitch.tv or find one using search",

@@ -59,38 +59,34 @@ export async function apiFetch(
     headers.set('X-Extension-Install-Id', String(installData.extension_install_id));
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
-  const mergedSignal = signal || controller.signal;
+  // AbortSignal.any merges caller signal + timeout — both work correctly (Chrome 116+)
+  const timeoutSignal = AbortSignal.timeout(API_TIMEOUT_MS);
+  const mergedSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
 
-  try {
-    const response = await fetch(`${API_BASE}${path}`, {
-      ...options,
-      headers,
-      signal: mergedSignal,
-    });
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+    signal: mergedSignal,
+  });
 
-    if (response.status === 401 && token) {
-      const refreshed = await tryRefresh();
-      if (refreshed) {
-        const newTokenData = await chrome.storage.session.get('access_token');
-        const newHeaders = new Headers(options.headers);
-        newHeaders.set('Authorization', `Bearer ${newTokenData.access_token}`);
-        newHeaders.set('Content-Type', 'application/json');
-        if (installData.extension_install_id) {
-          newHeaders.set('X-Extension-Install-Id', String(installData.extension_install_id));
-        }
-        return fetch(`${API_BASE}${path}`, { ...options, headers: newHeaders, signal: mergedSignal });
+  if (response.status === 401 && token) {
+    const refreshed = await tryRefresh();
+    if (refreshed) {
+      const newTokenData = await chrome.storage.session.get('access_token');
+      const newHeaders = new Headers(options.headers);
+      newHeaders.set('Authorization', `Bearer ${newTokenData.access_token}`);
+      newHeaders.set('Content-Type', 'application/json');
+      if (installData.extension_install_id) {
+        newHeaders.set('X-Extension-Install-Id', String(installData.extension_install_id));
       }
-      await chrome.storage.session.clear();
-      await chrome.storage.local.remove(['refresh_token', 'user']);
-      throw new AuthError('session_expired');
+      return fetch(`${API_BASE}${path}`, { ...options, headers: newHeaders, signal: mergedSignal });
     }
-
-    return response;
-  } finally {
-    clearTimeout(timeout);
+    await chrome.storage.session.clear();
+    await chrome.storage.local.remove(['refresh_token', 'user']);
+    throw new AuthError('session_expired');
   }
+
+  return response;
 }
 
 // === TypeScript interfaces ===

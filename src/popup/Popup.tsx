@@ -38,6 +38,7 @@ export default function Popup() {
   const [locale, setLocale] = useState<string>('ru');
   const [i18nReady, setI18nReady] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [streamExpiring, setStreamExpiring] = useState(false);
 
   // Init i18n
   useEffect(() => {
@@ -69,6 +70,9 @@ export default function Popup() {
     const listener = (message: Record<string, unknown>) => {
       if (message.action === 'TRUST_DATA_UPDATED') {
         setCache(message.data as TrustCache);
+      }
+      if (message.action === 'STREAM_EXPIRING') {
+        setStreamExpiring(true);
       }
     };
     chrome.runtime.onMessage.addListener(listener);
@@ -146,8 +150,8 @@ export default function Popup() {
       {screen === 'not_tracked_live' && cache && <NotTrackedScreen cache={cache} isGuest={isGuest} isLive={true} />}
       {screen === 'not_tracked_offline' && cache && <NotTrackedScreen cache={cache} isGuest={isGuest} isLive={false} />}
 
-      {/* Alert Banner slot (hidden until anomaly data) */}
-      <AlertBanner visible={false} />
+      {/* Alert Banner: stream expiring warning */}
+      <AlertBanner visible={streamExpiring} message={t('popup.stream_expiring', { nick: cache?.display_name ?? '' })} />
 
       {/* Footer M4 */}
       <div className="screen-footer">

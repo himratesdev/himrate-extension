@@ -5,7 +5,7 @@
 import { API_BASE, EXT_VERSION, WS_URL, TRUST_CACHE_TTL_MS, WS_RECONNECT_BASE_MS, WS_RECONNECT_MAX_MS, WS_MAX_RECONNECT_ATTEMPTS, REST_POLLING_INTERVAL_MS } from '../shared/config';
 import { extractChannel, formatCCV, getBadgeColor } from '../shared/utils';
 import { api, type TrustCache } from '../shared/api';
-import { searchUsers } from '../shared/gql';
+import { searchUsers, getChattersCount } from '../shared/gql';
 
 // =============================================
 // AUTH (unchanged from TASK-018)
@@ -177,11 +177,15 @@ async function fetchTrustData(login: string): Promise<void> {
     if (signal.aborted) return;
 
     if (!channelData) {
-      // Channel not tracked — try to get CCV from GQL for live check
+      // Channel not tracked — get CCV from GQL to detect live status (SRS FR-011, EC-7)
+      const gqlCcv = await getChattersCount(login);
+      const isLive = gqlCcv !== null && gqlCcv > 0;
+
       const updatedCache: TrustCache = {
         ...makeEmptyCache(login),
         is_tracked: false,
-        is_live: false, // Will be updated if we can detect live via GQL
+        is_live: isLive,
+        ccv: gqlCcv,
         loading: false,
         fetched_at: Date.now(),
       };
@@ -446,12 +450,9 @@ async function handleWsMessage(data: Record<string, unknown>): Promise<void> {
     await updateBadgeFromCache(updatedCache);
     notifyPopup({ action: 'TRUST_DATA_UPDATED', data: updatedCache });
 
-    // Chrome notification
-    sendNotification(
-      'stream_ended',
-      'HimRate',
-      `Stream ended. ${cache.display_name}: ERV ${cache.erv_percent ?? '—'}%, TI ${cache.ti_score ?? '—'}`
-    );
+    // Chrome notification (localized)
+    getLocalizedText('notification.stream_ended', { name: cache.display_name, erv: String(cache.erv_percent ?? '—'), ti: String(cache.ti_score ?? '—') })
+      .then(text => sendNotification('stream_ended', 'HimRate', text));
   }
 
   if (msgType === 'stream_expiring') {
@@ -460,12 +461,9 @@ async function handleWsMessage(data: Record<string, unknown>): Promise<void> {
       data: { channel_id: message.channel_id, expires_at: message.expires_at },
     });
 
-    const cache = await getTrustCache();
-    sendNotification(
-      'stream_expiring',
-      'HimRate',
-      `1 hour left for analytics of ${cache?.display_name ?? 'channel'}`
-    );
+    const expiringCache = await getTrustCache();
+    getLocalizedText('notification.stream_expiring', { name: expiringCache?.display_name ?? 'channel' })
+      .then(text => sendNotification('stream_expiring', 'HimRate', text));
   }
 }
 
@@ -516,6 +514,26 @@ function sendNotification(type: string, title: string, message: string): void {
     title,
     message,
   }).catch(() => {}); // Permission may not be granted
+}
+
+// =============================================
+// LOCALIZATION HELPER (for service worker notifications)
+// =============================================
+
+import enMessages from '../locales/en.json';
+import ruMessages from '../locales/ru.json';
+
+const localeMessages: Record<string, Record<string, string>> = { en: enMessages, ru: ruMessages };
+
+async function getLocalizedText(key: string, params: Record<string, string> = {}): Promise<string> {
+  const localeData = await chrome.storage.local.get('himrate_locale');
+  const locale = (localeData.himrate_locale as string) || 'en';
+  const messages = localeMessages[locale] || localeMessages.en;
+  let text = (messages as Record<string, string>)[key] || key;
+  for (const [k, v] of Object.entries(params)) {
+    text = text.replace(`{${k}}`, v);
+  }
+  return text;
 }
 
 // =============================================

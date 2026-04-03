@@ -20,12 +20,18 @@ export function NotTrackedScreen({ cache, isGuest, isLive }: Props) {
   const [showToast, setShowToast] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const handleRequestTracking = async () => {
     if (submitted || loading) return;
 
     if (isGuest) {
-      // Auth flow first, then auto-submit
-      chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' });
+      setAuthError(null);
+      chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' }, (res) => {
+        if (res && !res.success) {
+          setAuthError(res.error === 'cancelled' ? null : t('auth.error.failed'));
+        }
+      });
       return;
     }
 
@@ -94,9 +100,21 @@ export function NotTrackedScreen({ cache, isGuest, isLive }: Props) {
       <div className="btn-request-hint">{t('not_tracked.request_hint')}</div>
 
       {isGuest && (
-        <button className="btn btn-secondary" onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}>
+        <button className="btn btn-secondary" onClick={() => {
+          setAuthError(null);
+          chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' }, (res) => {
+            if (res && !res.success && res.error !== 'cancelled') {
+              setAuthError(t('auth.error.failed'));
+            }
+          });
+        }}>
           {t('auth.login')}
         </button>
+      )}
+      {authError && (
+        <div className="data-label" style={{ color: 'var(--color-erv-red)', fontSize: '11px', textAlign: 'center' }}>
+          {authError}
+        </div>
       )}
     </div>
   );

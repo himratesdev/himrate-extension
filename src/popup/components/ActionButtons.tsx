@@ -1,7 +1,7 @@
 // TASK-034: Action buttons row — Channel Analytics, My Analytics, Watchlist.
 // Guest: "View full analytics" + "Sign in".
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../shared/api';
 
@@ -15,6 +15,14 @@ export function ActionButtons({ isGuest, isLive: _isLive, channelId }: Props) {
   const { t } = useTranslation();
   const [watchlisted, setWatchlisted] = useState(false);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
+
+  // Load actual watchlist status on mount
+  useEffect(() => {
+    if (!channelId || isGuest) return;
+    chrome.runtime.sendMessage({ action: 'GET_TRUST_DATA' }, (cache) => {
+      if (cache?.is_tracked) setWatchlisted(true);
+    });
+  }, [channelId, isGuest]);
 
   const openSidePanel = (tab: string) => {
     chrome.runtime.sendMessage({ action: 'OPEN_SIDE_PANEL', tab });
@@ -38,6 +46,17 @@ export function ActionButtons({ isGuest, isLive: _isLive, channelId }: Props) {
     setWatchlistLoading(false);
   };
 
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const handleAuth = () => {
+    setAuthError(null);
+    chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' }, (res) => {
+      if (res && !res.success && res.error !== 'cancelled') {
+        setAuthError(t('auth.error.failed'));
+      }
+    });
+  };
+
   if (isGuest) {
     return (
       <>
@@ -47,9 +66,14 @@ export function ActionButtons({ isGuest, isLive: _isLive, channelId }: Props) {
         <div style={{ fontSize: '12px', color: 'var(--ink-50)', textAlign: 'center' }}>
           {t('popup.guest_sign_in_hint')}
         </div>
-        <button className="btn btn-secondary" onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}>
+        <button className="btn btn-secondary" onClick={handleAuth}>
           {t('auth.login')}
         </button>
+        {authError && (
+          <div style={{ fontSize: '11px', color: 'var(--color-erv-red)', textAlign: 'center' }}>
+            {authError}
+          </div>
+        )}
       </>
     );
   }

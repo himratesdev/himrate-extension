@@ -94,9 +94,6 @@
   "not_twitch.subtitle": "Откройте канал стримера на\u00a0twitch.tv или\u00a0найдите его через поиск",
   "not_twitch.open_panel": "Открыть боковую панель",
 
-  "paywall.track_cta": "Отслеживать $9.99/мес за канал",
-  "paywall.report_cta": "Отчёт $4.99",
-  "paywall.expired_title": "Подробная аналитика недоступна",
 
   "classification.trusted": "Порядочный",
   "classification.needs_review": "Средний",
@@ -147,6 +144,8 @@
   "aria.loading": "Загрузка",
   "aria.search_close": "Закрыть поиск",
   "aria.info": "Подробнее",
+  "aria.favorite_add": "Добавить в избранное",
+  "aria.favorite_remove": "Убрать из избранного",
 
   "badge.offline": "офф"
 }

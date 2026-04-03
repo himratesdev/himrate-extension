@@ -102,10 +102,8 @@ export function LiveScreen({ cache, isGuest, tier: _tier }: Props) {
         </div>
       </div>
 
-      {/* FR-002 from TASK-034: ViewerTime inline */}
-      {!isGuest && !isColdStart && (
-        <div className="viewer-time-inline">⏱ {t('popup.viewer_time', { N: 0 })}</div>
-      )}
+      {/* ViewerTime: shown only when real viewing session data is available.
+         Requires Viewer Analytics pipeline (not yet implemented) — hidden until then. */}
 
       <ActionButtons isGuest={isGuest} isLive={true} channelId={cache.channel_id} isWatchedByUser={cache.is_watched_by_user} />
     </div>

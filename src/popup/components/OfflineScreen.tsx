@@ -100,9 +100,7 @@ export function OfflineScreen({ cache, isGuest, tier: _tier }: Props) {
         </button>
       </div>
 
-      {!isGuest && (
-        <ActionButtons isGuest={isGuest} isLive={false} channelId={cache.channel_id} isWatchedByUser={cache.is_watched_by_user} />
-      )}
+      <ActionButtons isGuest={isGuest} isLive={false} channelId={cache.channel_id} isWatchedByUser={cache.is_watched_by_user} />
     </div>
   );
 }

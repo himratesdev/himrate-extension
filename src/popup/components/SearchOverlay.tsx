@@ -242,11 +242,15 @@ export function SearchOverlay({ onClose, isGuest, tier: _tier }: Props) {
                   {t('search.cta.full_analytics')}
                 </button>
                 <button className="search-btn search-btn-secondary"
-                  onClick={isGuest ? handleGuestCTA : undefined}>
+                  onClick={isGuest ? handleGuestCTA : () => {
+                    chrome.runtime.sendMessage({ action: 'OPEN_SIDE_PANEL', tab: 'report', channel: r.login });
+                  }}>
                   {t('search.cta.report')}
                 </button>
                 <button className="search-btn search-btn-secondary"
-                  onClick={isGuest ? handleGuestCTA : undefined}>
+                  onClick={isGuest ? handleGuestCTA : () => {
+                    chrome.runtime.sendMessage({ action: 'OPEN_SIDE_PANEL', tab: 'track', channel: r.login });
+                  }}>
                   {t('search.cta.add_channel')}
                 </button>
               </div>

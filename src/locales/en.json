@@ -94,9 +94,6 @@
   "not_twitch.subtitle": "Open a streamer's channel on\u00a0twitch.tv or find one using search",
   "not_twitch.open_panel": "Open side panel",
 
-  "paywall.track_cta": "Track $9.99/mo per channel",
-  "paywall.report_cta": "Report $4.99",
-  "paywall.expired_title": "Detailed analytics unavailable",
 
   "classification.trusted": "Trusted",
   "classification.needs_review": "Needs Review",
@@ -147,6 +144,8 @@
   "aria.loading": "Loading",
   "aria.search_close": "Close search",
   "aria.info": "More info",
+  "aria.favorite_add": "Add to favorites",
+  "aria.favorite_remove": "Remove from favorites",
 
   "badge.offline": "OFF"
 }

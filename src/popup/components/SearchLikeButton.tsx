@@ -1,6 +1,8 @@
 // TASK-077 FR-015: SearchLikeButton — SVG heart for favorites.
 // Stroke = not favorited, Fill = favorited. Guest click → auth redirect.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   login: string;
   isLiked: boolean;
@@ -9,6 +11,8 @@ interface Props {
 }
 
 export function SearchLikeButton({ login, isLiked, onToggle, isGuest }: Props) {
+  const { t } = useTranslation();
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isGuest) {
@@ -22,7 +26,7 @@ export function SearchLikeButton({ login, isLiked, onToggle, isGuest }: Props) {
     <button
       className="search-like-btn"
       onClick={handleClick}
-      aria-label={isLiked ? 'Remove from favorites' : 'Add to favorites'}
+      aria-label={isLiked ? t('aria.favorite_remove') : t('aria.favorite_add')}
     >
       <svg viewBox="0 0 24 24" width="16" height="16"
         fill={isLiked ? 'var(--color-erv-red)' : 'none'}

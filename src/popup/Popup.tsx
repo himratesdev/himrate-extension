@@ -1,344 +1,170 @@
+// TASK-034: Main Popup component — state machine + screen routing.
+// Replaces TASK-009 scaffold with real data from API + WebSocket.
+
 import { useState, useEffect, useCallback } from 'react';
+import { type TrustCache, type PopupScreen } from '../shared/api';
+import { initI18n, changeLanguage } from '../shared/i18n';
 import { useTranslation } from 'react-i18next';
-import { LangSwitcher } from '../shared/components/LangSwitcher';
+import { DONATION_URL } from '../shared/config';
 
-type PopupState = 'not_logged_in' | 'auth_loading' | 'auth_error' | 'live_guest' | 'live_registered' | 'offline' | 'not_twitch' | 'skeleton' | 'error';
-type AuthProvider = 'twitch' | 'google' | null;
+import { LiveScreen } from './components/LiveScreen';
+import { OfflineScreen } from './components/OfflineScreen';
+import { NotTrackedScreen } from './components/NotTrackedScreen';
+import { NotTwitchScreen } from './components/NotTwitchScreen';
+import { ErrorScreen } from './components/ErrorScreen';
+import { SkeletonScreen } from './components/SkeletonScreen';
+import { SearchOverlay } from './components/SearchOverlay';
+import { AlertBanner } from './components/AlertBanner';
 
-// S4: Search input in header for live states
-function SearchBar({ disabled = false }: { disabled?: boolean }) {
-  const { t } = useTranslation();
-  return (
-    <input
-      type="text"
-      disabled={disabled}
-      placeholder={t('search.placeholder')}
-      className="search-input compact"
-    />
-  );
+function determineScreen(
+  currentChannel: string | null,
+  cache: TrustCache | null,
+): PopupScreen {
+  if (!currentChannel) return 'not_twitch';
+  if (!cache || cache.loading) return 'skeleton';
+  if (cache.error) return 'error';
+  if (!cache.is_tracked && cache.is_live) return 'not_tracked_live';
+  if (!cache.is_tracked && !cache.is_live) return 'not_tracked_offline';
+  if (cache.is_tracked && cache.is_live) return 'live';
+  if (cache.is_tracked && !cache.is_live) return 'offline';
+  return 'skeleton';
 }
 
-// Shared left column: avatar + name + rating
-function LeftColumn({ displayName = '', avatarLetter = '', isOffline = false }: { displayName?: string; avatarLetter?: string; isOffline?: boolean }) {
+export default function Popup() {
   const { t } = useTranslation();
-  const name = displayName || t('placeholder.null');
-  const letter = avatarLetter || (displayName ? displayName[0].toUpperCase() : t('placeholder.null'));
-  return (
-    <div className="col-left">
-      <div className={`avatar${isOffline ? ' gray' : ''}`} aria-label="Streamer avatar">{letter}</div>
-      <div className="streamer-name">{name}</div>
-      <div className="rating-wrap">
-        <div className="rating-btn" aria-label="Rating">
-          {t('placeholder.null')}
-        </div>
-        <span className="rating-label">{t('label.streamer_rating_short')}</span>
-      </div>
-    </div>
-  );
-}
+  const [cache, setCache] = useState<TrustCache | null>(null);
+  const [authState, setAuthState] = useState<{ loggedIn: boolean; user: Record<string, unknown> | null }>({ loggedIn: false, user: null });
+  const [currentChannel, setCurrentChannel] = useState<string | null>(null);
+  const [locale, setLocale] = useState<string>('ru');
+  const [i18nReady, setI18nReady] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [streamExpiring, setStreamExpiring] = useState(false);
 
-export function Popup() {
-  const { t } = useTranslation();
-  const [state, setState] = useState<PopupState>('skeleton');
-  const [authProvider, setAuthProvider] = useState<AuthProvider>(null);
-  const [authError, setAuthError] = useState<string>('');
-
-  // Check auth state on mount
+  // Init i18n
   useEffect(() => {
-    chrome.runtime.sendMessage({ action: 'GET_AUTH_STATE' }, (response) => {
-      if (response?.loggedIn) {
-        setState('offline'); // TASK-019 will add live detection
-      } else {
-        setState('not_logged_in');
+    initI18n().then((i18nInstance) => {
+      setLocale(i18nInstance.language);
+      setI18nReady(true);
+    });
+  }, []);
+
+  // Load initial state
+  useEffect(() => {
+    chrome.runtime.sendMessage({ action: 'GET_AUTH_STATE' }, (res) => {
+      if (res) setAuthState(res);
+    });
+    chrome.runtime.sendMessage({ action: 'GET_CURRENT_CHANNEL' }, (res) => {
+      const ch = res?.currentChannel || null;
+      setCurrentChannel(ch);
+
+      if (ch) {
+        chrome.runtime.sendMessage({ action: 'GET_TRUST_DATA' }, (trustCache) => {
+          if (trustCache) setCache(trustCache);
+        });
       }
     });
   }, []);
 
-  const handleAuth = useCallback((provider: 'twitch' | 'google') => {
-    setState('auth_loading');
-    setAuthProvider(provider);
-    setAuthError('');
-
-    const action = provider === 'twitch' ? 'AUTH_TWITCH' : 'AUTH_GOOGLE';
-    chrome.runtime.sendMessage({ action }, (response) => {
-      if (response?.success) {
-        setState('offline'); // TASK-019 will add live detection
-      } else if (response?.error === 'cancelled') {
-        setState('not_logged_in');
-      } else {
-        const errorKey = response?.error === 'email_exists'
-          ? 'auth.error.email_exists'
-          : response?.error === 'network'
-            ? 'auth.error.network'
-            : 'auth.error.failed';
-        setAuthError(errorKey);
-        setState('auth_error');
+  // Listen for updates from background
+  useEffect(() => {
+    const listener = (message: Record<string, unknown>) => {
+      if (message.action === 'TRUST_DATA_UPDATED') {
+        setCache(message.data as TrustCache);
       }
-      setAuthProvider(null);
-    });
+      if (message.action === 'STREAM_EXPIRING') {
+        setStreamExpiring(true);
+      }
+    };
+    chrome.runtime.onMessage.addListener(listener);
+    return () => chrome.runtime.onMessage.removeListener(listener);
   }, []);
 
-  const showSearch = ['live_guest', 'live_registered'].includes(state);
+  // Skeleton timeout → error after 5s
+  useEffect(() => {
+    if (cache?.loading) {
+      const timeout = setTimeout(() => {
+        setCache(prev => prev?.loading ? { ...prev, loading: false, error: 'timeout' } : prev);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [cache?.loading]);
+
+  const handleRetry = useCallback(() => {
+    if (currentChannel) {
+      setCache(prev => prev ? { ...prev, loading: true, error: null } : null);
+      chrome.runtime.sendMessage({ action: 'CHANNEL_CHANGED', channel: currentChannel });
+    }
+  }, [currentChannel]);
+
+  const handleLanguageChange = async () => {
+    const newLocale = locale === 'ru' ? 'en' : 'ru';
+    await changeLanguage(newLocale);
+    setLocale(newLocale);
+  };
+
+  if (!i18nReady) return null;
+
+  const screen = determineScreen(currentChannel, cache);
+  const isGuest = !authState.loggedIn;
+  const tier = (authState.user?.tier as string) || 'free';
+  const showSearch = !isGuest || screen === 'not_twitch';
 
   return (
     <div className="screen">
+      {/* Search overlay */}
+      {searchOpen && (
+        <SearchOverlay onClose={() => setSearchOpen(false)} isGuest={isGuest} tier={tier} />
+      )}
+
       {/* Header */}
       <div className="screen-header">
         <div className="logo-header">{t('app.title')}</div>
-        {showSearch ? (
-          <div className="header-right">
-            <SearchBar disabled={state === 'live_guest'} />
-            <LangSwitcher />
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {showSearch && (
+            <input
+              type="text"
+              className="search-input"
+              placeholder={t('search.placeholder')}
+              disabled={isGuest && screen !== 'not_twitch'}
+              style={{ width: '150px', padding: '6px 10px', fontSize: '12px', boxShadow: '1px 1px 0 var(--border-dark)' }}
+              onFocus={() => setSearchOpen(true)}
+              readOnly
+            />
+          )}
+          <div className="lang-switch" onClick={handleLanguageChange} role="button" tabIndex={0}
+            onKeyDown={e => e.key === 'Enter' && handleLanguageChange()}
+            aria-label={t('aria.lang')}>
+            <span className="globe">🌐</span>
+            <span className="lang-code">{locale.toUpperCase()}</span>
+            <span className="chevron">▾</span>
           </div>
+        </div>
+      </div>
+
+      {/* Screen content */}
+      {screen === 'skeleton' && <SkeletonScreen />}
+      {screen === 'error' && <ErrorScreen onRetry={handleRetry} />}
+      {screen === 'not_twitch' && <NotTwitchScreen isGuest={isGuest} />}
+      {screen === 'live' && cache && <LiveScreen cache={cache} isGuest={isGuest} tier={tier} />}
+      {screen === 'offline' && cache && <OfflineScreen cache={cache} isGuest={isGuest} tier={tier} />}
+      {screen === 'not_tracked_live' && cache && <NotTrackedScreen cache={cache} isGuest={isGuest} isLive={true} />}
+      {screen === 'not_tracked_offline' && cache && <NotTrackedScreen cache={cache} isGuest={isGuest} isLive={false} />}
+
+      {/* Alert Banner: stream expiring warning */}
+      <AlertBanner visible={streamExpiring} message={t('popup.stream_expiring', { nick: cache?.display_name ?? '' })} />
+
+      {/* Footer M4 */}
+      <div className="screen-footer">
+        {DONATION_URL ? (
+          <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="footer-link">
+            {t('footer.support')}
+          </a>
         ) : (
-          <LangSwitcher />
+          <span className="footer-link" style={{ opacity: 0.5, cursor: 'default' }}>
+            {t('footer.support')}
+          </span>
         )}
       </div>
-
-      {/* Content */}
-      <div className={`screen-content${['not_logged_in', 'auth_loading', 'auth_error', 'not_twitch', 'error'].includes(state) ? ' screen-content-centered' : ''}`}>
-        {state === 'not_logged_in' && <NotLoggedIn onAuth={handleAuth} />}
-        {state === 'auth_loading' && <AuthLoading provider={authProvider} />}
-        {state === 'auth_error' && <AuthError errorKey={authError} onRetry={() => setState('not_logged_in')} />}
-        {state === 'live_guest' && <LiveGuest />}
-        {state === 'live_registered' && <LiveRegistered />}
-        {state === 'offline' && <Offline />}
-        {state === 'not_twitch' && <NotTwitch />}
-        {state === 'skeleton' && <SkeletonState />}
-        {state === 'error' && <ErrorState />}
-      </div>
-
-      {/* Footer */}
-      <div className="screen-footer">
-        <a href="#" className="footer-link">{t('footer.support')}</a>
-      </div>
     </div>
-  );
-}
-
-function NotLoggedIn({ onAuth }: { onAuth: (provider: 'twitch' | 'google') => void }) {
-  const { t } = useTranslation();
-  return (
-    <>
-      <h3 className="auth-title">{t('app.title')}</h3>
-      <p className="auth-subtitle">{t('app.subtitle')}</p>
-      <div className="auth-buttons">
-        <button className="btn btn-twitch" onClick={() => onAuth('twitch')}>
-          {t('auth.twitch')}
-        </button>
-        <button className="btn btn-google" onClick={() => onAuth('google')}>
-          {t('auth.google')}
-        </button>
-      </div>
-    </>
-  );
-}
-
-function AuthLoading({ provider }: { provider: AuthProvider }) {
-  const { t } = useTranslation();
-  return (
-    <>
-      <h3 className="auth-title">{t('app.title')}</h3>
-      <p className="auth-subtitle">{t('app.subtitle')}</p>
-      <div className="auth-buttons">
-        <button className="btn btn-twitch btn-loading" disabled aria-busy={provider === 'twitch'}>
-          {provider === 'twitch' ? <><span className="spinner" />{t('auth.signing_in')}</> : t('auth.twitch')}
-        </button>
-        <button className="btn btn-google btn-loading" disabled aria-busy={provider === 'google'}>
-          {provider === 'google' ? <><span className="spinner dark" />{t('auth.signing_in')}</> : t('auth.google')}
-        </button>
-      </div>
-    </>
-  );
-}
-
-function AuthError({ errorKey, onRetry }: { errorKey: string; onRetry: () => void }) {
-  const { t } = useTranslation();
-  return (
-    <>
-      <div className="auth-error-icon" role="alert">!</div>
-      <div className="auth-error-title">{t('auth.error.failed')}</div>
-      <p className="auth-error-message">{t(errorKey)}</p>
-      <button className="btn btn-primary" onClick={onRetry}>
-        {t('auth.retry')}
-      </button>
-    </>
-  );
-}
-
-function RightColumnLive({ isRegistered = false }: { isRegistered?: boolean }) {
-  const { t } = useTranslation();
-  return (
-    <div className="col-right">
-      <div className="stream-status">
-        <div className="live-dot" />
-        <span className="live-text">{t('label.live')}</span>
-      </div>
-      {/* Data label with info trigger */}
-      <div className="data-label data-label-primary">
-        <span className="info-wrap">
-          <span>{t('label.real_viewers')}</span>
-          <span className="info-trigger">i</span>
-          <div className="info-tooltip">{t('tooltip.data_disclaimer')}</div>
-        </span>
-      </div>
-      <div className="erv-hero placeholder">{t('placeholder.null')}</div>
-      {/* Twitch online */}
-      <div className="data-label data-label-secondary">
-        <span>{t('label.twitch_online')}</span> {t('placeholder.null')}
-      </div>
-      {/* ERV badge (clickable) */}
-      <div className="erv-badge-wrap">
-        <span
-          className="erv-badge neutral clickable"
-
-          onClick={() => {
-            // Phase 2: chrome.sidePanel.open() + navigate to Overview tab
-            chrome.runtime.sendMessage({ action: 'open_sidepanel', tab: 'overview' }).catch(() => {});
-          }}
-          role="button"
-          tabIndex={0}
-        >
-          {t('placeholder.null')}
-        </span>
-      </div>
-      {isRegistered && (
-        <div className="realtime-tag-wrap">
-          <span className="tag">{t('popup.realtime')}</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function LiveGuest() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <div className="two-col">
-        <LeftColumn />
-        <RightColumnLive isRegistered={false} />
-      </div>
-      <button className="btn btn-primary">
-        {t('popup.cta_guest')}
-      </button>
-      <button className="btn btn-secondary">
-        {t('auth.login')}
-      </button>
-    </>
-  );
-}
-
-function LiveRegistered() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <div className="two-col">
-        <LeftColumn />
-        <RightColumnLive isRegistered={true} />
-      </div>
-      <div className="btn-row">
-        <button className="btn btn-primary">
-          {t('popup.cta_channel')}
-        </button>
-        <button className="btn btn-secondary">
-          {t('popup.cta_my')}
-        </button>
-      </div>
-      <button className="btn btn-tertiary">
-        {t('popup.watchlist')}
-      </button>
-    </>
-  );
-}
-
-// S2: Offline reuses LeftColumn (DRY), S5: no hardcoded date
-function Offline() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <div className="two-col">
-        <LeftColumn isOffline={true} />
-        <div className="col-right">
-          <div className="stream-status">
-            <span className="offline-text">{t('popup.stream_ended')}</span>
-          </div>
-          {/* Data label with info trigger */}
-          <div className="data-label data-label-primary">
-            <span className="info-wrap">
-              <span>{t('label.real_viewers')}</span>
-              <span className="info-trigger">i</span>
-              <div className="info-tooltip">{t('tooltip.data_disclaimer')}</div>
-            </span>
-          </div>
-          <div className="erv-hero placeholder">{t('placeholder.null')}</div>
-          {/* ERV badge */}
-          <div className="erv-badge-wrap">
-            <span
-              className="erv-badge neutral clickable"
-    
-              onClick={() => {
-                chrome.runtime.sendMessage({ action: 'open_sidepanel', tab: 'overview' }).catch(() => {});
-              }}
-              role="button"
-              tabIndex={0}
-            >
-              {t('placeholder.null')}
-            </span>
-          </div>
-        </div>
-      </div>
-      <button className="btn btn-primary">
-        {t('btn.last_stream_analytics')}
-      </button>
-    </>
-  );
-}
-
-function NotTwitch() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <h3 className="not-twitch-title">{t('popup.go_twitch')}</h3>
-      <input
-        type="text"
-        className="search-input not-twitch-search"
-        placeholder={t('search.placeholder')}
-        disabled
-      />
-    </>
-  );
-}
-
-function SkeletonState() {
-  return (
-    <>
-      <div className="two-col" aria-busy="true" aria-label="Loading">
-        <div className="col-left">
-          <div className="skeleton skeleton-avatar" />
-          <div className="skeleton skeleton-name" />
-        </div>
-        <div className="col-right">
-          <div className="skeleton skeleton-status" />
-          <div className="skeleton skeleton-hero" />
-          <div className="skeleton skeleton-badge" />
-        </div>
-      </div>
-      <div className="skeleton skeleton-btn" />
-      <div className="skeleton skeleton-btn" />
-    </>
-  );
-}
-
-function ErrorState() {
-  const { t } = useTranslation();
-  return (
-    <>
-      <div className="error-icon">&#9888;&#65039;</div>
-      <p className="error-text">{t('popup.error')}</p>
-      <button className="btn btn-secondary btn-retry">
-        {t('popup.retry')}
-      </button>
-    </>
   );
 }

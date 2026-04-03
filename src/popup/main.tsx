@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { initI18n } from '../shared/i18n';
 import '../shared/fonts';
 import '../shared/neo-brutiful.css';
-import { Popup } from './Popup';
+import Popup from './Popup';
 
 initI18n().then(() => {
   createRoot(document.getElementById('root')!).render(

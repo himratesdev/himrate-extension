@@ -112,6 +112,11 @@ export interface TrustData {
   category_avg_ti: number | null;
   percentile_in_category: number | null;
   post_stream_expires_at: string | null;
+  // TASK-035: drill_down/full scope fields (nullable for headline scope)
+  signal_breakdown?: Array<{ type: string; value: number; confidence: number | null; weight: number | null; contribution: number; metadata: Record<string, unknown> | null }>;
+  streamer_reputation?: ReputationData | null;
+  health_score?: HealthScoreData | null;
+  top_countries?: Array<{ country_code: string; percentage: number; viewer_count: number }> | null;
 }
 
 export interface ChannelData {
@@ -147,6 +152,11 @@ export interface TrustCache {
   expires_at: string | null;
   previous_ti_score: number | null;
   is_watched_by_user: boolean;
+  // TASK-035: extended fields from drill_down/full scope
+  signal_breakdown: Array<{ type: string; value: number; confidence: number | null; weight: number | null; contribution: number; metadata: Record<string, unknown> | null }>;
+  streamer_reputation: ReputationData | null;
+  health_score: HealthScoreData | null;
+  top_countries: Array<{ country_code: string; percentage: number; viewer_count: number }> | null;
   ws_connected: boolean;
   error: string | null;
   loading: boolean;
@@ -175,6 +185,83 @@ export interface SearchResult {
   erv_label: string | null;
   erv_label_color: string | null;
   rating_score: number | null;
+}
+
+// TASK-035: Sparkline data
+export interface SparklinePoint {
+  timestamp: string;
+  ccv: number | null;
+  erv_count: number | null;
+  erv_percent: number | null;
+  ti_score: number | null;
+}
+
+export interface SparklineData {
+  period: '30m' | '7d';
+  points: SparklinePoint[];
+  anomalies: Array<{ timestamp: string; type: string; severity: string; delta: number | null }>;
+}
+
+// TASK-035: Badge embed data
+export interface BadgeData {
+  html: string;
+  markdown: string;
+  bbcode: string;
+  svg_url: string;
+  ti_score: number;
+  color: string;
+}
+
+// TASK-035: Channel Card data
+export interface CardData {
+  channel: {
+    login: string;
+    display_name: string;
+    avatar_url: string | null;
+    partner_status: string | null;
+    created_at: string;
+    followers_count: number;
+  };
+  trust: {
+    ti_score: number | null;
+    classification: string | null;
+    erv_percent: number | null;
+    erv_label: string | null;
+    erv_label_color: string | null;
+  };
+  health_score: HealthScoreData | null;
+  reputation: ReputationData | null;
+  stats: {
+    total_streams: number;
+    avg_ccv: number | null;
+    peak_ccv: number | null;
+    avg_duration_hours: number | null;
+    streams_per_week: number | null;
+  };
+  recent_streams: Array<{
+    date: string;
+    duration_hours: number | null;
+    peak_ccv: number | null;
+    avg_ccv: number | null;
+    ti_score: number | null;
+    erv_percent: number | null;
+  }>;
+  badge_url: string;
+  public_url: string;
+}
+
+export interface HealthScoreData {
+  score: number;
+  components: Record<string, { score: number | null; weight: number; label: string }>;
+  streams_count: number;
+  provisional_status: string;
+  percentile: number | null;
+}
+
+export interface ReputationData {
+  growth_pattern_score: number | null;
+  follower_quality_score: number | null;
+  engagement_consistency_score: number | null;
 }
 
 // === Typed API methods ===
@@ -243,6 +330,46 @@ export const api = {
       return { success: res.ok };
     } catch {
       return { success: false };
+    }
+  },
+
+  /** TASK-035: Get sparkline history (30m live / 7d offline). */
+  getTrustHistory: async (channelId: string, period: '30m' | '7d', signal?: AbortSignal): Promise<SparklineData | null> => {
+    try {
+      const res = await apiFetch(
+        `/api/v1/channels/${encodeURIComponent(channelId)}/trust/history?period=${period}`,
+        {},
+        signal
+      );
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch {
+      return null;
+    }
+  },
+
+  /** TASK-035: Get badge embed codes (streamer own channel). */
+  getBadge: async (channelId: string): Promise<BadgeData | null> => {
+    try {
+      const res = await apiFetch(`/api/v1/channels/${encodeURIComponent(channelId)}/badge`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch {
+      return null;
+    }
+  },
+
+  /** TASK-035: Get channel card data (streamer own channel). */
+  getCard: async (channelId: string): Promise<CardData | null> => {
+    try {
+      const res = await apiFetch(`/api/v1/channels/${encodeURIComponent(channelId)}/card`);
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch {
+      return null;
     }
   },
 };

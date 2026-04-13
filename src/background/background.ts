@@ -153,8 +153,9 @@ function makeEmptyCache(login: string): TrustCache {
     erv_label: null, erv_label_color: null, ccv: null, confidence: null,
     cold_start_status: null, is_live: false, is_tracked: false,
     streamer_rating: null, category_avg_ti: null, percentile_in_category: null,
-    expires_at: null, previous_ti_score: null, is_watched_by_user: false, ws_connected: false,
-    error: null, loading: false, fetched_at: 0,
+    expires_at: null, previous_ti_score: null, is_watched_by_user: false,
+    signal_breakdown: [], streamer_reputation: null, health_score: null, top_countries: null,
+    ws_connected: false, error: null, loading: false, fetched_at: 0,
   };
 }
 
@@ -224,6 +225,10 @@ async function fetchTrustData(login: string): Promise<void> {
       expires_at: trustData?.post_stream_expires_at ?? null,
       previous_ti_score: previousTi,
       is_watched_by_user: channelData.is_watched_by_user ?? false,
+      signal_breakdown: trustData?.signal_breakdown || [],
+      streamer_reputation: trustData?.streamer_reputation ?? null,
+      health_score: trustData?.health_score ?? null,
+      top_countries: trustData?.top_countries ?? null,
       ws_connected: false,
       error: null,
       loading: false,

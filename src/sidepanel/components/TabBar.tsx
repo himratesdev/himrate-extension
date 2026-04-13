@@ -1,30 +1,36 @@
+// TASK-035 FR-008: Tab Bar — 8 tabs, horizontal scroll, lock icons, anomaly dots.
+
 import { useTranslation } from 'react-i18next';
 
 interface TabBarProps {
   tabs: readonly string[];
   currentTab: string;
   onTabChange: (tab: string) => void;
-  alerts?: Record<string, boolean>;
+  lockedTabs?: string[];
+  anomalyTabs?: string[];
 }
 
-export function TabBar({ tabs, currentTab, onTabChange, alerts }: TabBarProps) {
+export function TabBar({ tabs, currentTab, onTabChange, lockedTabs = [], anomalyTabs = [] }: TabBarProps) {
   const { t } = useTranslation();
 
   return (
     <div className="tab-bar" role="tablist">
       {tabs.map((tab) => {
         const isActive = tab === currentTab;
-        const hasAlert = alerts?.[tab];
+        const isLocked = lockedTabs.includes(tab);
+        const hasAnomaly = anomalyTabs.includes(tab);
         return (
           <button
             key={tab}
-            className={`tab-item${isActive ? ' active' : ''}`}
+            className={`tab-item${isActive ? ' active' : ''}${isLocked ? ' locked' : ''}`}
             role="tab"
             aria-selected={isActive}
+            aria-disabled={isLocked}
             onClick={() => onTabChange(tab)}
           >
             {t(`tab.${tab}`)}
-            {hasAlert && <span className="tab-alert">!</span>}
+            {isLocked && <span className="tab-lock"> 🔒</span>}
+            {hasAnomaly && <span className="tab-anomaly-dot" />}
           </button>
         );
       })}

@@ -16,7 +16,7 @@ import { SkeletonOverview } from './SkeletonOverview';
 import { ErrorOverview } from './ErrorOverview';
 import { NotTrackedOverview } from './NotTrackedOverview';
 import { NotTwitchOverview } from './NotTwitchOverview';
-import type { TrustCache, ReputationData, HealthScoreData } from '../../shared/api';
+import type { TrustCache } from '../../shared/api';
 
 interface Props {
   trustCache: TrustCache | null;
@@ -71,7 +71,7 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
       {/* M3: Signal Breakdown (Premium / Free live) — data from trustCache, no extra API call */}
       {showDrillDown && (
-        <SignalBreakdown signals={((trustCache as unknown as Record<string, unknown>).signal_breakdown as Array<{ type: string; value: number; confidence: number | null; weight: number | null; contribution: number; metadata: Record<string, unknown> | null }>) || []} isPremium={isPremium} />
+        <SignalBreakdown signals={trustCache.signal_breakdown || []} isPremium={isPremium} />
       )}
       {showPaywall && (
         <div className="sp-paywall-blur">
@@ -83,13 +83,13 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
       {/* M4: Reputation — data from trustCache */}
       {showDrillDown && (
-        <ReputationCard reputation={(trustCache as unknown as { streamer_reputation?: ReputationData }).streamer_reputation || null} isLive={isLive} />
+        <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
       )}
 
       {/* Streamer Mode extensions */}
       {isOwnChannel && (
         <>
-          <HealthScoreCard healthScore={(trustCache as unknown as { health_score?: HealthScoreData }).health_score || null} />
+          <HealthScoreCard healthScore={trustCache.health_score} />
           <StreamerModeButtons channelId={trustCache.channel_id} login={trustCache.login} />
         </>
       )}

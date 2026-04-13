@@ -197,6 +197,7 @@
   "signal.ccv_chat_corr": "CCV+Чат корреляция",
   "signal.account_scoring": "Скоринг аккаунтов",
   "sp.components_toggle": "Компоненты",
+  "sp.ti_tooltip": "Trust Index — комплексная оценка доверия к\u00a0каналу",
 
   "aria.settings": "Настройки",
   "aria.profile": "Профиль",

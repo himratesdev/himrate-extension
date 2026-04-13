@@ -197,6 +197,7 @@
   "signal.ccv_chat_corr": "CCV+Chat Correlation",
   "signal.account_scoring": "Account Scoring",
   "sp.components_toggle": "Components",
+  "sp.ti_tooltip": "Trust Index — comprehensive channel trust score",
 
   "aria.settings": "Settings",
   "aria.profile": "Profile",

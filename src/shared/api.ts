@@ -112,6 +112,11 @@ export interface TrustData {
   category_avg_ti: number | null;
   percentile_in_category: number | null;
   post_stream_expires_at: string | null;
+  // TASK-035: drill_down/full scope fields (nullable for headline scope)
+  signal_breakdown?: Array<{ type: string; value: number; confidence: number | null; weight: number | null; contribution: number; metadata: Record<string, unknown> | null }>;
+  streamer_reputation?: ReputationData | null;
+  health_score?: HealthScoreData | null;
+  top_countries?: Array<{ country_code: string; percentage: number; viewer_count: number }> | null;
 }
 
 export interface ChannelData {
@@ -147,6 +152,11 @@ export interface TrustCache {
   expires_at: string | null;
   previous_ti_score: number | null;
   is_watched_by_user: boolean;
+  // TASK-035: extended fields from drill_down/full scope
+  signal_breakdown: Array<{ type: string; value: number; confidence: number | null; weight: number | null; contribution: number; metadata: Record<string, unknown> | null }>;
+  streamer_reputation: ReputationData | null;
+  health_score: HealthScoreData | null;
+  top_countries: Array<{ country_code: string; percentage: number; viewer_count: number }> | null;
   ws_connected: boolean;
   error: string | null;
   loading: boolean;

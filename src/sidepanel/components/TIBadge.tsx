@@ -21,7 +21,7 @@ export function TIBadge({ tiScore, classification, streamerRating, showExpand }:
     <div className="sp-ti-section">
       <div className="sp-ti-header">
         <div className="sp-ti-left">
-          <span className="sp-ti-label" title="Trust Index — комплексная оценка доверия к каналу">Trust Index</span>
+          <span className="sp-ti-label" title={t('sp.ti_tooltip')}>Trust Index</span>
           <span className="sp-ti-score">{tiScore != null ? tiScore : '—'}</span>
           {classText && <span className="sp-ti-class"> — {classText}</span>}
         </div>

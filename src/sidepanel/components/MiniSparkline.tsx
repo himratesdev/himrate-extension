@@ -11,13 +11,14 @@ interface Props {
   channelId: string | null;
   isLive: boolean;
   isPremium: boolean;
+  onNavigate?: (tab: string) => void;
 }
 
 const WIDTH = 280;
 const HEIGHT = 80;
 const PADDING = 4;
 
-export function MiniSparkline({ channelId, isLive, isPremium }: Props) {
+export function MiniSparkline({ channelId, isLive, isPremium, onNavigate }: Props) {
   const { t } = useTranslation();
   const [points, setPoints] = useState<SparklinePoint[]>([]);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
@@ -119,7 +120,7 @@ export function MiniSparkline({ channelId, isLive, isPremium }: Props) {
       )}
 
       <div className="sp-sparkline-footer">
-        <a className="sp-more-link" href="#">{t('sp.more') || 'Подробнее →'}</a>
+        <button className="sp-more-link" onClick={() => onNavigate?.('trends')}>{t('sp.more')}</button>
       </div>
     </div>
   );

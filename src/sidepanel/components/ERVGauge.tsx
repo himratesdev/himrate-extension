@@ -25,7 +25,7 @@ const GAUGE_COLORS: Record<string, string> = {
 
 export function ERVGauge({
   ervPercent, ervCount, ccv, ervLabel, ervLabelColor,
-  confidence, coldStartStatus, isLive, isOwnChannel,
+  confidence, coldStartStatus, isLive: _isLive, isOwnChannel,
 }: Props) {
   const { t } = useTranslation();
   const size = isOwnChannel ? 160 : 120;
@@ -97,7 +97,7 @@ export function ERVGauge({
       {/* ERV hero number */}
       {ervCount != null && !isInsufficient ? (
         <div className="sp-erv-hero" style={{ color }}>
-          ~{ervCount.toLocaleString()} {isLive ? t('popup.erv_hero_live').replace('Онлайн (HimRate): ~{N}', '').trim() || '' : ''}
+          ~{ervCount.toLocaleString()}
         </div>
       ) : (
         <div className="sp-erv-hero" style={{ color: '#9ca3af' }}>

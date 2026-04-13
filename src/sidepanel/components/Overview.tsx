@@ -16,7 +16,7 @@ import { SkeletonOverview } from './SkeletonOverview';
 import { ErrorOverview } from './ErrorOverview';
 import { NotTrackedOverview } from './NotTrackedOverview';
 import { NotTwitchOverview } from './NotTwitchOverview';
-import type { TrustCache } from '../../shared/api';
+import type { TrustCache, ReputationData, HealthScoreData } from '../../shared/api';
 
 interface Props {
   trustCache: TrustCache | null;
@@ -69,9 +69,9 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         showExpand={showDrillDown}
       />
 
-      {/* M3: Signal Breakdown (Premium / Free live) */}
+      {/* M3: Signal Breakdown (Premium / Free live) — data from trustCache, no extra API call */}
       {showDrillDown && (
-        <SignalBreakdown channelId={trustCache.channel_id} isPremium={isPremium} />
+        <SignalBreakdown signals={((trustCache as unknown as Record<string, unknown>).signal_breakdown as Array<{ type: string; value: number; confidence: number | null; weight: number | null; contribution: number; metadata: Record<string, unknown> | null }>) || []} isPremium={isPremium} />
       )}
       {showPaywall && (
         <div className="sp-paywall-blur">
@@ -81,15 +81,15 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         </div>
       )}
 
-      {/* M4: Reputation */}
+      {/* M4: Reputation — data from trustCache */}
       {showDrillDown && (
-        <ReputationCard channelId={trustCache.channel_id} isLive={isLive} />
+        <ReputationCard reputation={(trustCache as unknown as { streamer_reputation?: ReputationData }).streamer_reputation || null} isLive={isLive} />
       )}
 
       {/* Streamer Mode extensions */}
       {isOwnChannel && (
         <>
-          <HealthScoreCard channelId={trustCache.channel_id} />
+          <HealthScoreCard healthScore={(trustCache as unknown as { health_score?: HealthScoreData }).health_score || null} />
           <StreamerModeButtons channelId={trustCache.channel_id} login={trustCache.login} />
         </>
       )}
@@ -113,7 +113,7 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
       {/* Guest CTA */}
       {isGuest && (
         <div className="sp-guest-cta">
-          <button className="btn btn-primary" onClick={() => chrome.runtime.sendMessage({ action: 'OPEN_AUTH' })}>
+          <button className="btn btn-primary" onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}>
             {t('popup.cta_guest')}
           </button>
           <p className="sp-guest-hint">{t('popup.guest_sign_in_hint')}</p>

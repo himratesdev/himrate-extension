@@ -17,7 +17,7 @@ export type SidePanelTab = typeof TABS[number];
 
 // Tabs locked per tier (Design Spec §F3)
 const LOCKED_TABS: Record<string, SidePanelTab[]> = {
-  guest: ['trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'],
+  guest: ['trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid'],
   free: ['trends', 'audience', 'compare', 'overlap', 'botraid'],
   premium: [],
   business: [],
@@ -170,8 +170,8 @@ export function SidePanel() {
         <a href="#" className="footer-link">{t('footer.support')}</a>
         <div className="panel-footer-right">
           <a href="#" className="footer-link">{t('footer.feedback')}</a>
-          <a href="https://youtube.com" target="_blank" rel="noopener" className="footer-link">{t('footer.youtube')}</a>
-          <a href="https://t.me" target="_blank" rel="noopener" className="footer-link">{t('footer.telegram')}</a>
+          <a href="https://youtube.com/@himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.youtube')}</a>
+          <a href="https://t.me/himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.telegram')}</a>
         </div>
       </div>
     </div>

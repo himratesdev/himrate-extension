@@ -2,13 +2,11 @@
 // Provisional badges when streams_count < 10.
 // Fetches from api.getTrust() and reads health_score from extended response.
 
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../shared/api';
 import type { HealthScoreData } from '../../shared/api';
 
 interface Props {
-  channelId: string | null;
+  healthScore: HealthScoreData | null;
 }
 
 const COMPONENTS_ORDER = ['ti', 'stability', 'engagement', 'growth', 'consistency'] as const;
@@ -29,18 +27,8 @@ function scoreColor(score: number | null): string {
   return '#ef4444';
 }
 
-export function HealthScoreCard({ channelId }: Props) {
+export function HealthScoreCard({ healthScore: health }: Props) {
   const { t } = useTranslation();
-  const [health, setHealth] = useState<HealthScoreData | null>(null);
-
-  useEffect(() => {
-    if (!channelId) return;
-    api.getTrust(channelId).then((data) => {
-      if (data && 'health_score' in data) {
-        setHealth((data as unknown as { health_score: HealthScoreData }).health_score ?? null);
-      }
-    });
-  }, [channelId]);
 
   if (!health) return null;
 
@@ -49,7 +37,7 @@ export function HealthScoreCard({ channelId }: Props) {
   return (
     <div className="sp-health-card" style={{ border: '2px solid #22c55e', borderRadius: '8px', padding: '12px' }}>
       <div className="sp-health-header" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-        <span style={{ fontWeight: 700, fontSize: '13px' }}>Health Score</span>
+        <span style={{ fontWeight: 700, fontSize: '13px' }}>{t('sp.health_score')}</span>
         <span style={{ fontSize: '18px', fontWeight: 700, color: scoreColor(health.score) }}>{health.score}</span>
         {isProvisional && (
           <span className="sp-provisional-badge" style={{ fontSize: '10px', marginLeft: 'auto' }}>

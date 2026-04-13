@@ -31,7 +31,7 @@ export function TIBadge({ tiScore, classification, streamerRating, showExpand }:
             onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
           >
-            {t('tab.overview')} {expanded ? '▴' : '▾'}
+            {t('sp.components_toggle')} {expanded ? '▴' : '▾'}
           </button>
         )}
       </div>

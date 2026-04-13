@@ -1,9 +1,7 @@
 // TASK-035 FR-004: Live-Signal Breakdown — 11 signals with bars.
 // Premium: open. Free/Guest: blur overlay (DS §1.2-A).
 
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../shared/api';
 
 interface Signal {
   type: string;
@@ -15,36 +13,27 @@ interface Signal {
 }
 
 interface Props {
-  channelId: string | null;
+  signals: Signal[];
   isPremium: boolean;
 }
 
-const SIGNAL_NAMES: Record<string, string> = {
-  auth_ratio: 'Auth Ratio',
-  chatter_to_ccv_ratio: 'Chatter-to-CCV',
-  ccv_step_function: 'CCV Step Function',
-  ccv_tier_clustering: 'CCV Tier Clustering',
-  per_user_chat_behavior: 'Chat Behavior',
-  channel_protection_score: 'Channel Protection',
-  cross_channel_bot_presence: 'Cross-Channel Bots',
-  known_bot_list_matching: 'Known Bot Match',
-  raid_attribution: 'Raid Attribution',
-  ccv_chat_rate_correlation: 'CCV+Chat Correlation',
-  account_profile_scoring: 'Account Scoring',
+// Signal type → i18n key mapping
+const SIGNAL_I18N: Record<string, string> = {
+  auth_ratio: 'signal.auth_ratio',
+  chatter_to_ccv_ratio: 'signal.chatter_ccv',
+  ccv_step_function: 'signal.ccv_step',
+  ccv_tier_clustering: 'signal.ccv_tier',
+  per_user_chat_behavior: 'signal.chat_behavior',
+  channel_protection_score: 'signal.channel_protection',
+  cross_channel_bot_presence: 'signal.cross_channel',
+  known_bot_list_matching: 'signal.known_bots',
+  raid_attribution: 'signal.raid',
+  ccv_chat_rate_correlation: 'signal.ccv_chat_corr',
+  account_profile_scoring: 'signal.account_scoring',
 };
 
-export function SignalBreakdown({ channelId, isPremium }: Props) {
+export function SignalBreakdown({ signals, isPremium }: Props) {
   const { t } = useTranslation();
-  const [signals, setSignals] = useState<Signal[]>([]);
-
-  useEffect(() => {
-    if (!channelId) return;
-    api.getTrust(channelId).then((data) => {
-      if (data && 'signal_breakdown' in data) {
-        setSignals((data as unknown as { signal_breakdown: Signal[] }).signal_breakdown || []);
-      }
-    });
-  }, [channelId]);
 
   if (signals.length === 0) return null;
 
@@ -57,7 +46,7 @@ export function SignalBreakdown({ channelId, isPremium }: Props) {
       </div>
       {sorted.map((sig, i) => (
         <div key={sig.type} className="sp-signal-bar" style={{ animationDelay: `${i * 50}ms` }}>
-          <div className="sp-signal-name">{SIGNAL_NAMES[sig.type] || sig.type}</div>
+          <div className="sp-signal-name">{t(SIGNAL_I18N[sig.type] || sig.type)}</div>
           <div className="sp-signal-track">
             <div
               className="sp-signal-fill"

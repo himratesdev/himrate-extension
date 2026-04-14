@@ -248,7 +248,7 @@
   "wl.freshness_now": "Обн. сейчас",
   "wl.freshness_hours": "Обн. {{n}}ч назад",
   "wl.freshness_days": "Обн. {{n}}д назад",
-  "wl.stat_tracked": "Tracked",
+  "wl.stat_tracked": "Отслеживаются",
   "wl.export_coming_soon": "Экспорт будет доступен скоро",
   "wl.sort_erv_desc": "ERV% ↓",
   "wl.sort_erv_asc": "ERV% ↑",

@@ -8,6 +8,7 @@ import { LangSwitcher } from '../shared/components/LangSwitcher';
 import { TabBar } from './components/TabBar';
 import { Overview } from './components/Overview';
 import { PlaceholderTab } from './components/PlaceholderTab';
+import { Watchlists } from './components/Watchlists';
 import { ChannelSwitchNotification } from './components/ChannelSwitchNotification';
 import { InfoBanner } from './components/InfoBanner';
 import type { TrustCache } from '../shared/api';
@@ -151,6 +152,8 @@ export function SidePanel() {
             isOwnChannel={isOwnChannel}
             authState={authState}
           />
+        ) : currentTab === 'watchlists' ? (
+          <Watchlists tier={tier} authState={authState} />
         ) : (
           <PlaceholderTab tabId={currentTab} />
         )}

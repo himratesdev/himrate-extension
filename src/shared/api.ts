@@ -264,6 +264,43 @@ export interface ReputationData {
   engagement_consistency_score: number | null;
 }
 
+// TASK-036: Watchlist interfaces
+export interface WatchlistStats {
+  avg_erv: number | null;
+  live_count: number;
+  tracked_count: number;
+  total: number;
+}
+
+export interface WatchlistItem {
+  id: string;
+  name: string;
+  channels_count: number;
+  position: number;
+  stats: WatchlistStats;
+  created_at: string;
+}
+
+export interface WatchlistChannel {
+  channel_id: string;
+  login: string;
+  display_name: string;
+  avatar_url: string | null;
+  erv_percent: number | null;
+  erv_label_color: string | null;
+  ti_score: number | null;
+  ccv: number | null;
+  is_live: boolean;
+  is_tracked: boolean;
+  last_ti_at: string | null;
+  last_stream_at: string | null;
+  inactive: boolean;
+  tags: string[];
+  notes: string | null;
+  added_at: string;
+  position: number | null;
+}
+
 // === Typed API methods ===
 
 export const api = {
@@ -370,6 +407,138 @@ export const api = {
       return json.data || null;
     } catch {
       return null;
+    }
+  },
+
+  // TASK-036: Watchlists API
+
+  /** List user's watchlists with stats. */
+  getWatchlists: async (signal?: AbortSignal): Promise<WatchlistItem[]> => {
+    try {
+      const res = await apiFetch('/api/v1/watchlists', {}, signal);
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch {
+      return [];
+    }
+  },
+
+  /** Create a new watchlist. */
+  createWatchlist: async (name: string): Promise<WatchlistItem | null> => {
+    try {
+      const res = await apiFetch('/api/v1/watchlists', {
+        method: 'POST',
+        body: JSON.stringify({ watchlist: { name } }),
+      });
+      if (!res.ok) return null;
+      const json = await res.json();
+      return json.data || null;
+    } catch {
+      return null;
+    }
+  },
+
+  /** Rename a watchlist. */
+  renameWatchlist: async (id: string, name: string): Promise<boolean> => {
+    try {
+      const res = await apiFetch(`/api/v1/watchlists/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ watchlist: { name } }),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  /** Delete a watchlist. */
+  deleteWatchlist: async (id: string): Promise<boolean> => {
+    try {
+      const res = await apiFetch(`/api/v1/watchlists/${id}`, { method: 'DELETE' });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  /** Get enriched channels in a watchlist. */
+  getWatchlistChannels: async (
+    watchlistId: string, sort?: string, filters?: Record<string, string>, signal?: AbortSignal
+  ): Promise<{ data: WatchlistChannel[]; meta: { total: number; watchlist_name: string } }> => {
+    try {
+      const params = new URLSearchParams();
+      if (sort) params.set('sort', sort);
+      if (filters) Object.entries(filters).forEach(([k, v]) => params.set(k, v));
+      const qs = params.toString() ? `?${params.toString()}` : '';
+      const res = await apiFetch(`/api/v1/watchlists/${watchlistId}/channels${qs}`, {}, signal);
+      if (!res.ok) return { data: [], meta: { total: 0, watchlist_name: '' } };
+      return res.json();
+    } catch {
+      return { data: [], meta: { total: 0, watchlist_name: '' } };
+    }
+  },
+
+  /** Add channel to watchlist. */
+  addToWatchlist: async (watchlistId: string, channelId: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await apiFetch(`/api/v1/watchlists/${watchlistId}/channels`, {
+        method: 'POST',
+        body: JSON.stringify({ channel_id: channelId }),
+      });
+      if (res.status === 409) return { success: false, error: 'already_in_list' };
+      if (res.status === 422) return { success: false, error: 'limit_reached' };
+      return { success: res.ok };
+    } catch {
+      return { success: false, error: 'network' };
+    }
+  },
+
+  /** Remove channel from watchlist. */
+  removeFromWatchlist: async (watchlistId: string, channelId: string): Promise<boolean> => {
+    try {
+      const res = await apiFetch(`/api/v1/watchlists/${watchlistId}/channels/${channelId}`, { method: 'DELETE' });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  /** Move channel to another watchlist. */
+  moveChannel: async (watchlistId: string, channelId: string, targetId: string): Promise<boolean> => {
+    try {
+      const res = await apiFetch(`/api/v1/watchlists/${watchlistId}/channels/${channelId}/move`, {
+        method: 'PATCH',
+        body: JSON.stringify({ target_watchlist_id: targetId }),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  /** Update tags/notes for a channel in a watchlist. */
+  updateChannelMeta: async (watchlistId: string, channelId: string, tags: string[], notes: string | null): Promise<boolean> => {
+    try {
+      const res = await apiFetch(`/api/v1/watchlists/${watchlistId}/channels/${channelId}/meta`, {
+        method: 'PATCH',
+        body: JSON.stringify({ tags, notes }),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  /** Tag autocomplete. */
+  getWatchlistTags: async (query: string): Promise<string[]> => {
+    try {
+      const res = await apiFetch(`/api/v1/watchlists/tags?q=${encodeURIComponent(query)}`);
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch {
+      return [];
     }
   },
 };

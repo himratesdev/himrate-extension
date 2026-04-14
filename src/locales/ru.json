@@ -247,5 +247,16 @@
   "wl.stale_data": "⚠ Данные могут быть неактуальны",
   "wl.freshness_now": "Обн. сейчас",
   "wl.freshness_hours": "Обн. {{n}}ч назад",
-  "wl.freshness_days": "Обн. {{n}}д назад"
+  "wl.freshness_days": "Обн. {{n}}д назад",
+  "wl.stat_tracked": "Tracked",
+  "wl.export_coming_soon": "Экспорт будет доступен скоро",
+  "wl.sort_erv_desc": "ERV% ↓",
+  "wl.sort_erv_asc": "ERV% ↑",
+  "wl.sort_ti_desc": "TI ↓",
+  "wl.sort_ccv_desc": "CCV ↓",
+  "wl.sort_name": "Имя А-Я",
+  "wl.sort_added": "Добавлен ↓",
+  "wl.filters_locked": "Premium",
+  "wl.sort_label": "Сортировка",
+  "wl.filters_label": "Фильтры"
 }

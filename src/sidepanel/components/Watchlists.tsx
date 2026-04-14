@@ -1,37 +1,20 @@
 // TASK-036: Watchlists tab — M1 Selector + Stats Row + Search + M2 Cards + M3 Bulk Actions + Conversion Banner.
-// Replaces PlaceholderTab for 'watchlists' tab.
+// Code Review fixes: M1 onClick handlers, M2 FilterSort UI, S4 hardcoded "Tracked", S5 guest blur overlay, N3 decomposition.
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../shared/api';
 import type { WatchlistItem, WatchlistChannel } from '../../shared/api';
+import { WatchlistCard } from './WatchlistCard';
+import { FilterSort } from './FilterSort';
+import type { SortOption } from './FilterSort';
 
 interface Props {
   tier: string;
   authState: { loggedIn: boolean; tier: string };
 }
 
-// FR-026: Freshness label from last_ti_at
-function freshnessLabel(lastTiAt: string | null, t: (key: string, opts?: Record<string, unknown>) => string): { text: string; color: string } {
-  if (!lastTiAt) return { text: t('wl.stale_data'), color: '#D97706' };
-  const hours = (Date.now() - new Date(lastTiAt).getTime()) / 3_600_000;
-  if (hours < 1) return { text: t('wl.freshness_now'), color: '#9CA3AF' };
-  if (hours < 24) return { text: t('wl.freshness_hours', { n: Math.floor(hours) }), color: '#9CA3AF' };
-  const days = Math.floor(hours / 24);
-  if (days <= 30) return { text: t('wl.freshness_days', { n: days }), color: '#D97706' };
-  return { text: t('wl.stale_data'), color: '#D97706' };
-}
-
-// BR-010: Card opacity by status
-function cardOpacity(ch: WatchlistChannel): number {
-  if (ch.is_live) return 1.0;
-  if (!ch.last_stream_at) return 0.4;
-  const days = (Date.now() - new Date(ch.last_stream_at).getTime()) / 86_400_000;
-  if (days < 1) return 0.6;
-  return 0.4;
-}
-
-// ERV color
+// ERV color (used in stats row)
 function ervColor(pct: number | null): string {
   if (pct == null) return '#9CA3AF';
   if (pct >= 80) return '#059669';
@@ -49,6 +32,7 @@ export function Watchlists({ tier, authState }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [currentSort, setCurrentSort] = useState<SortOption>('erv_desc');
 
   // Load watchlists
   const loadWatchlists = useCallback(async () => {
@@ -66,19 +50,19 @@ export function Watchlists({ tier, authState }: Props) {
     setLoading(false);
   }, [activeId]);
 
-  // Load channels for active watchlist
+  // Load channels for active watchlist (M2: pass sort param to API)
   const loadChannels = useCallback(async () => {
     if (!activeId) return;
     try {
-      const result = await api.getWatchlistChannels(activeId);
+      const result = await api.getWatchlistChannels(activeId, currentSort);
       setChannels(result.data);
     } catch {
       setChannels([]);
     }
-  }, [activeId]);
+  }, [activeId, currentSort]);
 
   useEffect(() => { loadWatchlists(); }, []);
-  useEffect(() => { if (activeId) loadChannels(); }, [activeId, loadChannels]);
+  useEffect(() => { if (activeId) loadChannels(); }, [activeId, currentSort, loadChannels]);
 
   // Check banner dismiss
   useEffect(() => {
@@ -148,19 +132,80 @@ export function Watchlists({ tier, authState }: Props) {
     chrome.storage.local.set({ wl_banner_dismissed_at: new Date().toISOString() });
   };
 
-  // Guest overlay
+  // M1: Compare bulk action handler
+  const handleCompare = () => {
+    chrome.runtime.sendMessage({ action: 'NAVIGATE_TAB', tab: 'compare', channels: Array.from(selected) });
+  };
+
+  // M1: Export PDF bulk action handler (placeholder)
+  const handleExport = () => {
+    alert(t('wl.export_coming_soon'));
+  };
+
+  // M2: Sort change handler
+  const handleSortChange = (sort: SortOption) => {
+    setCurrentSort(sort);
+  };
+
+  // S5: Guest blur overlay instead of early return
   if (!authState.loggedIn) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', gap: '12px', textAlign: 'center', flex: 1 }}>
-        <div style={{ fontSize: '40px', marginBottom: '8px' }}>★</div>
-        <div style={{ fontSize: '14px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>{t('wl.guest_title')}</div>
-        <div style={{ fontSize: '12px', color: '#6B7280' }}>{t('wl.guest_subtitle')}</div>
-        <button
-          style={{ marginTop: '12px', padding: '10px 20px', fontSize: '12px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2.5px solid #0a0a0a', borderRadius: '8px', background: '#0a0a0a', color: 'white', cursor: 'pointer' }}
-          onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}
-        >
-          {t('wl.guest_cta')}
-        </button>
+      <div style={{ position: 'relative', minHeight: '300px', overflow: 'hidden' }}>
+        {/* Skeleton-like background content with blur */}
+        <div style={{ filter: 'blur(4px)', pointerEvents: 'none', userSelect: 'none' }}>
+          {/* Fake selector */}
+          <div style={{ borderBottom: '1px solid #e5e5e5', marginBottom: '4px', paddingBottom: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 0' }}>
+              <div style={{ padding: '6px 12px', fontSize: '11px', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '2px solid #1a1a1a', borderRadius: '20px', background: '#1a1a1a', color: 'white' }}>Watchlist (3)</div>
+              <div style={{ padding: '6px 12px', fontSize: '11px', fontWeight: 500, fontFamily: "'Space Grotesk', sans-serif", border: '2px solid #0a0a0a', borderRadius: '20px', background: 'white', color: '#374151' }}>Favorites (5)</div>
+            </div>
+          </div>
+          {/* Fake stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', paddingBottom: '8px', marginBottom: '4px' }}>
+            <div style={{ background: 'rgba(34,197,94,0.06)', borderRadius: '6px', padding: '6px 8px', textAlign: 'center' }}>
+              <div style={{ fontSize: '9px', color: '#6B7280', fontFamily: "'JetBrains Mono', monospace" }}>ERV</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#059669', fontFamily: "'JetBrains Mono', monospace" }}>87%</div>
+            </div>
+            <div style={{ background: 'rgba(34,197,94,0.06)', borderRadius: '6px', padding: '6px 8px', textAlign: 'center' }}>
+              <div style={{ fontSize: '9px', color: '#6B7280', fontFamily: "'JetBrains Mono', monospace" }}>Online</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#059669', fontFamily: "'JetBrains Mono', monospace" }}>2</div>
+            </div>
+            <div style={{ background: 'rgba(0,0,0,0.04)', borderRadius: '6px', padding: '6px 8px', textAlign: 'center' }}>
+              <div style={{ fontSize: '9px', color: '#6B7280', fontFamily: "'JetBrains Mono', monospace" }}>Tracked</div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#6366f1', fontFamily: "'JetBrains Mono', monospace" }}>3/5</div>
+            </div>
+          </div>
+          {/* Fake cards */}
+          {[1, 2, 3].map(i => (
+            <div key={i} style={{ border: '2.5px solid #0a0a0a', borderRadius: '10px', padding: '10px 12px', marginBottom: '4px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#E5E7EB' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ width: '80px', height: '12px', background: '#E5E7EB', borderRadius: '4px', marginBottom: '4px' }} />
+                  <div style={{ width: '60px', height: '10px', background: '#F3F4F6', borderRadius: '4px' }} />
+                </div>
+                <div style={{ width: '50px', height: '18px', background: '#E5E7EB', borderRadius: '6px' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Overlay CTA */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          gap: '12px', textAlign: 'center', zIndex: 10,
+          background: 'rgba(255,255,255,0.3)',
+        }}>
+          <div style={{ fontSize: '40px', marginBottom: '8px' }}>★</div>
+          <div style={{ fontSize: '14px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>{t('wl.guest_title')}</div>
+          <div style={{ fontSize: '12px', color: '#6B7280' }}>{t('wl.guest_subtitle')}</div>
+          <button
+            style={{ marginTop: '12px', padding: '10px 20px', fontSize: '12px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2.5px solid #0a0a0a', borderRadius: '8px', background: '#0a0a0a', color: 'white', cursor: 'pointer' }}
+            onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}
+          >
+            {t('wl.guest_cta')}
+          </button>
+        </div>
       </div>
     );
   }
@@ -231,7 +276,7 @@ export function Watchlists({ tier, authState }: Props) {
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* Stats Row (S4: hardcoded "Tracked" → i18n) */}
       {activeWl && activeWl.stats.total > 0 && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', paddingBottom: '8px', borderBottom: '1px solid #e5e5e5', marginBottom: '4px' }}>
           <div style={{ background: 'rgba(34,197,94,0.06)', borderRadius: '6px', padding: '6px 8px', textAlign: 'center' }}>
@@ -246,11 +291,14 @@ export function Watchlists({ tier, authState }: Props) {
             </div>
           </div>
           <div style={{ background: 'rgba(0,0,0,0.04)', borderRadius: '6px', padding: '6px 8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '9px', color: '#6B7280', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '1px' }}>Tracked</div>
+            <div style={{ fontSize: '9px', color: '#6B7280', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '1px' }}>{t('wl.stat_tracked')}</div>
             <div style={{ fontSize: '13px', fontWeight: 700, color: tier === 'free' ? '#6B7280' : '#6366f1', fontFamily: "'JetBrains Mono', monospace" }}>{activeWl.stats.tracked_count}<span style={{ fontSize: '10px', color: '#a3a3a3' }}>/{activeWl.stats.total}</span></div>
           </div>
         </div>
       )}
+
+      {/* M2: Filter/Sort UI (FR-010/014) */}
+      <FilterSort tier={tier} currentSort={currentSort} onSortChange={handleSortChange} />
 
       {/* Search */}
       <div style={{ position: 'relative', marginBottom: '4px' }}>
@@ -281,110 +329,53 @@ export function Watchlists({ tier, authState }: Props) {
         </div>
       )}
 
-      {/* M2: Channel Cards */}
-      {filteredChannels.map(ch => {
-        const opacity = cardOpacity(ch);
-        const isSelected = selected.has(ch.channel_id);
-        const fresh = freshnessLabel(ch.last_ti_at, t);
+      {/* M2: Channel Cards (N3: extracted to WatchlistCard) */}
+      {filteredChannels.map(ch => (
+        <WatchlistCard
+          key={ch.channel_id}
+          ch={ch}
+          tier={tier}
+          isSelected={selected.has(ch.channel_id)}
+          onSelect={handleSelect}
+          onRemove={handleRemove}
+        />
+      ))}
 
-        return (
-          <div
-            key={ch.channel_id}
-            style={{
-              border: `2.5px solid ${isSelected ? '#6366f1' : '#0a0a0a'}`,
-              borderRadius: '10px', padding: '10px 12px', marginBottom: '4px',
-              background: isSelected ? 'rgba(99,102,241,0.03)' : 'white',
-              boxShadow: '2px 2px 0 rgba(0,0,0,0.06)',
-              cursor: 'pointer', position: 'relative', opacity,
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {/* Checkbox (Premium/Business) */}
-              {tier !== 'free' && tier !== 'guest' && (
-                <div
-                  onClick={(e) => { e.stopPropagation(); handleSelect(ch.channel_id); }}
-                  style={{
-                    width: '16px', height: '16px', borderRadius: '4px', flexShrink: 0,
-                    background: isSelected ? '#6366f1' : 'white',
-                    border: `2px solid ${isSelected ? '#6366f1' : '#a3a3a3'}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                  }}
-                >
-                  {isSelected && <span style={{ color: 'white', fontSize: '10px', fontWeight: 700 }}>✓</span>}
-                </div>
-              )}
-              {/* Avatar */}
-              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: ch.avatar_url ? 'transparent' : '#7C3AED', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '12px', fontWeight: 700, flexShrink: 0, overflow: 'hidden' }}>
-                {ch.avatar_url ? <img src={ch.avatar_url} alt="" width={32} height={32} /> : ch.display_name[0]?.toUpperCase()}
-              </div>
-              {/* Name + status */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '12px', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif" }}>{ch.display_name}</div>
-                <div style={{ fontSize: '10px', color: '#6B7280', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                  {ch.is_live && <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: ervColor(ch.erv_percent), animation: 'pulse 2s infinite' }} />}
-                  {ch.is_live ? `${t('wl.online')} · ${(ch.ccv || 0).toLocaleString()} ${t('wl.viewers')}` : ch.inactive ? t('wl.inactive_label') : t('wl.offline')}
-                </div>
-              </div>
-              {/* ERV + TI badges */}
-              {!ch.inactive && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
-                  <span style={{ fontSize: '9px', padding: '2px 7px', background: `${ervColor(ch.erv_percent)}15`, color: ervColor(ch.erv_percent), borderRadius: '6px', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>ERV {ch.erv_percent != null ? `${ch.erv_percent}%` : '—'}</span>
-                  <span style={{ fontSize: '8px', padding: '1px 5px', background: `${ervColor(ch.erv_percent)}10`, color: ervColor(ch.erv_percent), borderRadius: '4px', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>TI {ch.ti_score ?? '—'}</span>
-                </div>
-              )}
-              {/* Inactive badge */}
-              {ch.inactive && (
-                <span style={{ fontSize: '8px', padding: '2px 6px', background: 'rgba(0,0,0,0.06)', color: '#a3a3a3', borderRadius: '4px', fontWeight: 500 }}>{t('wl.inactive_badge')}</span>
-              )}
-              {/* Kebab */}
-              <button
-                onClick={(e) => { e.stopPropagation(); handleRemove(ch.channel_id); }}
-                style={{ position: 'absolute', top: '6px', right: '6px', background: 'none', border: 'none', color: '#a3a3a3', fontSize: '14px', cursor: 'pointer', padding: '2px 4px', lineHeight: '1' }}
-                title={t('wl.remove')}
-              >×</button>
-            </div>
-            {/* Tags + freshness */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '5px', paddingTop: '5px', borderTop: '1px solid #e5e7eb' }}>
-              {ch.tags.slice(0, 3).map(tag => (
-                <span key={tag} style={{ fontSize: '9px', padding: '1px 6px', background: 'rgba(0,0,0,0.04)', color: '#6B7280', borderRadius: '4px' }}>#{tag}</span>
-              ))}
-              <span style={{ flex: 1 }} />
-              <span style={{ fontSize: '9px', color: fresh.color }}>{fresh.text}</span>
-            </div>
-            {/* Stale warning */}
-            {ch.inactive && (
-              <div style={{ fontSize: '9px', color: '#D97706', marginTop: '4px' }}>{t('wl.stale_data')}</div>
-            )}
-            {/* CTA — only for untracked */}
-            {!ch.is_tracked && !ch.inactive && (
-              <button style={{ width: '100%', marginTop: '6px', padding: '5px', fontSize: '11px', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid rgba(99,102,241,0.3)', borderRadius: '6px', background: 'rgba(99,102,241,0.04)', color: '#6366f1', cursor: 'pointer' }}>
-                {t('wl.start_tracking')}
-              </button>
-            )}
-          </div>
-        );
-      })}
-
-      {/* Conversion Banner (≥5 channels → Business) */}
+      {/* Conversion Banner (>=5 channels -> Business) — M1: Business CTA onClick */}
       {showBanner && (
         <div style={{ marginTop: '10px', padding: '14px 16px', borderRadius: '10px', background: 'linear-gradient(135deg, #1a1a1a 0%, #2d1e5e 100%)', border: '2.5px solid #1a1a1a', color: 'white', position: 'relative', boxShadow: '3px 3px 0 rgba(0,0,0,0.15)' }}>
           <div style={{ fontSize: '10px', fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>Business</div>
           <div style={{ fontSize: '13px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", marginBottom: '4px', lineHeight: '1.3' }}>{t('wl.conversion', { n: activeWl!.stats.total })}</div>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '10px' }}>
-            <button style={{ flex: 1, padding: '8px 14px', fontSize: '11px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2px solid white', borderRadius: '8px', background: 'white', color: '#1a1a1a', cursor: 'pointer' }}>{t('wl.business_cta')}</button>
+            <button
+              onClick={() => window.open('https://himrate.com/pricing', '_blank')}
+              style={{ flex: 1, padding: '8px 14px', fontSize: '11px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2px solid white', borderRadius: '8px', background: 'white', color: '#1a1a1a', cursor: 'pointer' }}
+            >
+              {t('wl.business_cta')}
+            </button>
             <span style={{ fontSize: '11px', fontFamily: "'JetBrains Mono', monospace", color: '#a5b4fc', fontWeight: 700, whiteSpace: 'nowrap' }}>{t('wl.business_price')}</span>
           </div>
           <button onClick={handleDismissBanner} style={{ position: 'absolute', top: '8px', right: '10px', background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '16px', cursor: 'pointer', lineHeight: '1', padding: '2px' }} title={t('wl.dismiss_1d')}>×</button>
         </div>
       )}
 
-      {/* M3: Bulk Actions Bar */}
+      {/* M3: Bulk Actions Bar — M1: Compare + Export onClick handlers */}
       {selected.size > 0 && (
         <div style={{ padding: '10px 14px', background: '#1a1a1a', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginTop: '8px' }}>
           <span style={{ fontSize: '11px', color: '#ffffff', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>{t('wl.selected', { n: selected.size })}</span>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-            <button style={{ padding: '5px 10px', fontSize: '10px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid #ffffff', borderRadius: '6px', background: '#ffffff', color: '#1a1a1a', cursor: 'pointer' }}>{t('wl.compare')}</button>
-            <button style={{ padding: '5px 10px', fontSize: '10px', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid rgba(255,255,255,0.5)', borderRadius: '6px', background: 'transparent', color: '#ffffff', cursor: 'pointer' }}>{t('wl.export')}</button>
+            <button
+              onClick={handleCompare}
+              style={{ padding: '5px 10px', fontSize: '10px', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid #ffffff', borderRadius: '6px', background: '#ffffff', color: '#1a1a1a', cursor: 'pointer' }}
+            >
+              {t('wl.compare')}
+            </button>
+            <button
+              onClick={handleExport}
+              style={{ padding: '5px 10px', fontSize: '10px', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid rgba(255,255,255,0.5)', borderRadius: '6px', background: 'transparent', color: '#ffffff', cursor: 'pointer' }}
+            >
+              {t('wl.export')}
+            </button>
             <button onClick={() => setSelected(new Set())} style={{ padding: '5px 8px', fontSize: '10px', fontWeight: 500, border: 'none', background: 'transparent', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', textDecoration: 'underline' }}>{t('wl.deselect')}</button>
           </div>
         </div>

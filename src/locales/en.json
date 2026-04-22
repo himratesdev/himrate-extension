@@ -258,5 +258,46 @@
   "wl.sort_added": "Added ↓",
   "wl.filters_locked": "Premium",
   "wl.sort_label": "Sort",
-  "wl.filters_label": "Filters"
+  "wl.filters_label": "Filters",
+
+  "trends.no_channel": "Open a Twitch channel to see trends",
+  "trends.period.aria": "Period selector",
+  "trends.period.7d": "7d",
+  "trends.period.30d": "30d",
+  "trends.period.60d": "60d",
+  "trends.period.90d": "90d",
+  "trends.period.365d": "365d",
+
+  "trends.confidence.high": "High confidence",
+  "trends.confidence.medium": "Medium confidence",
+  "trends.confidence.low": "Low confidence",
+
+  "trends.errors.generic": "Failed to load data",
+  "trends.errors.retry": "Retry",
+
+  "trends.empty.title": "Insufficient data",
+  "trends.empty.min_3_streams": "Minimum 3 streams required",
+  "trends.empty.min_7_streams": "Stability needs 7+ streams",
+  "trends.empty.min_14_days": "Component breakdown needs 14+ days",
+
+  "trends.modules.erv.title": "ERV — Real Viewers",
+  "trends.modules.erv.hero_label": "real viewers",
+
+  "trends.modules.trust_index.title": "Trust Index — History",
+
+  "trends.modules.rehabilitation.title": "Rating Recovery",
+  "trends.modules.rehabilitation.progress": "{{completed}}/{{required}} clean streams ({{pct}}%)",
+  "trends.modules.rehabilitation.bonus_badge": "+{{n}} bonus",
+  "trends.modules.rehabilitation.bonus_tooltip_title": "How bonus is earned",
+  "trends.modules.rehabilitation.bonus_chat": "Chat quality: {{n}}/100",
+  "trends.modules.rehabilitation.bonus_engagement": "Engagement: {{n}}/100",
+  "trends.modules.rehabilitation.eta": "Full recovery in ~{{streams}} streams",
+
+  "trends.tier_changes.count_one": "1 tier change",
+  "trends.tier_changes.count_few": "{{count}} tier changes",
+  "trends.tier_changes.count_many": "{{count}} tier changes",
+  "trends.tier_changes.count_other": "{{count}} tier changes",
+
+  "trends.best_stream.title": "Best stream",
+  "trends.worst_stream.title": "Lowest stream"
 }

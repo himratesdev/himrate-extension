@@ -9,6 +9,8 @@ import { TabBar } from './components/TabBar';
 import { Overview } from './components/Overview';
 import { PlaceholderTab } from './components/PlaceholderTab';
 import { Watchlists } from './components/Watchlists';
+import { TrendsTab } from './components/tabs/trends/TrendsTab';
+import type { AccessLevel } from '../shared/trends-types';
 import { ChannelSwitchNotification } from './components/ChannelSwitchNotification';
 import { InfoBanner } from './components/InfoBanner';
 import type { TrustCache } from '../shared/api';
@@ -154,6 +156,11 @@ export function SidePanel() {
           />
         ) : currentTab === 'watchlists' ? (
           <Watchlists tier={tier} authState={authState} />
+        ) : currentTab === 'trends' ? (
+          <TrendsTab
+            channelId={trustCache?.channel_id ?? null}
+            accessLevel={resolveAccessLevel(tier, isOwnChannel)}
+          />
         ) : (
           <PlaceholderTab tabId={currentTab} />
         )}
@@ -185,4 +192,14 @@ function getAnomalyTabs(cache: TrustCache | null): string[] {
   if (!cache?.is_live || cache.erv_percent == null || cache.erv_percent >= 80) return [];
   // Anomaly dots on Overview + relevant tabs when ERV < 80%
   return ['overview'];
+}
+
+// TASK-039 Phase D1: access_level resolution для Trends API (FR-011..014).
+// Matches ChannelPolicy semantics: business > streamer > premium > free > anonymous.
+function resolveAccessLevel(tier: string, isOwnChannel: boolean): AccessLevel {
+  if (tier === 'business') return 'business';
+  if (isOwnChannel && (tier === 'streamer' || tier === 'free')) return 'streamer';
+  if (tier === 'premium') return 'premium';
+  if (tier === 'free') return 'free';
+  return 'anonymous';
 }

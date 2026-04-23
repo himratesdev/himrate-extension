@@ -1,12 +1,13 @@
-// TASK-039 FR-001, M1 Hero module — ERV% timeline с trend + forecast.
+// TASK-039 FR-001, M1 Hero module — ERV% timeline с trend + forecast + explanation + best/worst.
 // Consumes GET /api/v1/channels/:id/trends/erv.
-// Hero layout: current ERV% большой, trend arrow, chart, forecast dashed.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { trendsApi } from '../../../../../shared/trends-api';
-import type { ErvResponse, TrendsPeriod } from '../../../../../shared/trends-types';
-import { LineChart } from '../charts/LineChart';
+import type { ErvResponse, TrendsPeriod, ForecastBlock } from '../../../../../shared/trends-types';
+import { trendsColor } from '../../../../../shared/trends-theme';
+import { useCurrentLocale } from '../../../../../shared/use-current-locale';
+import { LineChart, type Series } from '../charts/LineChart';
 import { LoadingSkeleton } from '../states/LoadingSkeleton';
 import { ErrorState } from '../states/ErrorState';
 import { InsufficientData } from '../states/InsufficientData';
@@ -14,36 +15,39 @@ import { InsufficientData } from '../states/InsufficientData';
 interface Props {
   channelId: string;
   period: TrendsPeriod;
-  compact?: boolean;
+  /** Overview list variant (denser layout). Default variant = drill-down detail. */
+  variant?: 'overview' | 'detail';
 }
 
-export function ErvTimeline({ channelId, period, compact = false }: Props) {
-  const { t, i18n } = useTranslation();
+export function ErvTimeline({ channelId, period, variant = 'detail' }: Props) {
+  const { t } = useTranslation();
+  const locale = useCurrentLocale();
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'ok'; data: ErvResponse }
     | { status: 'error' }
     | { status: 'empty' }
   >({ status: 'loading' });
-
-  // refreshKey bumps → effect re-fires (манульный retry через ErrorState).
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     setState({ status: 'loading' });
     const ctrl = new AbortController();
-    trendsApi.getErv(channelId, period, 'daily', ctrl.signal).then((result) => {
-      if (!result.ok) {
-        setState({ status: result.error === 'insufficient_data' ? 'empty' : 'error' });
-        return;
-      }
-      const points = result.data.data.points;
-      if (points.length < 3) {
-        setState({ status: 'empty' });
-        return;
-      }
-      setState({ status: 'ok', data: result.data });
-    });
+    trendsApi
+      .getErv(channelId, period, 'daily', ctrl.signal)
+      .then((result) => {
+        if (!result.ok) {
+          setState({ status: result.error === 'insufficient_data' ? 'empty' : 'error' });
+          return;
+        }
+        const points = result.data.data.points;
+        setState(points.length < 3 ? { status: 'empty' } : { status: 'ok', data: result.data });
+      })
+      .catch((e: unknown) => {
+        // CR N-5: AbortError при unmount — expected, не regression.
+        if (e instanceof DOMException && e.name === 'AbortError') return;
+        setState({ status: 'error' });
+      });
     return () => ctrl.abort();
   }, [channelId, period, refreshKey]);
 
@@ -53,15 +57,47 @@ export function ErvTimeline({ channelId, period, compact = false }: Props) {
   if (state.status === 'error') return <ErrorState onRetry={handleRetry} />;
   if (state.status === 'empty') return <InsufficientData reasonKey="min_3_streams" />;
 
-  const d = state.data.data;
-  const locale = i18n.language.startsWith('ru') ? 'ru' : 'en';
+  return <ErvTimelineView data={state.data} locale={locale} variant={variant} t={t} />;
+}
+
+// Pure view component — easier testing + clearer separation from fetch logic.
+export function ErvTimelineView({
+  data,
+  locale,
+  variant,
+  t,
+}: {
+  data: ErvResponse;
+  locale: 'ru' | 'en';
+  variant: 'overview' | 'detail';
+  t: ReturnType<typeof useTranslation>['t'];
+}) {
+  const d = data.data;
   const dates = d.points.map((p) => p.date);
-  const values = d.points.map((p) => p.erv_percent);
+  const ervValues = d.points.map((p) => p.erv_percent);
   const current = d.summary?.current;
   const trendArrow = d.trend.direction === 'rising' ? '↑' : d.trend.direction === 'declining' ? '↓' : '→';
 
+  // CR S-1: forecast как dashed projection series.
+  // Extends x-axis: last actual point + forecast_7d + forecast_30d projected points.
+  const forecastSeries = useMemo(() => buildForecastSeries(dates, ervValues, d.forecast), [dates, ervValues, d.forecast]);
+  const chartDates = forecastSeries ? forecastSeries.dates : dates;
+
+  const series: Series[] = [
+    { label: 'ERV %', values: padValues(ervValues, chartDates.length), color: trendsColor('erv'), width: 2 },
+  ];
+  if (forecastSeries) {
+    series.push({
+      label: t('trends.modules.erv.forecast_series_label'),
+      values: forecastSeries.values,
+      color: trendsColor('forecast'),
+      dashed: true,
+      width: 2,
+    });
+  }
+
   return (
-    <div className="trends-module trends-module-erv">
+    <div className={`trends-module trends-module-erv trends-module-${variant}`}>
       <div className="trends-module-header">
         <span className="trends-module-title">{t('trends.modules.erv.title')}</span>
       </div>
@@ -79,22 +115,23 @@ export function ErvTimeline({ channelId, period, compact = false }: Props) {
             {d.trend.delta.toFixed(1)}
           </span>
           {d.trend.confidence && (
-            <span className="trends-trend-confidence">
-              {t(`trends.confidence.${d.trend.confidence}`)}
-            </span>
+            <span className="trends-trend-confidence">{t(`trends.confidence.${d.trend.confidence}`)}</span>
           )}
         </div>
       )}
 
       <LineChart
-        dates={dates}
-        series={buildSeries(values, d.forecast, locale)}
-        width={compact ? 300 : 320}
-        height={compact ? 120 : 160}
+        dates={chartDates}
+        series={series}
+        height={variant === 'overview' ? 120 : 160}
         yMin={0}
         yMax={100}
         valueFormatter={(v) => `${v.toFixed(0)}%`}
       />
+
+      {d.forecast && (
+        <ForecastBlock forecast={d.forecast} t={t} />
+      )}
 
       {d.trend_explanation.explanation_en && (
         <div className="trends-explanation">
@@ -124,9 +161,66 @@ export function ErvTimeline({ channelId, period, compact = false }: Props) {
   );
 }
 
-function buildSeries(values: (number | null)[], _forecast: ErvResponse['data']['forecast'], locale: string) {
-  const label = locale === 'ru' ? 'ERV %' : 'ERV %';
-  return [
-    { label, values, color: '#16a34a', width: 2 },
+function ForecastBlock({ forecast, t }: { forecast: ForecastBlock; t: ReturnType<typeof useTranslation>['t'] }) {
+  const reliability = t(`trends.reliability.${forecast.reliability}`);
+  return (
+    <div className="trends-forecast-block">
+      <div className="trends-forecast-row">
+        <span className="trends-forecast-label">{t('trends.forecast.horizon_7d')}</span>
+        <span className="trends-forecast-value">
+          {t('trends.forecast.range', {
+            value: forecast.forecast_7d.value.toFixed(1),
+            lower: forecast.forecast_7d.lower.toFixed(1),
+            upper: forecast.forecast_7d.upper.toFixed(1),
+          })}
+        </span>
+      </div>
+      <div className="trends-forecast-row">
+        <span className="trends-forecast-label">{t('trends.forecast.horizon_30d')}</span>
+        <span className="trends-forecast-value">
+          {t('trends.forecast.range', {
+            value: forecast.forecast_30d.value.toFixed(1),
+            lower: forecast.forecast_30d.lower.toFixed(1),
+            upper: forecast.forecast_30d.upper.toFixed(1),
+          })}
+        </span>
+      </div>
+      <div className={`trends-forecast-reliability trends-forecast-${forecast.reliability}`}>{reliability}</div>
+      {forecast.reliability === 'low' && (
+        <div className="trends-forecast-disclaimer">{t('trends.reliability.disclaimer_low')}</div>
+      )}
+    </div>
+  );
+}
+
+// Forecast projection — extends dates + values с 2 forecast points (7d + 30d ahead).
+// Returns {dates, values} aligned с actual series (padded с nulls for historical).
+// null early для historical → не рендерится в dashed line (только forecast tail).
+function buildForecastSeries(
+  historicalDates: string[],
+  historicalValues: (number | null)[],
+  forecast: ForecastBlock | null,
+): { dates: string[]; values: (number | null)[] } | null {
+  if (!forecast || historicalDates.length === 0) return null;
+
+  const lastDate = historicalDates[historicalDates.length - 1];
+  if (!lastDate) return null;
+
+  const lastTs = new Date(lastDate).getTime();
+  const date7d = new Date(lastTs + 7 * 86_400_000).toISOString().slice(0, 10);
+  const date30d = new Date(lastTs + 30 * 86_400_000).toISOString().slice(0, 10);
+
+  const extendedDates = [...historicalDates, date7d, date30d];
+  const extendedValues: (number | null)[] = [
+    ...new Array(historicalDates.length - 1).fill(null),
+    historicalValues[historicalValues.length - 1] ?? null, // anchor: last historical
+    forecast.forecast_7d.value,
+    forecast.forecast_30d.value,
   ];
+  return { dates: extendedDates, values: extendedValues };
+}
+
+function padValues(values: (number | null)[], targetLength: number): (number | null)[] {
+  if (values.length >= targetLength) return values;
+  return [...values, ...new Array(targetLength - values.length).fill(null)];
 }

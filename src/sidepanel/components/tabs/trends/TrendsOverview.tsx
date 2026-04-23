@@ -15,8 +15,8 @@ interface Props {
 export function TrendsOverview({ channelId, period }: Props) {
   return (
     <div className="trends-overview">
-      <ErvTimeline channelId={channelId} period={period} compact />
-      <TrustIndexTimeline channelId={channelId} period={period} compact />
+      <ErvTimeline channelId={channelId} period={period} variant="overview" />
+      <TrustIndexTimeline channelId={channelId} period={period} variant="overview" />
       <RehabilitationCurve channelId={channelId} />
     </div>
   );

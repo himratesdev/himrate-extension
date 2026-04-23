@@ -267,10 +267,20 @@
   "trends.period.60d": "60д",
   "trends.period.90d": "90д",
   "trends.period.365d": "365д",
+  "trends.period.business_required": "Годовая история доступна в Business — $99/мес",
 
   "trends.confidence.high": "Высокая точность",
   "trends.confidence.medium": "Средняя точность",
   "trends.confidence.low": "Низкая точность",
+
+  "trends.reliability.high": "Высокая точность прогноза",
+  "trends.reliability.medium": "Средняя точность прогноза",
+  "trends.reliability.low": "Низкая точность прогноза",
+  "trends.reliability.disclaimer_low": "Точность прогноза низкая — интерпретируйте с осторожностью.",
+
+  "trends.forecast.horizon_7d": "Прогноз на 7 дней",
+  "trends.forecast.horizon_30d": "Прогноз на 30 дней",
+  "trends.forecast.range": "{{value}} ({{lower}}..{{upper}})",
 
   "trends.errors.generic": "Не удалось загрузить данные",
   "trends.errors.retry": "Повторить",
@@ -279,11 +289,19 @@
   "trends.empty.min_3_streams": "Необходимо минимум 3 стрима",
   "trends.empty.min_7_streams": "Стабильность рассчитывается при 7+ стримах",
   "trends.empty.min_14_days": "Компоненты требуют минимум 14 дней",
+  "trends.empty.no_channel": "Откройте Twitch канал чтобы увидеть тренды",
+
+  "trends.anonymous.aria": "Требуется авторизация",
+  "trends.anonymous.title": "Войдите чтобы увидеть тренды",
+  "trends.anonymous.message": "Исторические данные доступны авторизованным пользователям.",
+  "trends.anonymous.sign_in": "Войти",
 
   "trends.modules.erv.title": "ERV — Реальные зрители",
   "trends.modules.erv.hero_label": "реальных зрителей",
+  "trends.modules.erv.forecast_series_label": "Прогноз ERV",
 
   "trends.modules.trust_index.title": "Trust Index — История",
+  "trends.modules.trust_index.forecast_series_label": "Прогноз TI",
 
   "trends.modules.rehabilitation.title": "Восстановление рейтинга",
   "trends.modules.rehabilitation.progress": "{{completed}}/{{required}} чистых стримов ({{pct}}%)",

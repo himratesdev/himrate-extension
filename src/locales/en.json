@@ -267,10 +267,20 @@
   "trends.period.60d": "60d",
   "trends.period.90d": "90d",
   "trends.period.365d": "365d",
+  "trends.period.business_required": "365-day history requires Business — $99/mo",
 
   "trends.confidence.high": "High confidence",
   "trends.confidence.medium": "Medium confidence",
   "trends.confidence.low": "Low confidence",
+
+  "trends.reliability.high": "High reliability",
+  "trends.reliability.medium": "Medium reliability",
+  "trends.reliability.low": "Low reliability",
+  "trends.reliability.disclaimer_low": "Forecast reliability is low — view with caution.",
+
+  "trends.forecast.horizon_7d": "7-day forecast",
+  "trends.forecast.horizon_30d": "30-day forecast",
+  "trends.forecast.range": "{{value}} ({{lower}}..{{upper}})",
 
   "trends.errors.generic": "Failed to load data",
   "trends.errors.retry": "Retry",
@@ -279,11 +289,19 @@
   "trends.empty.min_3_streams": "Minimum 3 streams required",
   "trends.empty.min_7_streams": "Stability needs 7+ streams",
   "trends.empty.min_14_days": "Component breakdown needs 14+ days",
+  "trends.empty.no_channel": "Open a Twitch channel to see trends",
+
+  "trends.anonymous.aria": "Authentication required",
+  "trends.anonymous.title": "Sign in to see trends",
+  "trends.anonymous.message": "Historical analytics available for authenticated users.",
+  "trends.anonymous.sign_in": "Sign in",
 
   "trends.modules.erv.title": "ERV — Real Viewers",
   "trends.modules.erv.hero_label": "real viewers",
+  "trends.modules.erv.forecast_series_label": "ERV forecast",
 
   "trends.modules.trust_index.title": "Trust Index — History",
+  "trends.modules.trust_index.forecast_series_label": "TI forecast",
 
   "trends.modules.rehabilitation.title": "Rating Recovery",
   "trends.modules.rehabilitation.progress": "{{completed}}/{{required}} clean streams ({{pct}}%)",

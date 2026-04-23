@@ -1,13 +1,17 @@
 // TASK-039 Phase D1: uPlot React wrapper для TI/ERV timeline.
-// SRS §14 OQ-3: uPlot 40KB (vs Chart.js 200KB), 5x faster на 365d — CWS bundle-size optimized.
+// SRS §14 OQ-3: uPlot 40KB (vs Chart.js 200KB), 5x faster на 365d — CWS bundle optimized.
 //
-// Props API minimal: series (label, values, color). Forecast dashed-line variant supported
-// через dashed: true. Tooltip formatter via valueFormatter prop.
+// Build-for-years:
+//   - Colors через CSS custom properties (src/shared/trends-theme.ts)
+//   - Responsive width через ResizeObserver (container-width driven, не magic numbers)
+//   - Dashed series support для forecast projection (CR S-1)
+//   - Anomaly markers через draw hook (canvas-level, zero DOM overhead)
 
 import { useEffect, useRef, useMemo } from 'react';
 import uPlot from 'uplot';
 import type { Options, AlignedData } from 'uplot';
 import 'uplot/dist/uPlot.min.css';
+import { trendsPalette } from '../../../../../shared/trends-theme';
 
 export interface Series {
   label: string;
@@ -20,21 +24,24 @@ export interface Series {
 interface Props {
   dates: string[];
   series: Series[];
+  /** Fixed width. Если не передано → auto-expand to container (responsive). */
   width?: number;
   height?: number;
   yMin?: number;
   yMax?: number;
   valueFormatter?: (v: number) => string;
   dateFormatter?: (date: string) => string;
-  /** Anomaly markers: date string → render vertical red line. */
+  /** Anomaly markers: date string → vertical red line (canvas draw hook). */
   anomalyDates?: string[];
 }
+
+const DEFAULT_HEIGHT = 160;
 
 export function LineChart({
   dates,
   series,
-  width = 320,
-  height = 160,
+  width,
+  height = DEFAULT_HEIGHT,
   yMin,
   yMax,
   valueFormatter,
@@ -43,6 +50,7 @@ export function LineChart({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const plotRef = useRef<uPlot | null>(null);
+  const palette = useMemo(() => trendsPalette(), []);
 
   // Convert dates → unix timestamps (uPlot x-axis requires numeric).
   const xValues = useMemo(
@@ -55,13 +63,18 @@ export function LineChart({
     [xValues, series]
   );
 
-  const opts = useMemo<Options>(() => {
+  // Initial plot creation — build options once, then .setData / .setSize.
+  useEffect(() => {
+    if (!containerRef.current) return;
+    if (plotRef.current) return; // already created; see update effect below
+
+    const initialWidth = width ?? containerRef.current.clientWidth ?? 320;
     const anomalyTimestamps = new Set(
       anomalyDates.map((d) => Math.floor(new Date(d).getTime() / 1000))
     );
 
-    return {
-      width,
+    const opts: Options = {
+      width: initialWidth,
       height,
       scales: {
         y: {
@@ -70,7 +83,7 @@ export function LineChart({
       },
       axes: [
         {
-          stroke: '#6b7280',
+          stroke: palette.axisStroke,
           size: 30,
           values: (_u, splits) =>
             splits.map((s) => {
@@ -79,7 +92,7 @@ export function LineChart({
             }),
         },
         {
-          stroke: '#6b7280',
+          stroke: palette.axisStroke,
           size: 40,
           values: (_u, splits) =>
             splits.map((v) => (valueFormatter ? valueFormatter(v) : v.toFixed(0))),
@@ -101,7 +114,7 @@ export function LineChart({
             if (anomalyTimestamps.size === 0) return;
             const { ctx } = u;
             ctx.save();
-            ctx.strokeStyle = '#dc2626';
+            ctx.strokeStyle = palette.anomaly;
             ctx.lineWidth = 1;
             ctx.setLineDash([2, 2]);
             u.data[0].forEach((ts) => {
@@ -119,21 +132,42 @@ export function LineChart({
       legend: { show: false },
       cursor: { drag: { x: false, y: false } },
     };
-  }, [width, height, yMin, yMax, series, valueFormatter, dateFormatter, anomalyDates]);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-    if (plotRef.current) {
-      plotRef.current.setSize({ width, height });
-      plotRef.current.setData(data);
-      return;
-    }
     plotRef.current = new uPlot(opts, data, containerRef.current);
     return () => {
       plotRef.current?.destroy();
       plotRef.current = null;
     };
-  }, [data, opts, width, height]);
+    // Mount-only effect — uPlot instance created once, lifecycle managed manually.
+    // Subsequent updates (data, size) handled отдельными effects ниже чтобы избежать
+    // recreate-on-every-render overhead. If series structure changes (count), consumer
+    // должен remount компонент через key prop.
+  }, []);
 
-  return <div ref={containerRef} className="sp-linechart" />;
+  // Data updates — don't recreate plot, just setData + setSize.
+  useEffect(() => {
+    const plot = plotRef.current;
+    if (!plot) return;
+    plot.setData(data);
+  }, [data]);
+
+  // Responsive: resize to container width unless explicit width prop.
+  useEffect(() => {
+    if (width != null) {
+      plotRef.current?.setSize({ width, height });
+      return;
+    }
+    const container = containerRef.current;
+    if (!container || typeof ResizeObserver === 'undefined') return;
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry || !plotRef.current) return;
+      plotRef.current.setSize({ width: Math.floor(entry.contentRect.width), height });
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [width, height]);
+
+  return <div ref={containerRef} className="sp-linechart" style={{ width: '100%', height }} />;
 }

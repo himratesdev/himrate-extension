@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { trendsApi } from '../../../../../shared/trends-api';
 import type { RehabilitationResponse } from '../../../../../shared/trends-types';
+import { useCurrentLocale } from '../../../../../shared/use-current-locale';
 import { ErrorState } from '../states/ErrorState';
 import { LoadingSkeleton } from '../states/LoadingSkeleton';
 
@@ -14,7 +15,8 @@ interface Props {
 }
 
 export function RehabilitationCurve({ channelId }: Props) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const locale = useCurrentLocale();
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'ok'; data: RehabilitationResponse }
@@ -28,18 +30,21 @@ export function RehabilitationCurve({ channelId }: Props) {
   useEffect(() => {
     setState({ status: 'loading' });
     const ctrl = new AbortController();
-    trendsApi.getRehabilitation(channelId, '30d', ctrl.signal).then((result) => {
-      if (!result.ok) {
+    trendsApi
+      .getRehabilitation(channelId, '30d', ctrl.signal)
+      .then((result) => {
+        if (!result.ok) {
+          setState({ status: 'error' });
+          return;
+        }
+        const active = result.data.data.rehabilitation_active ?? result.data.data.active ?? false;
+        setState(active ? { status: 'ok', data: result.data } : { status: 'inactive' });
+      })
+      .catch((e: unknown) => {
+        // CR N-5: AbortError на unmount — expected.
+        if (e instanceof DOMException && e.name === 'AbortError') return;
         setState({ status: 'error' });
-        return;
-      }
-      const active = result.data.data.rehabilitation_active ?? result.data.data.active ?? false;
-      if (!active) {
-        setState({ status: 'inactive' });
-        return;
-      }
-      setState({ status: 'ok', data: result.data });
-    });
+      });
     return () => ctrl.abort();
   }, [channelId, refreshKey]);
 
@@ -51,7 +56,6 @@ export function RehabilitationCurve({ channelId }: Props) {
   if (state.status === 'inactive') return null;
 
   const d = state.data.data;
-  const locale = i18n.language.startsWith('ru') ? 'ru' : 'en';
   const progress = d.progress;
   const bonus = d.bonus;
 
@@ -59,7 +63,9 @@ export function RehabilitationCurve({ channelId }: Props) {
 
   const completed = progress.clean_streams_completed;
   const required = progress.clean_streams_required;
-  const pct = progress.effective_progress_pct ?? progress.completion_percent ?? progress.progress_pct;
+  // CR S-2: все три pct поля optional в types — fallback 0 предотвращает
+  // TypeError на pct.toFixed() когда backend возвращает пустую prog payload.
+  const pct = progress.effective_progress_pct ?? progress.completion_percent ?? progress.progress_pct ?? 0;
 
   return (
     <div className="trends-module trends-module-rehab">

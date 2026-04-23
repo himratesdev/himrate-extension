@@ -1,16 +1,17 @@
 // TASK-039 FR-002, M2 — Trust Index timeline с trend + forecast + tier_changes + anomaly markers.
 // Consumes GET /api/v1/channels/:id/trends/trust_index.
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { trendsApi } from '../../../../../shared/trends-api';
-import type { TrustIndexResponse, TrendsPeriod, ForecastBlock } from '../../../../../shared/trends-types';
+import type { TrustIndexResponse, TrendsPeriod } from '../../../../../shared/trends-types';
 import { trendsColor } from '../../../../../shared/trends-theme';
 import { useCurrentLocale } from '../../../../../shared/use-current-locale';
 import { LineChart, type Series } from '../charts/LineChart';
 import { LoadingSkeleton } from '../states/LoadingSkeleton';
 import { ErrorState } from '../states/ErrorState';
 import { InsufficientData } from '../states/InsufficientData';
+import { buildForecastSeries, padValues, ForecastBlockView } from '../shared/forecast-helpers';
 
 interface Props {
   channelId: string;
@@ -70,26 +71,32 @@ export function TrustIndexTimelineView({
   t: ReturnType<typeof useTranslation>['t'];
 }) {
   const d = data.data;
-  const dates = d.points.map((p) => p.date);
-  const tiValues = d.points.map((p) => p.ti);
   const current = d.summary?.current;
-  const anomalyDates = d.anomaly_markers.map((a) => a.date);
+  const anomalyDates = useMemo(() => d.anomaly_markers.map((a) => a.date), [d.anomaly_markers]);
 
-  const forecastSeries = useMemo(() => buildForecastSeries(dates, tiValues, d.forecast), [dates, tiValues, d.forecast]);
-  const chartDates = forecastSeries ? forecastSeries.dates : dates;
+  // Proper memoization: deps — d.points + d.forecast (reference-stable из server
+  // response). Prevents пересчёт series при unrelated parent re-renders.
+  const { chartDates, series } = useMemo<{ chartDates: string[]; series: Series[] }>(() => {
+    const dates = d.points.map((p) => p.date);
+    const tiValues = d.points.map((p) => p.ti);
+    const forecastSeries = buildForecastSeries(dates, tiValues, d.forecast);
+    const resolvedDates = forecastSeries ? forecastSeries.dates : dates;
 
-  const series: Series[] = [
-    { label: 'TI', values: padValues(tiValues, chartDates.length), color: trendsColor('ti'), width: 2 },
-  ];
-  if (forecastSeries) {
-    series.push({
-      label: t('trends.modules.trust_index.forecast_series_label'),
-      values: forecastSeries.values,
-      color: trendsColor('forecast'),
-      dashed: true,
-      width: 2,
-    });
-  }
+    const built: Series[] = [
+      { label: 'TI', values: padValues(tiValues, resolvedDates.length), color: trendsColor('ti'), width: 2 },
+    ];
+    if (forecastSeries) {
+      built.push({
+        label: t('trends.modules.trust_index.forecast_series_label'),
+        values: forecastSeries.values,
+        color: trendsColor('forecast'),
+        dashed: true,
+        width: 2,
+      });
+    }
+
+    return { chartDates: resolvedDates, series: built };
+  }, [d.points, d.forecast, t]);
 
   return (
     <div className={`trends-module trends-module-ti trends-module-${variant}`}>
@@ -119,36 +126,7 @@ export function TrustIndexTimelineView({
         anomalyDates={anomalyDates}
       />
 
-      {d.forecast && (
-        <div className="trends-forecast-block">
-          <div className="trends-forecast-row">
-            <span className="trends-forecast-label">{t('trends.forecast.horizon_7d')}</span>
-            <span className="trends-forecast-value">
-              {t('trends.forecast.range', {
-                value: d.forecast.forecast_7d.value.toFixed(1),
-                lower: d.forecast.forecast_7d.lower.toFixed(1),
-                upper: d.forecast.forecast_7d.upper.toFixed(1),
-              })}
-            </span>
-          </div>
-          <div className="trends-forecast-row">
-            <span className="trends-forecast-label">{t('trends.forecast.horizon_30d')}</span>
-            <span className="trends-forecast-value">
-              {t('trends.forecast.range', {
-                value: d.forecast.forecast_30d.value.toFixed(1),
-                lower: d.forecast.forecast_30d.lower.toFixed(1),
-                upper: d.forecast.forecast_30d.upper.toFixed(1),
-              })}
-            </span>
-          </div>
-          <div className={`trends-forecast-reliability trends-forecast-${d.forecast.reliability}`}>
-            {t(`trends.reliability.${d.forecast.reliability}`)}
-          </div>
-          {d.forecast.reliability === 'low' && (
-            <div className="trends-forecast-disclaimer">{t('trends.reliability.disclaimer_low')}</div>
-          )}
-        </div>
-      )}
+      {d.forecast && <ForecastBlockView forecast={d.forecast} t={t} />}
 
       {d.trend_explanation.explanation_en && (
         <div className="trends-explanation">
@@ -166,34 +144,4 @@ export function TrustIndexTimelineView({
       )}
     </div>
   );
-}
-
-function buildForecastSeries(
-  historicalDates: string[],
-  historicalValues: (number | null)[],
-  forecast: ForecastBlock | null,
-): { dates: string[]; values: (number | null)[] } | null {
-  if (!forecast || historicalDates.length === 0) return null;
-
-  const lastDate = historicalDates[historicalDates.length - 1];
-  if (!lastDate) return null;
-
-  const lastTs = new Date(lastDate).getTime();
-  const date7d = new Date(lastTs + 7 * 86_400_000).toISOString().slice(0, 10);
-  const date30d = new Date(lastTs + 30 * 86_400_000).toISOString().slice(0, 10);
-
-  return {
-    dates: [...historicalDates, date7d, date30d],
-    values: [
-      ...new Array(historicalDates.length - 1).fill(null),
-      historicalValues[historicalValues.length - 1] ?? null,
-      forecast.forecast_7d.value,
-      forecast.forecast_30d.value,
-    ],
-  };
-}
-
-function padValues(values: (number | null)[], targetLength: number): (number | null)[] {
-  if (values.length >= targetLength) return values;
-  return [...values, ...new Array(targetLength - values.length).fill(null)];
 }

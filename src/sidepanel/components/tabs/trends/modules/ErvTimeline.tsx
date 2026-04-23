@@ -1,16 +1,17 @@
 // TASK-039 FR-001, M1 Hero module — ERV% timeline с trend + forecast + explanation + best/worst.
 // Consumes GET /api/v1/channels/:id/trends/erv.
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { trendsApi } from '../../../../../shared/trends-api';
-import type { ErvResponse, TrendsPeriod, ForecastBlock } from '../../../../../shared/trends-types';
+import type { ErvResponse, TrendsPeriod } from '../../../../../shared/trends-types';
 import { trendsColor } from '../../../../../shared/trends-theme';
 import { useCurrentLocale } from '../../../../../shared/use-current-locale';
 import { LineChart, type Series } from '../charts/LineChart';
 import { LoadingSkeleton } from '../states/LoadingSkeleton';
 import { ErrorState } from '../states/ErrorState';
 import { InsufficientData } from '../states/InsufficientData';
+import { buildForecastSeries, padValues, ForecastBlockView } from '../shared/forecast-helpers';
 
 interface Props {
   channelId: string;
@@ -73,28 +74,38 @@ export function ErvTimelineView({
   t: ReturnType<typeof useTranslation>['t'];
 }) {
   const d = data.data;
-  const dates = d.points.map((p) => p.date);
-  const ervValues = d.points.map((p) => p.erv_percent);
   const current = d.summary?.current;
   const trendArrow = d.trend.direction === 'rising' ? '↑' : d.trend.direction === 'declining' ? '↓' : '→';
 
-  // CR S-1: forecast как dashed projection series.
-  // Extends x-axis: last actual point + forecast_7d + forecast_30d projected points.
-  const forecastSeries = useMemo(() => buildForecastSeries(dates, ervValues, d.forecast), [dates, ervValues, d.forecast]);
-  const chartDates = forecastSeries ? forecastSeries.dates : dates;
+  // Proper memoization: deps — d.points + d.forecast (reference-stable из server
+  // response object). useMemo предотвращает пересчёт arrays + series config при
+  // unrelated parent re-renders.
+  const { chartDates, series } = useMemo<{ chartDates: string[]; series: Series[] }>(() => {
+    const dates = d.points.map((p) => p.date);
+    const ervValues = d.points.map((p) => p.erv_percent);
+    const forecastSeries = buildForecastSeries(dates, ervValues, d.forecast);
+    const resolvedDates = forecastSeries ? forecastSeries.dates : dates;
 
-  const series: Series[] = [
-    { label: 'ERV %', values: padValues(ervValues, chartDates.length), color: trendsColor('erv'), width: 2 },
-  ];
-  if (forecastSeries) {
-    series.push({
-      label: t('trends.modules.erv.forecast_series_label'),
-      values: forecastSeries.values,
-      color: trendsColor('forecast'),
-      dashed: true,
-      width: 2,
-    });
-  }
+    const built: Series[] = [
+      {
+        label: 'ERV %',
+        values: padValues(ervValues, resolvedDates.length),
+        color: trendsColor('erv'),
+        width: 2,
+      },
+    ];
+    if (forecastSeries) {
+      built.push({
+        label: t('trends.modules.erv.forecast_series_label'),
+        values: forecastSeries.values,
+        color: trendsColor('forecast'),
+        dashed: true,
+        width: 2,
+      });
+    }
+
+    return { chartDates: resolvedDates, series: built };
+  }, [d.points, d.forecast, t]);
 
   return (
     <div className={`trends-module trends-module-erv trends-module-${variant}`}>
@@ -129,9 +140,7 @@ export function ErvTimelineView({
         valueFormatter={(v) => `${v.toFixed(0)}%`}
       />
 
-      {d.forecast && (
-        <ForecastBlock forecast={d.forecast} t={t} />
-      )}
+      {d.forecast && <ForecastBlockView forecast={d.forecast} t={t} />}
 
       {d.trend_explanation.explanation_en && (
         <div className="trends-explanation">
@@ -159,68 +168,4 @@ export function ErvTimelineView({
       )}
     </div>
   );
-}
-
-function ForecastBlock({ forecast, t }: { forecast: ForecastBlock; t: ReturnType<typeof useTranslation>['t'] }) {
-  const reliability = t(`trends.reliability.${forecast.reliability}`);
-  return (
-    <div className="trends-forecast-block">
-      <div className="trends-forecast-row">
-        <span className="trends-forecast-label">{t('trends.forecast.horizon_7d')}</span>
-        <span className="trends-forecast-value">
-          {t('trends.forecast.range', {
-            value: forecast.forecast_7d.value.toFixed(1),
-            lower: forecast.forecast_7d.lower.toFixed(1),
-            upper: forecast.forecast_7d.upper.toFixed(1),
-          })}
-        </span>
-      </div>
-      <div className="trends-forecast-row">
-        <span className="trends-forecast-label">{t('trends.forecast.horizon_30d')}</span>
-        <span className="trends-forecast-value">
-          {t('trends.forecast.range', {
-            value: forecast.forecast_30d.value.toFixed(1),
-            lower: forecast.forecast_30d.lower.toFixed(1),
-            upper: forecast.forecast_30d.upper.toFixed(1),
-          })}
-        </span>
-      </div>
-      <div className={`trends-forecast-reliability trends-forecast-${forecast.reliability}`}>{reliability}</div>
-      {forecast.reliability === 'low' && (
-        <div className="trends-forecast-disclaimer">{t('trends.reliability.disclaimer_low')}</div>
-      )}
-    </div>
-  );
-}
-
-// Forecast projection — extends dates + values с 2 forecast points (7d + 30d ahead).
-// Returns {dates, values} aligned с actual series (padded с nulls for historical).
-// null early для historical → не рендерится в dashed line (только forecast tail).
-function buildForecastSeries(
-  historicalDates: string[],
-  historicalValues: (number | null)[],
-  forecast: ForecastBlock | null,
-): { dates: string[]; values: (number | null)[] } | null {
-  if (!forecast || historicalDates.length === 0) return null;
-
-  const lastDate = historicalDates[historicalDates.length - 1];
-  if (!lastDate) return null;
-
-  const lastTs = new Date(lastDate).getTime();
-  const date7d = new Date(lastTs + 7 * 86_400_000).toISOString().slice(0, 10);
-  const date30d = new Date(lastTs + 30 * 86_400_000).toISOString().slice(0, 10);
-
-  const extendedDates = [...historicalDates, date7d, date30d];
-  const extendedValues: (number | null)[] = [
-    ...new Array(historicalDates.length - 1).fill(null),
-    historicalValues[historicalValues.length - 1] ?? null, // anchor: last historical
-    forecast.forecast_7d.value,
-    forecast.forecast_30d.value,
-  ];
-  return { dates: extendedDates, values: extendedValues };
-}
-
-function padValues(values: (number | null)[], targetLength: number): (number | null)[] {
-  if (values.length >= targetLength) return values;
-  return [...values, ...new Array(targetLength - values.length).fill(null)];
 }

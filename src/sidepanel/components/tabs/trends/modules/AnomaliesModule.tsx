@@ -1,13 +1,19 @@
-// TASK-039 FR-004, M4 — Anomalies counter + frequency + DoW + types + events list.
-// Consumes GET /api/v1/channels/:id/trends/anomalies.
+// TASK-039 FR-004, M4 — Anomalies counter + frequency + DoW + types + paginated event list.
+// Server response: app/services/trends/api/anomalies_endpoint_service.rb.
+// Severity derived from confidence threshold (server returns raw confidence numeric).
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { trendsApi } from '../../../../../shared/trends-api';
-import type { AnomaliesResponse, TrendsPeriod, WeekdayKey } from '../../../../../shared/trends-types';
-import { useCurrentLocale } from '../../../../../shared/use-current-locale';
+import type {
+  AnomaliesResponse,
+  AnomalyEvent,
+  TrendsPeriod,
+  WeekdayKey,
+} from '../../../../../shared/trends-types';
 import { LoadingSkeleton } from '../states/LoadingSkeleton';
 import { ErrorState } from '../states/ErrorState';
+import { useTrendsModule } from '../shared/use-trends-module';
 
 interface Props {
   channelId: string;
@@ -16,36 +22,43 @@ interface Props {
 }
 
 const WEEKDAY_ORDER: WeekdayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+const PER_PAGE = 50;
+
+// CR M-1: severity derived client-side от confidence (server raw signal).
+// Thresholds matched Phase C2 mapping в anomalies_endpoint_service severity_to_confidence_threshold:
+//   high: confidence ≥ 0.7
+//   medium: confidence ≥ 0.4
+//   low: остальное
+function severityForConfidence(c: number | null): 'high' | 'medium' | 'low' {
+  if (c == null) return 'low';
+  if (c >= 0.7) return 'high';
+  if (c >= 0.4) return 'medium';
+  return 'low';
+}
 
 export function AnomaliesModule({ channelId, period, variant = 'detail' }: Props) {
   const { t } = useTranslation();
-  const locale = useCurrentLocale();
-  const [state, setState] = useState<
-    | { status: 'loading' }
-    | { status: 'ok'; data: AnomaliesResponse }
-    | { status: 'error' }
-  >({ status: 'loading' });
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    setState({ status: 'loading' });
-    const ctrl = new AbortController();
-    trendsApi
-      .getAnomalies(channelId, period, ctrl.signal)
-      .then((result) => {
-        setState(result.ok ? { status: 'ok', data: result.data } : { status: 'error' });
-      })
-      .catch((e: unknown) => {
-        if (e instanceof DOMException && e.name === 'AbortError') return;
-        setState({ status: 'error' });
-      });
-    return () => ctrl.abort();
-  }, [channelId, period, refreshKey]);
+  const { state, retry } = useTrendsModule<AnomaliesResponse>(
+    (signal) => trendsApi.getAnomalies(channelId, period, { page, perPage: PER_PAGE, signal }),
+    [channelId, period, page]
+  );
 
   if (state.status === 'loading') return <LoadingSkeleton moduleCount={1} />;
-  if (state.status === 'error') return <ErrorState onRetry={() => setRefreshKey((k) => k + 1)} />;
+  if (state.status === 'error') return <ErrorState onRetry={retry} />;
+  if (state.status === 'empty' || state.status === 'inactive') return null;
 
-  return <AnomaliesModuleView data={state.data} variant={variant} period={period} t={t} locale={locale} />;
+  return (
+    <AnomaliesModuleView
+      data={state.data}
+      variant={variant}
+      period={period}
+      t={t}
+      page={page}
+      onPageChange={setPage}
+    />
+  );
 }
 
 export function AnomaliesModuleView({
@@ -53,13 +66,15 @@ export function AnomaliesModuleView({
   variant,
   period,
   t,
-  locale,
+  page,
+  onPageChange,
 }: {
   data: AnomaliesResponse;
   variant: 'overview' | 'detail';
   period: TrendsPeriod;
   t: ReturnType<typeof useTranslation>['t'];
-  locale: 'ru' | 'en';
+  page: number;
+  onPageChange: (next: number) => void;
 }) {
   const d = data.data;
   const freq = d.frequency_score;
@@ -72,7 +87,7 @@ export function AnomaliesModuleView({
   const verdictLabel =
     freq.verdict === 'elevated' && factor != null
       ? t('trends.modules.anomalies.elevated', { factor: factor.toFixed(1) })
-      : freq.verdict === 'reduced' && factor != null
+      : freq.verdict === 'reduced' && factor != null && factor > 0
       ? t('trends.modules.anomalies.reduced', { factor: (1 / factor).toFixed(1) })
       : t('trends.modules.anomalies.normal');
 
@@ -111,9 +126,14 @@ export function AnomaliesModuleView({
                 const heightPct = (count / max) * 100;
                 return (
                   <div key={day} className="trends-anomalies-dow-cell">
-                    <div className="trends-anomalies-dow-bar" style={{ height: `${Math.max(4, heightPct)}%` }} />
+                    <div
+                      className="trends-anomalies-dow-bar"
+                      style={{ height: `${Math.max(4, heightPct)}%` }}
+                    />
                     <span className="trends-anomalies-dow-count">{count}</span>
-                    <span className="trends-anomalies-dow-label">{t(`trends.modules.anomalies.weekday.${day}`)}</span>
+                    <span className="trends-anomalies-dow-label">
+                      {t(`trends.modules.anomalies.weekday.${day}`)}
+                    </span>
                   </div>
                 );
               })}
@@ -139,28 +159,75 @@ export function AnomaliesModuleView({
                 {t('trends.modules.anomalies.event_empty')}
               </div>
             ) : (
-              d.anomalies.map((event) => (
-                <div key={event.id} className={`trends-anomalies-event severity-${event.severity}`}>
-                  <span className="trends-anomalies-event-dot" aria-hidden="true" />
-                  <div className="trends-anomalies-event-body">
-                    <span className="trends-anomalies-event-date">{event.date.slice(0, 10)}</span>
-                    <span className="trends-anomalies-event-type">{event.attribution ?? event.type}</span>
-                    <span className="trends-anomalies-event-desc">
-                      {locale === 'ru' ? event.description_ru : event.description_en}
-                    </span>
-                  </div>
-                  {event.ti_delta != null && (
-                    <span className="trends-anomalies-event-delta">
-                      {event.ti_delta > 0 ? '+' : ''}
-                      {event.ti_delta.toFixed(0)}
-                    </span>
-                  )}
-                </div>
-              ))
+              d.anomalies.map((event) => <EventCard key={event.anomaly_id} event={event} />)
             )}
+
+            <Pagination pagination={d.pagination} onChange={onPageChange} t={t} currentPage={page} />
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function EventCard({ event }: { event: AnomalyEvent }) {
+  const severity = severityForConfidence(event.confidence);
+  const attributionLabel = event.attribution?.source ?? event.cause ?? event.type;
+  return (
+    <div className={`trends-anomalies-event severity-${severity}`}>
+      <span className="trends-anomalies-event-dot" aria-hidden="true" />
+      <div className="trends-anomalies-event-body">
+        <span className="trends-anomalies-event-date">{event.date.slice(0, 10)}</span>
+        <span className="trends-anomalies-event-type">{attributionLabel.replace(/_/g, ' ')}</span>
+        {event.cause && event.cause !== attributionLabel && (
+          <span className="trends-anomalies-event-cause">{event.cause}</span>
+        )}
+      </div>
+      {event.ccv_impact != null && (
+        <span className="trends-anomalies-event-impact">
+          {event.ccv_impact > 0 ? '+' : ''}
+          {event.ccv_impact.toFixed(0)}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function Pagination({
+  pagination,
+  onChange,
+  t,
+  currentPage,
+}: {
+  pagination: AnomaliesResponse['data']['pagination'];
+  onChange: (next: number) => void;
+  t: ReturnType<typeof useTranslation>['t'];
+  currentPage: number;
+}) {
+  if (pagination.total_pages <= 1) return null;
+  return (
+    <div className="trends-anomalies-pagination">
+      <button
+        type="button"
+        className="trends-anomalies-page-btn"
+        disabled={currentPage <= 1}
+        onClick={() => onChange(currentPage - 1)}
+        aria-label={t('aria.back')}
+      >
+        ←
+      </button>
+      <span className="trends-anomalies-page-label">
+        {currentPage} / {pagination.total_pages}
+      </span>
+      <button
+        type="button"
+        className="trends-anomalies-page-btn"
+        disabled={!pagination.has_next}
+        onClick={() => onChange(currentPage + 1)}
+        aria-label={t('sp.more')}
+      >
+        →
+      </button>
     </div>
   );
 }

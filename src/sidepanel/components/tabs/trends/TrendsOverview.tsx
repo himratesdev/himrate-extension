@@ -2,7 +2,7 @@
 // Modules: M1 ERV, M2 TI, M3 Stability, M4 Anomalies, M5 Components, M6 Rehabilitation
 // (conditional), M11 Comparison, M13 Categories, M14 Weekday.
 
-import type { TrendsPeriod } from '../../../../shared/trends-types';
+import type { AccessLevel, TrendsMeta, TrendsPeriod } from '../../../../shared/trends-types';
 import { ErvTimeline } from './modules/ErvTimeline';
 import { TrustIndexTimeline } from './modules/TrustIndexTimeline';
 import { StabilityModule } from './modules/StabilityModule';
@@ -17,17 +17,20 @@ import { InsightsBanner } from './InsightsBanner';
 interface Props {
   channelId: string;
   period: TrendsPeriod;
+  accessLevel: AccessLevel;
   /** Deep-link handler — parent navigates to module drill-down on insight action. */
   onInsightAction?: (action: string) => void;
+  /** Surface meta (e.g. data_freshness) к parent для StaleBanner показа. */
+  onMetaUpdate?: (meta: TrendsMeta) => void;
 }
 
-export function TrendsOverview({ channelId, period, onInsightAction }: Props) {
+export function TrendsOverview({ channelId, period, accessLevel, onInsightAction, onMetaUpdate }: Props) {
   return (
     <div className="trends-overview">
       <InsightsBanner channelId={channelId} period={period} onAction={onInsightAction} />
-      <ErvTimeline channelId={channelId} period={period} variant="overview" />
+      <ErvTimeline channelId={channelId} period={period} variant="overview" onMetaUpdate={onMetaUpdate} />
       <TrustIndexTimeline channelId={channelId} period={period} variant="overview" />
-      <StabilityModule channelId={channelId} period={period} variant="overview" />
+      <StabilityModule channelId={channelId} period={period} variant="overview" accessLevel={accessLevel} />
       <AnomaliesModule channelId={channelId} period={period} variant="overview" />
       <ComponentsModule channelId={channelId} period={period} variant="overview" />
       <RehabilitationCurve channelId={channelId} />

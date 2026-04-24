@@ -1,14 +1,16 @@
 // TASK-039: Trends Tab shell — Period toggle + Overview routing + access gating.
-// Full 9-module overview (Phase D2). Free → Paywall, Anonymous → AnonymousState,
-// Premium → 7-90d, Business → 365d unlocked.
+// Phase D2 wiring (CR fixes):
+//   M-2: onRequestUpgrade callback threaded к Paywall CTA
+//   S-1: StaleBanner shown when meta.data_freshness === 'stale'
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TrendsPeriod, AccessLevel } from '../../../../shared/trends-types';
+import type { TrendsPeriod, AccessLevel, TrendsMeta } from '../../../../shared/trends-types';
 import { PeriodToggle } from './PeriodToggle';
 import { TrendsOverview } from './TrendsOverview';
 import { AnonymousState } from './states/AnonymousState';
 import { InsufficientData } from './states/InsufficientData';
+import { StaleBanner } from './states/StaleBanner';
 import { Paywall } from './Paywall';
 
 interface Props {
@@ -18,13 +20,28 @@ interface Props {
   onRequestSignIn?: () => void;
   /** Called when user clicks paywall CTA — parent navigates to checkout. */
   onRequestUpgrade?: (target: 'premium' | 'business') => void;
+  /** Reconnect Twitch OAuth handler — parent triggers re-auth flow. */
+  onReconnectTwitch?: () => void;
+  /** OAuth state: when true, content shows revoked banner с Reconnect CTA. */
+  oauthRevoked?: boolean;
 }
 
 const DEFAULT_PERIOD: TrendsPeriod = '30d';
 
-export function TrendsTab({ channelId, accessLevel, onRequestSignIn, onRequestUpgrade }: Props) {
+export function TrendsTab({
+  channelId,
+  accessLevel,
+  onRequestSignIn,
+  onRequestUpgrade,
+  onReconnectTwitch,
+  oauthRevoked = false,
+}: Props) {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<TrendsPeriod>(DEFAULT_PERIOD);
+  const [meta, setMeta] = useState<TrendsMeta | null>(null);
+
+  // Stable identity — child useEffect avoid refetch на render.
+  const handleMetaUpdate = useCallback((m: TrendsMeta) => setMeta(m), []);
 
   // Anonymous viewer — sign-in CTA, no fetches.
   if (accessLevel === 'anonymous') {
@@ -66,10 +83,21 @@ export function TrendsTab({ channelId, accessLevel, onRequestSignIn, onRequestUp
         accessLevel={accessLevel}
         onRequestUpgrade={handleRequestUpgrade}
       />
+      {oauthRevoked && (
+        <StaleBanner variant="revoked" onReconnect={onReconnectTwitch} />
+      )}
+      {!oauthRevoked && meta?.data_freshness === 'stale' && (
+        <StaleBanner variant="stale" relative={t('tooltip.data_stale')} />
+      )}
       {showBusinessPaywall ? (
         <Paywall variant="business" onUpgrade={() => onRequestUpgrade?.('business')} />
       ) : (
-        <TrendsOverview channelId={channelId} period={period} />
+        <TrendsOverview
+          channelId={channelId}
+          period={period}
+          accessLevel={accessLevel}
+          onMetaUpdate={handleMetaUpdate}
+        />
       )}
       <span className="sr-only">{t('trends.period.aria')}</span>
     </div>

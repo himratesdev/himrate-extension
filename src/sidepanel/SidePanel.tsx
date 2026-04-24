@@ -81,6 +81,25 @@ export function SidePanel() {
     setCurrentTab(tabId);
   }, [authState.tier]);
 
+  // TASK-039 Phase D2 M-2: thread upgrade/sign-in/reconnect handlers через TrendsTab.
+  // Открываем checkout / settings web pages через chrome.tabs (extension context).
+  // CR M-2 fix: prevents Paywall CTA non-functional regression.
+  const handleRequestUpgrade = useCallback((target: 'premium' | 'business') => {
+    const url = target === 'business'
+      ? 'https://himrate.com/pricing?plan=business&utm_source=extension&utm_medium=trends_tab'
+      : 'https://himrate.com/pricing?plan=premium&utm_source=extension&utm_medium=trends_tab';
+    chrome.tabs.create({ url });
+  }, []);
+
+  const handleRequestSignIn = useCallback(() => {
+    // Open settings tab — sign-in flow lives there per TASK-018 wiring.
+    setCurrentTab('settings');
+  }, []);
+
+  const handleReconnectTwitch = useCallback(() => {
+    chrome.runtime.sendMessage({ action: 'TWITCH_RECONNECT' });
+  }, []);
+
   const handleChannelSwitch = useCallback((accept: boolean) => {
     if (accept && pendingChannel) {
       setLoading(true);
@@ -160,6 +179,10 @@ export function SidePanel() {
           <TrendsTab
             channelId={trustCache?.channel_id ?? null}
             accessLevel={resolveAccessLevel(tier, isOwnChannel)}
+            onRequestSignIn={handleRequestSignIn}
+            onRequestUpgrade={handleRequestUpgrade}
+            onReconnectTwitch={handleReconnectTwitch}
+            oauthRevoked={authState.loggedIn && !authState.twitchLinked}
           />
         ) : (
           <PlaceholderTab tabId={currentTab} />

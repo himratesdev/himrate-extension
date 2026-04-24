@@ -1,4 +1,5 @@
-// TASK-039 Phase D2: Unit tests для 6 новых Trends modules + InsightsBanner + Paywall.
+// TASK-039 Phase D2 (CR iter1 fixes): Unit tests for 6 new Trends modules + InsightsBanner + Paywall.
+// Mock shapes match actual server responses (verified против endpoint services Phase C2).
 
 import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
@@ -60,25 +61,15 @@ function r(element: React.ReactElement) {
 const META = { access_level: 'premium' as const, data_freshness: 'fresh' as const };
 
 describe('StabilityModule', () => {
-  it('renders score + label + category baseline', async () => {
+  it('renders score (× 100) + label, score 0..1 decimal от server', async () => {
     vi.spyOn(trendsApi, 'getStability').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '30d',
-          stability: {
-            score: 88, label: 'stable', cv: 0.12, streams_count: 28,
-            ti_avg: 77, ti_std: 9, category_avg: 78, category: 'Just Chatting',
-          },
-          weekly_history: [
-            { week_start: '2026-03-01', ti_avg: 82, streams_count: 7 },
-            { week_start: '2026-03-08', ti_avg: 84, streams_count: 7 },
-          ],
-          peer_comparison: {
-            category: 'Just Chatting', sample_size: 2340,
-            channel_score: 88, p50: 77, p90: 93,
-          },
-          explanation_ru: 'ru exp', explanation_en: 'Низкая волатильность TI за период',
+          channel_id: 'c1', period: '30d', from: '2026-03-01', to: '2026-03-30',
+          score: 0.88, label: 'stable', cv: 0.12,
+          ti_mean: 77, ti_std: 9, streams_count: 28,
+          insufficient_data: false,
         },
         meta: META,
       },
@@ -86,22 +77,17 @@ describe('StabilityModule', () => {
     r(<StabilityModule channelId="c1" period="30d" />);
     await waitFor(() => expect(screen.getByText('88 / 100')).toBeInTheDocument());
     expect(screen.getByText('Stable channel')).toBeInTheDocument();
-    expect(screen.getByText(/Category average: 78/)).toBeInTheDocument();
   });
 
-  it('shows InsufficientData when label=insufficient_data', async () => {
+  it('shows InsufficientData когда server returns label=insufficient_data', async () => {
     vi.spyOn(trendsApi, 'getStability').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '30d',
-          stability: {
-            score: 0, label: 'insufficient_data', cv: 0, streams_count: 1,
-            ti_avg: 0, ti_std: 0, category_avg: null, category: null,
-          },
-          weekly_history: [],
-          peer_comparison: null,
-          explanation_ru: '', explanation_en: '',
+          channel_id: 'c1', period: '30d', from: '', to: '',
+          score: null, label: 'insufficient_data', cv: null,
+          ti_mean: null, ti_std: null, streams_count: 1,
+          insufficient_data: true, reason: 'streams_below_min', min_streams_required: 7,
         },
         meta: META,
       },
@@ -109,19 +95,62 @@ describe('StabilityModule', () => {
     r(<StabilityModule channelId="c1" period="30d" />);
     await waitFor(() => expect(screen.getByText('Stability needs 7+ streams')).toBeInTheDocument());
   });
+
+  it('renders peer comparison rows когда include_peer_comparison + accessLevel premium', async () => {
+    const spy = vi.spyOn(trendsApi, 'getStability').mockResolvedValue({
+      ok: true,
+      data: {
+        data: {
+          channel_id: 'c1', period: '30d', from: '', to: '',
+          score: 0.88, label: 'stable', cv: 0.12,
+          ti_mean: 77, ti_std: 9, streams_count: 28,
+          insufficient_data: false,
+          peer_comparison: {
+            category: 'Just Chatting',
+            sample_size: 2340,
+            channel_values: { ti_avg: 77, erv_avg_percent: 83, stability: 0.88 },
+            percentiles: {
+              ti: { p25: 70, p50: 75, p75: 82, p90: 88 },
+              erv: { p25: 65, p50: 75, p75: 82, p90: 90 },
+              stability: { p25: 0.65, p50: 0.77, p75: 0.85, p90: 0.93 },
+            },
+            verdict: { verdict_ru: 'ru', verdict_en: 'en' },
+          },
+        },
+        meta: META,
+      },
+    });
+    r(<StabilityModule channelId="c1" period="30d" accessLevel="premium" />);
+    await waitFor(() => expect(screen.getByText(/Comparison · Just Chatting/)).toBeInTheDocument());
+    expect(screen.getByText('You')).toBeInTheDocument();
+    expect(screen.getByText('50%')).toBeInTheDocument();
+    expect(screen.getByText('90%')).toBeInTheDocument();
+    expect(spy).toHaveBeenCalledWith('c1', '30d', expect.objectContaining({ includePeerComparison: true }));
+  });
 });
 
 describe('AnomaliesModule', () => {
-  it('renders count + frequency verdict + DoW chart', async () => {
+  it('renders count + frequency verdict + DoW + paginated event list', async () => {
     vi.spyOn(trendsApi, 'getAnomalies').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '30d',
+          channel_id: 'c1', period: '30d', from: '', to: '',
           total: 5, unattributed_count: 1,
           anomalies: [
-            { id: 'a1', date: '2026-03-15', type: 'raid_organic', severity: 'medium', attribution: 'raid_organic', description_ru: 'ru', description_en: 'organic raid', ti_delta: -3 },
+            {
+              anomaly_id: 'a1',
+              date: '2026-03-15T10:00:00Z',
+              stream_id: 's1',
+              type: 'ccv_spike_unexplained',
+              cause: 'organic raid from another streamer',
+              confidence: 0.75,
+              ccv_impact: 320,
+              details: null,
+              attribution: { source: 'raid_organic', confidence: 0.85, attributed_at: '2026-03-15T10:01:00Z' },
+            },
           ],
+          pagination: { page: 1, per_page: 50, total_pages: 1, has_next: false },
           frequency_score: {
             current_per_month: 5, baseline_per_month: 2, delta_percent: 150,
             verdict: 'elevated', verdict_ru: 'ru', verdict_en: 'en',
@@ -138,47 +167,50 @@ describe('AnomaliesModule', () => {
     await waitFor(() => expect(screen.getByText('5')).toBeInTheDocument());
     expect(screen.getByText(/2\.5×/)).toBeInTheDocument();
     expect(screen.getByText('When anomalies happen')).toBeInTheDocument();
-    expect(screen.getByText('organic raid')).toBeInTheDocument();
+    expect(screen.getAllByText(/raid organic/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('+320')).toBeInTheDocument();
   });
 
-  it('shows event_empty message when anomalies array is empty', async () => {
+  it('shows event_empty + total_pages > 1 → pagination buttons', async () => {
     vi.spyOn(trendsApi, 'getAnomalies').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '30d',
-          total: 0, unattributed_count: 0, anomalies: [],
+          channel_id: 'c1', period: '365d', from: '', to: '',
+          total: 120, unattributed_count: 0, anomalies: [],
+          pagination: { page: 1, per_page: 50, total_pages: 3, has_next: true },
           frequency_score: { current_per_month: 0, baseline_per_month: 0, delta_percent: 0, verdict: 'normal', verdict_ru: '', verdict_en: '' },
           distribution: { by_day_of_week: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0, sun: 0 }, by_type: {} },
         },
         meta: META,
       },
     });
-    r(<AnomaliesModule channelId="c1" period="30d" />);
+    r(<AnomaliesModule channelId="c1" period="365d" />);
     await waitFor(() => expect(screen.getByText('No anomalies in this period')).toBeInTheDocument());
+    expect(screen.getByText('1 / 3')).toBeInTheDocument();
   });
 });
 
 describe('ComponentsModule', () => {
-  it('renders contribution stack + discovery + coupling cards', async () => {
+  it('renders contribution stack из degradation_signals + Discovery + Coupling + Botted', async () => {
     vi.spyOn(trendsApi, 'getComponents').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '30d',
-          points: [],
-          summary: {
-            top_components: [
-              { name: 'auth_ratio', delta: -3, current_pts: 35, contribution_pct: 35 },
-              { name: 'engagement', delta: 0, current_pts: 25, contribution_pct: 25 },
-            ],
-          },
-          improvement_signals: [{ name: 'engagement', delta: 2, current_pts: 25, contribution_pct: 25 }],
-          degradation_signals: [{ name: 'auth_ratio', delta: -3, current_pts: 35, contribution_pct: 35 }],
-          discovery_phase: { status: 'organic', score: 0.82, details_ru: 'ru', details_en: 'Followers and viewers grow together' },
-          follower_ccv_coupling: { health: 'healthy', current_r: 0.78, description_ru: 'ru', description_en: 'Healthy correlation' },
-          botted_streams: { count: 0, total_streams: 28, period_label: '30d' },
-          explanation_ru: 'ru', explanation_en: 'Components steady',
+          channel_id: 'c1', period: '30d', from: '', to: '',
+          group: null,
+          components: ['auth_ratio', 'engagement'],
+          points: [
+            { date: '2026-03-01T00:00:00Z', ti: 70, components: { auth_ratio: 35, engagement: 25 } },
+          ],
+          degradation_signals: [
+            { name: 'auth_ratio', delta: -3, start_value: 38, end_value: 35 },
+            { name: 'engagement', delta: -1, start_value: 26, end_value: 25 },
+          ],
+          discovery_phase: { status: 'organic', score: 0.82, details_ru: 'ru', details_en: 'Organic growth' },
+          follower_ccv_coupling_timeline: [{ date: '2026-03-01', r: 0.78, health: 'healthy' }],
+          follower_ccv_coupling_summary: { current_r: 0.78, current_health: 'healthy', avg_r: 0.75 },
+          botted_fraction: 0,
         },
         meta: META,
       },
@@ -187,20 +219,19 @@ describe('ComponentsModule', () => {
     await waitFor(() => expect(screen.getByText(/Channel growth type:/)).toBeInTheDocument());
     expect(screen.getByText(/Followers ↔ viewers coupling:/)).toBeInTheDocument();
     expect(screen.getByText('Streams with inflation signs')).toBeInTheDocument();
-    // botted count = 0 → "None detected" message
     expect(screen.getByText(/None detected/)).toBeInTheDocument();
   });
 
-  it('shows InsufficientData when top_components empty', async () => {
+  it('shows InsufficientData когда no points + no degradation signals', async () => {
     vi.spyOn(trendsApi, 'getComponents').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '30d',
-          points: [], summary: { top_components: [] },
-          improvement_signals: [], degradation_signals: [],
-          discovery_phase: null, follower_ccv_coupling: null, botted_streams: null,
-          explanation_ru: '', explanation_en: '',
+          channel_id: 'c1', period: '30d', from: '', to: '',
+          group: null, components: [], points: [],
+          degradation_signals: [],
+          discovery_phase: null, follower_ccv_coupling_timeline: [],
+          follower_ccv_coupling_summary: null, botted_fraction: null,
         },
         meta: META,
       },
@@ -211,48 +242,64 @@ describe('ComponentsModule', () => {
 });
 
 describe('ComparisonModule', () => {
-  it('renders top-pct + percentile rows + history', async () => {
+  it('renders top-pct (derived from quartile percentiles) + verdict', async () => {
     vi.spyOn(trendsApi, 'getComparison').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '30d',
-          category: 'Just Chatting', sample_size: 2340,
-          channel: { ti: 77, erv_percent: 83, stability: 88 },
+          channel_id: 'c1', period: '30d', from: '', to: '',
+          category: 'Just Chatting',
+          sample_size: 2340,
+          channel_values: { ti_avg: 92, erv_avg_percent: 83, stability: 0.88 },
           percentiles: {
-            trust_index: { percentile: 88, value: 77, channel_value: 77 },
-            erv_percent: { percentile: 82, value: 83, channel_value: 83 },
-            stability: { percentile: 90, value: 88, channel_value: 88 },
+            ti: { p25: 60, p50: 70, p75: 80, p90: 88 },
+            erv: { p25: 60, p50: 70, p75: 80, p90: 90 },
+            stability: { p25: 0.5, p50: 0.65, p75: 0.8, p90: 0.9 },
           },
-          percentile_history: [
-            { weeks_ago: 4, percentile: 80 },
-            { weeks_ago: 0, percentile: 88 },
-          ],
+          verdict: { verdict_ru: 'ru', verdict_en: 'Channel performs above peer median' },
         },
         meta: META,
       },
     });
     r(<ComparisonModule channelId="c1" period="30d" />);
-    await waitFor(() => expect(screen.getByText('Top 12%')).toBeInTheDocument());
-    expect(screen.getByText('Just Chatting')).toBeInTheDocument();
-    expect(screen.getByText(/Better than 88% of 2340 channels/)).toBeInTheDocument();
-    expect(screen.getByText('Position dynamics')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('Just Chatting')).toBeInTheDocument());
+    // ti=92 > p90=88 → rank≈95, top≈5%
+    expect(screen.getByText(/Top 5%/)).toBeInTheDocument();
+  });
+
+  it('shows InsufficientData когда server returns insufficient_data=true', async () => {
+    vi.spyOn(trendsApi, 'getComparison').mockResolvedValue({
+      ok: true,
+      data: {
+        data: {
+          channel_id: 'c1', period: '30d', from: '', to: '',
+          category: null,
+          insufficient_data: true,
+          reason: 'no_category_history',
+        },
+        meta: META,
+      },
+    });
+    r(<ComparisonModule channelId="c1" period="30d" />);
+    await waitFor(() => expect(screen.getByText('Minimum 3 streams required')).toBeInTheDocument());
   });
 });
 
 describe('CategoriesModule', () => {
-  it('renders per-category cards with baseline ticks + best badge', async () => {
+  it('renders per-category cards + best badge derived из top_category', async () => {
     vi.spyOn(trendsApi, 'getCategories').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '90d',
+          channel_id: 'c1', period: '90d', from: '', to: '',
           categories: [
-            { name: 'Just Chatting', streams_count: 28, ti_avg: 74, erv_avg_percent: 81, stability_avg: 85, vs_baseline_ti_delta: 3, vs_baseline_erv_delta: 5, is_best: false },
-            { name: 'Fortnite', streams_count: 6, ti_avg: 81, erv_avg_percent: 88, stability_avg: 90, vs_baseline_ti_delta: 10, vs_baseline_erv_delta: 11, is_best: true },
+            { name: 'Just Chatting', streams_count: 28, ti_avg: 74, erv_avg_percent: 81, vs_baseline_ti_delta: 3, vs_baseline_erv_delta: 5 },
+            { name: 'Fortnite', streams_count: 6, ti_avg: 81, erv_avg_percent: 88, vs_baseline_ti_delta: 10, vs_baseline_erv_delta: 11 },
           ],
-          baseline: { ti_avg: 71, erv_avg_percent: 76, stability_avg: 77 },
-          verdict_ru: 'ru', verdict_en: 'Best in Fortnite',
+          single_category: false,
+          top_category: 'Fortnite',
+          total_streams: 34,
+          verdict: { verdict_ru: 'ru', verdict_en: 'Best in Fortnite' },
         },
         meta: META,
       },
@@ -261,18 +308,19 @@ describe('CategoriesModule', () => {
     await waitFor(() => expect(screen.getByText('Fortnite')).toBeInTheDocument());
     expect(screen.getByText('Just Chatting')).toBeInTheDocument();
     expect(screen.getByText('Best')).toBeInTheDocument();
-    // Two categories × TI baseline = 71 → 2 baseline cells reading "avg 71".
+    // baseline Just Chatting TI = 74 - 3 = 71
     expect(screen.getAllByText(/avg 71/).length).toBeGreaterThanOrEqual(1);
   });
 });
 
 describe('WeekdayModule', () => {
-  it('renders 7-bar chart + best/worst day cards', async () => {
+  it('derives best/worst day client-side from weekday_patterns', async () => {
     vi.spyOn(trendsApi, 'getWeekdayPatterns').mockResolvedValue({
       ok: true,
       data: {
         data: {
-          channel_id: 'c1', period: '90d',
+          channel_id: 'c1', period: '90d', from: '', to: '',
+          insufficient_data: false,
           weekday_patterns: {
             mon: { ti_avg: 78, erv_avg_percent: 82, streams_count: 12 },
             tue: { ti_avg: 76, erv_avg_percent: 80, streams_count: 11 },
@@ -282,8 +330,7 @@ describe('WeekdayModule', () => {
             sat: { ti_avg: 70, erv_avg_percent: 74, streams_count: 8 },
             sun: { ti_avg: 68, erv_avg_percent: 72, streams_count: 7 },
           },
-          best_weekday: { day: 'fri', ti_avg: 81, erv_avg_percent: 87 },
-          worst_weekday: { day: 'sun', ti_avg: 68, erv_avg_percent: 72 },
+          total_days: 71,
           insight_ru: 'ru', insight_en: 'Friday is best',
         },
         meta: META,
@@ -295,10 +342,36 @@ describe('WeekdayModule', () => {
     expect(screen.getByText('Best day')).toBeInTheDocument();
     expect(screen.getByText('Worst day')).toBeInTheDocument();
   });
+
+  it('shows InsufficientData когда insufficient_data=true', async () => {
+    vi.spyOn(trendsApi, 'getWeekdayPatterns').mockResolvedValue({
+      ok: true,
+      data: {
+        data: {
+          channel_id: 'c1', period: '7d', from: '', to: '',
+          insufficient_data: true,
+          weekday_patterns: {
+            mon: { ti_avg: null, erv_avg_percent: null, streams_count: 0 },
+            tue: { ti_avg: null, erv_avg_percent: null, streams_count: 0 },
+            wed: { ti_avg: null, erv_avg_percent: null, streams_count: 0 },
+            thu: { ti_avg: null, erv_avg_percent: null, streams_count: 0 },
+            fri: { ti_avg: null, erv_avg_percent: null, streams_count: 0 },
+            sat: { ti_avg: null, erv_avg_percent: null, streams_count: 0 },
+            sun: { ti_avg: null, erv_avg_percent: null, streams_count: 0 },
+          },
+          min_days_required: 14,
+          insight_ru: null, insight_en: null,
+        },
+        meta: META,
+      },
+    });
+    r(<WeekdayModule channelId="c1" period="7d" />);
+    await waitFor(() => expect(screen.getByText('Component breakdown needs 14+ days')).toBeInTheDocument());
+  });
 });
 
 describe('InsightsBanner', () => {
-  it('renders P0/P1/P2 cards и dismiss работает с localStorage', async () => {
+  it('renders P0/P1/P2 cards и dismiss persistance в localStorage', async () => {
     vi.spyOn(trendsApi, 'getInsights').mockResolvedValue({
       ok: true,
       data: {
@@ -318,7 +391,6 @@ describe('InsightsBanner', () => {
     await waitFor(() => expect(screen.getByText('TI dropped 12 pts')).toBeInTheDocument());
     expect(screen.getByText('No anomalies')).toBeInTheDocument();
 
-    // Dismiss P0
     fireEvent.click(screen.getAllByRole('button', { name: 'Dismiss' })[0]);
     await waitFor(() => expect(screen.queryByText('TI dropped 12 pts')).not.toBeInTheDocument());
 
@@ -326,7 +398,7 @@ describe('InsightsBanner', () => {
     expect(stored.length).toBe(1);
   });
 
-  it('returns null when API returns empty insights', async () => {
+  it('returns null когда API returns empty insights', async () => {
     vi.spyOn(trendsApi, 'getInsights').mockResolvedValue({
       ok: true,
       data: {
@@ -341,7 +413,7 @@ describe('InsightsBanner', () => {
 });
 
 describe('Paywall', () => {
-  it('Free variant renders 6 features + Premium tier + CTA', () => {
+  it('Free variant renders 6 features + Premium tier + CTA fires onUpgrade', () => {
     const onUpgrade = vi.fn();
     r(<Paywall variant="free" onUpgrade={onUpgrade} />);
     expect(screen.getByText('Real Viewers')).toBeInTheDocument();
@@ -351,7 +423,7 @@ describe('Paywall', () => {
     expect(onUpgrade).toHaveBeenCalledOnce();
   });
 
-  it('Business variant renders 365d + peers + CTA', () => {
+  it('Business variant renders 365d + peers + CTA fires onUpgrade', () => {
     const onUpgrade = vi.fn();
     r(<Paywall variant="business" onUpgrade={onUpgrade} />);
     expect(screen.getByText('365 days of history')).toBeInTheDocument();

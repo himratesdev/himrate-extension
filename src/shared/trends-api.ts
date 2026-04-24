@@ -82,24 +82,29 @@ export const trendsApi = {
     return request<RehabilitationResponse>(`/api/v1/channels/${channelId}/trends/rehabilitation?${qs}`, signal);
   },
 
-  /** FR-003: GET /api/v1/channels/:id/trends/stability (M3) */
+  /** FR-003: GET /api/v1/channels/:id/trends/stability (M3).
+   *  M-4: include_peer_comparison=true requests peer block (Premium+ via Pundit). */
   getStability(
     channelId: string,
     period: TrendsPeriod,
-    signal?: AbortSignal
+    options: { includePeerComparison?: boolean; signal?: AbortSignal } = {}
   ): Promise<TrendsResult<StabilityResponse>> {
     const qs = new URLSearchParams({ period });
-    return request<StabilityResponse>(`/api/v1/channels/${channelId}/trends/stability?${qs}`, signal);
+    if (options.includePeerComparison) qs.set('include_peer_comparison', 'true');
+    return request<StabilityResponse>(`/api/v1/channels/${channelId}/trends/stability?${qs}`, options.signal);
   },
 
-  /** FR-004: GET /api/v1/channels/:id/trends/anomalies (M4) */
+  /** FR-004: GET /api/v1/channels/:id/trends/anomalies (M4).
+   *  M-3: pagination — default page=1 per_page=50; max per_page=200 server-enforced. */
   getAnomalies(
     channelId: string,
     period: TrendsPeriod,
-    signal?: AbortSignal
+    options: { page?: number; perPage?: number; signal?: AbortSignal } = {}
   ): Promise<TrendsResult<AnomaliesResponse>> {
     const qs = new URLSearchParams({ period });
-    return request<AnomaliesResponse>(`/api/v1/channels/${channelId}/trends/anomalies?${qs}`, signal);
+    if (options.page != null) qs.set('page', String(options.page));
+    if (options.perPage != null) qs.set('per_page', String(options.perPage));
+    return request<AnomaliesResponse>(`/api/v1/channels/${channelId}/trends/anomalies?${qs}`, options.signal);
   },
 
   /** FR-005: GET /api/v1/channels/:id/trends/components (M5) */

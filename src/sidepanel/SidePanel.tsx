@@ -9,6 +9,8 @@ import { TabBar } from './components/TabBar';
 import { Overview } from './components/Overview';
 import { PlaceholderTab } from './components/PlaceholderTab';
 import { Watchlists } from './components/Watchlists';
+import { TrendsTab } from './components/tabs/trends/TrendsTab';
+import type { AccessLevel } from '../shared/trends-types';
 import { ChannelSwitchNotification } from './components/ChannelSwitchNotification';
 import { InfoBanner } from './components/InfoBanner';
 import type { TrustCache } from '../shared/api';
@@ -154,6 +156,11 @@ export function SidePanel() {
           />
         ) : currentTab === 'watchlists' ? (
           <Watchlists tier={tier} authState={authState} />
+        ) : currentTab === 'trends' ? (
+          <TrendsTab
+            channelId={trustCache?.channel_id ?? null}
+            accessLevel={resolveAccessLevel(tier, isOwnChannel)}
+          />
         ) : (
           <PlaceholderTab tabId={currentTab} />
         )}
@@ -185,4 +192,21 @@ function getAnomalyTabs(cache: TrustCache | null): string[] {
   if (!cache?.is_live || cache.erv_percent == null || cache.erv_percent >= 80) return [];
   // Anomaly dots on Overview + relevant tabs when ERV < 80%
   return ['overview'];
+}
+
+// TASK-039: access_level resolution для Trends API (FR-011..014).
+// CR S-3: Matches server ChannelPolicy priority order EXACTLY:
+//   effective_business_access? → "business"
+//   owns_channel_access?       → "streamer"  (через auth_providers.is_broadcaster)
+//   premium_access?            → "premium"
+//   registered                 → "free"
+//   else                       → "anonymous"
+// Streamer check BEFORE premium — streamer-on-own-channel с premium tier всё равно
+// получает "streamer" access_level в meta.access_level response (не "premium").
+function resolveAccessLevel(tier: string, isOwnChannel: boolean): AccessLevel {
+  if (tier === 'business') return 'business';
+  if (isOwnChannel) return 'streamer';
+  if (tier === 'premium') return 'premium';
+  if (tier === 'free' || tier === 'streamer') return 'free';
+  return 'anonymous';
 }

@@ -258,5 +258,64 @@
   "wl.sort_added": "Добавлен ↓",
   "wl.filters_locked": "Premium",
   "wl.sort_label": "Сортировка",
-  "wl.filters_label": "Фильтры"
+  "wl.filters_label": "Фильтры",
+
+  "trends.no_channel": "Откройте Twitch канал чтобы увидеть тренды",
+  "trends.period.aria": "Выбор периода",
+  "trends.period.7d": "7д",
+  "trends.period.30d": "30д",
+  "trends.period.60d": "60д",
+  "trends.period.90d": "90д",
+  "trends.period.365d": "365д",
+  "trends.period.business_required": "Годовая история доступна в Business — $99/мес",
+
+  "trends.confidence.high": "Высокая точность",
+  "trends.confidence.medium": "Средняя точность",
+  "trends.confidence.low": "Низкая точность",
+
+  "trends.reliability.high": "Высокая точность прогноза",
+  "trends.reliability.medium": "Средняя точность прогноза",
+  "trends.reliability.low": "Низкая точность прогноза",
+  "trends.reliability.disclaimer_low": "Точность прогноза низкая — интерпретируйте с осторожностью.",
+
+  "trends.forecast.horizon_7d": "Прогноз на 7 дней",
+  "trends.forecast.horizon_30d": "Прогноз на 30 дней",
+  "trends.forecast.range": "{{value}} ({{lower}}..{{upper}})",
+
+  "trends.errors.generic": "Не удалось загрузить данные",
+  "trends.errors.retry": "Повторить",
+
+  "trends.empty.title": "Недостаточно данных",
+  "trends.empty.min_3_streams": "Необходимо минимум 3 стрима",
+  "trends.empty.min_7_streams": "Стабильность рассчитывается при 7+ стримах",
+  "trends.empty.min_14_days": "Компоненты требуют минимум 14 дней",
+  "trends.empty.no_channel": "Откройте Twitch канал чтобы увидеть тренды",
+
+  "trends.anonymous.aria": "Требуется авторизация",
+  "trends.anonymous.title": "Войдите чтобы увидеть тренды",
+  "trends.anonymous.message": "Исторические данные доступны авторизованным пользователям.",
+  "trends.anonymous.sign_in": "Войти",
+
+  "trends.modules.erv.title": "ERV — Реальные зрители",
+  "trends.modules.erv.hero_label": "реальных зрителей",
+  "trends.modules.erv.forecast_series_label": "Прогноз ERV",
+
+  "trends.modules.trust_index.title": "Trust Index — История",
+  "trends.modules.trust_index.forecast_series_label": "Прогноз TI",
+
+  "trends.modules.rehabilitation.title": "Восстановление рейтинга",
+  "trends.modules.rehabilitation.progress": "{{completed}}/{{required}} чистых стримов ({{pct}}%)",
+  "trends.modules.rehabilitation.bonus_badge": "+{{n}} бонус",
+  "trends.modules.rehabilitation.bonus_tooltip_title": "За что начислен бонус",
+  "trends.modules.rehabilitation.bonus_chat": "Качество чата: {{n}}/100",
+  "trends.modules.rehabilitation.bonus_engagement": "Вовлечённость: {{n}}/100",
+  "trends.modules.rehabilitation.eta": "До полного восстановления: ~{{streams}} стримов",
+
+  "trends.tier_changes.count_one": "1 смена тира",
+  "trends.tier_changes.count_few": "{{count}} смены тира",
+  "trends.tier_changes.count_many": "{{count}} смен тира",
+  "trends.tier_changes.count_other": "{{count}} смен тира",
+
+  "trends.best_stream.title": "Лучший стрим",
+  "trends.worst_stream.title": "Худший стрим"
 }

@@ -15,6 +15,7 @@ globalThis.chrome = {
   runtime: {
     sendMessage: async () => ({}),
     onInstalled: { addListener: () => {} },
+    getManifest: () => ({ version: '0.0.0-test' }),
   },
   sidePanel: {
     setPanelBehavior: async () => {},

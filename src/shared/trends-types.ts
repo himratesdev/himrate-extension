@@ -192,6 +192,243 @@ export interface RehabilitationResponse {
   meta: TrendsMeta;
 }
 
+// === Stability endpoint (FR-003, M3) ===
+
+export interface StabilityWeeklyPoint {
+  week_start: string;
+  ti_avg: number;
+  streams_count: number;
+}
+
+export interface StabilityPeerComparison {
+  category: string;
+  sample_size: number;
+  channel_score: number;
+  p50: number;
+  p90: number;
+}
+
+export interface StabilityResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    stability: {
+      score: number;
+      label: 'stable' | 'moderate' | 'volatile' | 'insufficient_data';
+      cv: number;
+      streams_count: number;
+      ti_avg: number;
+      ti_std: number;
+      category_avg: number | null;
+      category: string | null;
+    };
+    weekly_history: StabilityWeeklyPoint[];
+    peer_comparison: StabilityPeerComparison | null;
+    explanation_ru: string;
+    explanation_en: string;
+  };
+  meta: TrendsMeta;
+}
+
+// === Anomalies endpoint (FR-004, M4) ===
+
+export interface AnomalyEvent {
+  id: string;
+  date: string;
+  type: string;
+  severity: 'high' | 'medium' | 'low';
+  attribution: string | null;
+  description_ru: string;
+  description_en: string;
+  ti_delta: number | null;
+}
+
+export interface AnomalyFrequencyScore {
+  current_per_month: number;
+  baseline_per_month: number | null;
+  delta_percent: number | null;
+  verdict: 'elevated' | 'normal' | 'reduced' | 'insufficient_data';
+  verdict_ru: string;
+  verdict_en: string;
+}
+
+export interface AnomalyDistribution {
+  by_day_of_week: Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', number>;
+  by_type: Record<string, number>;
+}
+
+export interface AnomaliesResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    total: number;
+    unattributed_count: number;
+    anomalies: AnomalyEvent[];
+    frequency_score: AnomalyFrequencyScore;
+    distribution: AnomalyDistribution;
+  };
+  meta: TrendsMeta;
+}
+
+// === Components endpoint (FR-005, M5) ===
+
+export interface ComponentSignal {
+  name: string;
+  delta: number;
+  current_pts: number | null;
+  contribution_pct: number | null;
+}
+
+export interface DiscoveryPhase {
+  status: 'organic' | 'anomalous_burst' | 'suspicious' | 'missing' | 'not_applicable';
+  score: number | null;
+  details_ru: string;
+  details_en: string;
+}
+
+export interface FollowerCcvCoupling {
+  health: 'healthy' | 'weakening' | 'decoupled' | 'insufficient_data';
+  current_r: number | null;
+  description_ru: string;
+  description_en: string;
+}
+
+export interface BottedStreamsBlock {
+  count: number;
+  total_streams: number;
+  period_label: string;
+}
+
+export interface ComponentsPoint {
+  date: string;
+  components: Record<string, number | null>;
+}
+
+export interface ComponentsResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    points: ComponentsPoint[];
+    summary: {
+      top_components: ComponentSignal[];
+    };
+    improvement_signals: ComponentSignal[];
+    degradation_signals: ComponentSignal[];
+    discovery_phase: DiscoveryPhase | null;
+    follower_ccv_coupling: FollowerCcvCoupling | null;
+    botted_streams: BottedStreamsBlock | null;
+    explanation_ru: string;
+    explanation_en: string;
+  };
+  meta: TrendsMeta;
+}
+
+// === Comparison endpoint (FR-007, M11) ===
+
+export interface ComparisonPercentileEntry {
+  percentile: number;
+  value: number;
+  channel_value: number;
+}
+
+export interface ComparisonHistoryEntry {
+  weeks_ago: number;
+  percentile: number;
+}
+
+export interface ComparisonResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    category: string | null;
+    sample_size: number;
+    channel: {
+      ti: number;
+      erv_percent: number;
+      stability: number | null;
+    };
+    percentiles: {
+      trust_index: ComparisonPercentileEntry;
+      erv_percent: ComparisonPercentileEntry;
+      stability: ComparisonPercentileEntry | null;
+    };
+    percentile_history: ComparisonHistoryEntry[];
+  };
+  meta: TrendsMeta;
+}
+
+// === Categories endpoint (FR-008, M13) ===
+
+export interface CategoryRow {
+  name: string;
+  streams_count: number;
+  ti_avg: number | null;
+  erv_avg_percent: number | null;
+  stability_avg: number | null;
+  vs_baseline_ti_delta: number | null;
+  vs_baseline_erv_delta: number | null;
+  is_best: boolean;
+}
+
+export interface CategoriesResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    categories: CategoryRow[];
+    baseline: {
+      ti_avg: number | null;
+      erv_avg_percent: number | null;
+      stability_avg: number | null;
+    };
+    verdict_ru: string;
+    verdict_en: string;
+  };
+  meta: TrendsMeta;
+}
+
+// === Weekday patterns endpoint (FR-009, M14) ===
+
+export type WeekdayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+
+export interface WeekdayCell {
+  ti_avg: number | null;
+  erv_avg_percent: number | null;
+  streams_count: number;
+}
+
+export interface WeekdayPatternsResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    weekday_patterns: Record<WeekdayKey, WeekdayCell>;
+    best_weekday: { day: WeekdayKey; ti_avg: number; erv_avg_percent: number } | null;
+    worst_weekday: { day: WeekdayKey; ti_avg: number; erv_avg_percent: number } | null;
+    insight_ru: string;
+    insight_en: string;
+  };
+  meta: TrendsMeta;
+}
+
+// === Movement Insights endpoint (FR-010, banner) ===
+
+export interface InsightCard {
+  priority: 'P0' | 'P1' | 'P2' | 'P3';
+  icon: string;
+  message_ru: string;
+  message_en: string;
+  action: string | null;
+  recency_score?: number;
+}
+
+export interface InsightsResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    insights: InsightCard[];
+  };
+  meta: TrendsMeta;
+}
+
 // === Error shape (shared) ===
 
 export interface TrendsApiError {

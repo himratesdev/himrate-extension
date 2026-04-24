@@ -6,6 +6,13 @@ import type {
   ErvResponse,
   TrustIndexResponse,
   RehabilitationResponse,
+  StabilityResponse,
+  AnomaliesResponse,
+  ComponentsResponse,
+  ComparisonResponse,
+  CategoriesResponse,
+  WeekdayPatternsResponse,
+  InsightsResponse,
   TrendsPeriod,
   TrendsGranularity,
 } from './trends-types';
@@ -73,5 +80,75 @@ export const trendsApi = {
   ): Promise<TrendsResult<RehabilitationResponse>> {
     const qs = new URLSearchParams({ period });
     return request<RehabilitationResponse>(`/api/v1/channels/${channelId}/trends/rehabilitation?${qs}`, signal);
+  },
+
+  /** FR-003: GET /api/v1/channels/:id/trends/stability (M3) */
+  getStability(
+    channelId: string,
+    period: TrendsPeriod,
+    signal?: AbortSignal
+  ): Promise<TrendsResult<StabilityResponse>> {
+    const qs = new URLSearchParams({ period });
+    return request<StabilityResponse>(`/api/v1/channels/${channelId}/trends/stability?${qs}`, signal);
+  },
+
+  /** FR-004: GET /api/v1/channels/:id/trends/anomalies (M4) */
+  getAnomalies(
+    channelId: string,
+    period: TrendsPeriod,
+    signal?: AbortSignal
+  ): Promise<TrendsResult<AnomaliesResponse>> {
+    const qs = new URLSearchParams({ period });
+    return request<AnomaliesResponse>(`/api/v1/channels/${channelId}/trends/anomalies?${qs}`, signal);
+  },
+
+  /** FR-005: GET /api/v1/channels/:id/trends/components (M5) */
+  getComponents(
+    channelId: string,
+    period: TrendsPeriod,
+    signal?: AbortSignal
+  ): Promise<TrendsResult<ComponentsResponse>> {
+    const qs = new URLSearchParams({ period });
+    return request<ComponentsResponse>(`/api/v1/channels/${channelId}/trends/components?${qs}`, signal);
+  },
+
+  /** FR-007: GET /api/v1/channels/:id/trends/comparison (M11) */
+  getComparison(
+    channelId: string,
+    period: TrendsPeriod,
+    signal?: AbortSignal
+  ): Promise<TrendsResult<ComparisonResponse>> {
+    const qs = new URLSearchParams({ period });
+    return request<ComparisonResponse>(`/api/v1/channels/${channelId}/trends/comparison?${qs}`, signal);
+  },
+
+  /** FR-008: GET /api/v1/channels/:id/trends/categories (M13) */
+  getCategories(
+    channelId: string,
+    period: TrendsPeriod,
+    signal?: AbortSignal
+  ): Promise<TrendsResult<CategoriesResponse>> {
+    const qs = new URLSearchParams({ period });
+    return request<CategoriesResponse>(`/api/v1/channels/${channelId}/trends/categories?${qs}`, signal);
+  },
+
+  /** FR-009: GET /api/v1/channels/:id/trends/patterns/weekday (M14) */
+  getWeekdayPatterns(
+    channelId: string,
+    period: TrendsPeriod,
+    signal?: AbortSignal
+  ): Promise<TrendsResult<WeekdayPatternsResponse>> {
+    const qs = new URLSearchParams({ period });
+    return request<WeekdayPatternsResponse>(`/api/v1/channels/${channelId}/trends/patterns/weekday?${qs}`, signal);
+  },
+
+  /** FR-010: GET /api/v1/channels/:id/trends/insights (Movement Insights banner) */
+  getInsights(
+    channelId: string,
+    period: TrendsPeriod,
+    signal?: AbortSignal
+  ): Promise<TrendsResult<InsightsResponse>> {
+    const qs = new URLSearchParams({ period });
+    return request<InsightsResponse>(`/api/v1/channels/${channelId}/trends/insights?${qs}`, signal);
   },
 };

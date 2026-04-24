@@ -1,6 +1,6 @@
-// TASK-039: Trends Tab shell — Period toggle + Overview routing + anonymous gate.
-// Current scope: Overview с 3 core modules (ERV / TI / Rehabilitation).
-// Dedicated drill-down screens + analytics modules (M3..M13) tracked в отдельных feature tickets.
+// TASK-039: Trends Tab shell — Period toggle + Overview routing + access gating.
+// Full 9-module overview (Phase D2). Free → Paywall, Anonymous → AnonymousState,
+// Premium → 7-90d, Business → 365d unlocked.
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,26 +9,37 @@ import { PeriodToggle } from './PeriodToggle';
 import { TrendsOverview } from './TrendsOverview';
 import { AnonymousState } from './states/AnonymousState';
 import { InsufficientData } from './states/InsufficientData';
+import { Paywall } from './Paywall';
 
 interface Props {
   channelId: string | null;
   accessLevel: AccessLevel;
   /** Optional hook — when user clicks "Sign in" в AnonymousState. Parent wires to login flow. */
   onRequestSignIn?: () => void;
+  /** Called when user clicks paywall CTA — parent navigates to checkout. */
+  onRequestUpgrade?: (target: 'premium' | 'business') => void;
 }
 
 const DEFAULT_PERIOD: TrendsPeriod = '30d';
 
-export function TrendsTab({ channelId, accessLevel, onRequestSignIn }: Props) {
+export function TrendsTab({ channelId, accessLevel, onRequestSignIn, onRequestUpgrade }: Props) {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<TrendsPeriod>(DEFAULT_PERIOD);
-  const [upgradeToast, setUpgradeToast] = useState<string | null>(null);
 
-  // CR S-4: anonymous — dedicated state instead of misleading "Error, retry".
+  // Anonymous viewer — sign-in CTA, no fetches.
   if (accessLevel === 'anonymous') {
     return (
       <div className="trends-tab">
         <AnonymousState onSignIn={onRequestSignIn} />
+      </div>
+    );
+  }
+
+  // Free viewer — full upgrade screen, no fetches.
+  if (accessLevel === 'free') {
+    return (
+      <div className="trends-tab">
+        <Paywall variant="free" onUpgrade={() => onRequestUpgrade?.('premium')} />
       </div>
     );
   }
@@ -41,27 +52,26 @@ export function TrendsTab({ channelId, accessLevel, onRequestSignIn }: Props) {
     );
   }
 
-  const handleRequestUpgrade = (p: TrendsPeriod) => {
-    setUpgradeToast(t('trends.period.business_required'));
-    // Auto-dismiss toast через 4 сек. Full paywall modal tracked отдельным feature request.
-    window.setTimeout(() => setUpgradeToast(null), 4000);
-    void p;
-  };
+  // Premium viewer hits 365d Business gate — Business paywall replaces overview.
+  const showBusinessPaywall = period === '365d' && accessLevel !== 'business';
+
+  const handlePeriodChange = (next: TrendsPeriod) => setPeriod(next);
+  const handleRequestUpgrade = (_p: TrendsPeriod) => setPeriod('365d');
 
   return (
     <div className="trends-tab">
       <PeriodToggle
         currentPeriod={period}
-        onChange={setPeriod}
+        onChange={handlePeriodChange}
         accessLevel={accessLevel}
         onRequestUpgrade={handleRequestUpgrade}
       />
-      {upgradeToast && (
-        <div className="trends-upgrade-toast" role="status" aria-live="polite">
-          {upgradeToast}
-        </div>
+      {showBusinessPaywall ? (
+        <Paywall variant="business" onUpgrade={() => onRequestUpgrade?.('business')} />
+      ) : (
+        <TrendsOverview channelId={channelId} period={period} />
       )}
-      <TrendsOverview channelId={channelId} period={period} />
+      <span className="sr-only">{t('trends.period.aria')}</span>
     </div>
   );
 }

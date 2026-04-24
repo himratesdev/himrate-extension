@@ -1,4 +1,4 @@
-// TASK-039 Phase D1: Trends error state с retry button.
+// TASK-039: Trends error state с retry button.
 
 import { useTranslation } from 'react-i18next';
 

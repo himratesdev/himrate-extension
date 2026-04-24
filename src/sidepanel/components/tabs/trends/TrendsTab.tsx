@@ -1,5 +1,6 @@
-// TASK-039 Phase D1: Trends Tab shell — Period toggle + Overview/drill-down routing + anonymous gate.
-// D1 scope: Overview с 3 core modules. Drill-down defer D2.
+// TASK-039: Trends Tab shell — Period toggle + Overview routing + anonymous gate.
+// Current scope: Overview с 3 core modules (ERV / TI / Rehabilitation).
+// Dedicated drill-down screens + analytics modules (M3..M13) tracked в отдельных feature tickets.
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +43,7 @@ export function TrendsTab({ channelId, accessLevel, onRequestSignIn }: Props) {
 
   const handleRequestUpgrade = (p: TrendsPeriod) => {
     setUpgradeToast(t('trends.period.business_required'));
-    // Auto-dismiss toast через 4 сек — D2 заменит full paywall modal.
+    // Auto-dismiss toast через 4 сек. Full paywall modal tracked отдельным feature request.
     window.setTimeout(() => setUpgradeToast(null), 4000);
     void p;
   };

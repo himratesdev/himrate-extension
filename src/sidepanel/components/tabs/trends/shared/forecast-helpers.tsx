@@ -1,7 +1,7 @@
-// TASK-039 Phase D1 CR follow-ups (post iter 1 re-review):
+// TASK-039 CR follow-ups:
 //   - Dedup buildForecastSeries + padValues между ErvTimeline + TrustIndexTimeline
 //   - ForecastBlockView renamed (избегает shadow с type ForecastBlock)
-// Reused в D2 analytics modules where forecast applicable.
+// Reusable в любых модулях где forecast applicable (trend-based endpoints).
 
 import type { TFunction } from 'i18next';
 import type { ForecastBlock } from '../../../../../shared/trends-types';

@@ -1,4 +1,4 @@
-// TASK-039 Phase D1: TypeScript types для Trends API responses (SRS §4 response shapes).
+// TASK-039: TypeScript types для Trends API responses (SRS §4 response shapes).
 // Строгая типизация → compile-time validation что UI consumer матчит backend contract.
 
 export type TrendsPeriod = '7d' | '30d' | '60d' | '90d' | '365d';

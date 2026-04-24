@@ -15,7 +15,7 @@
     --color-erv-red: #DC2626;
     --color-erv-red-bg: #FEF2F2;
 
-    /* TASK-039 Phase D1: Trends chart palette (read through trends-theme.ts). */
+    /* TASK-039: Trends chart palette (read through trends-theme.ts). */
     --trends-erv-color: #16A34A;
     --trends-ti-color: #2563EB;
     --trends-anomaly-color: #DC2626;

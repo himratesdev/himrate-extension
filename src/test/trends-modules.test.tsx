@@ -1,4 +1,4 @@
-// TASK-039 Phase D1 CR N-2: Unit tests для Trends modules state transitions.
+// TASK-039 CR N-2: Unit tests для Trends modules state transitions.
 // Verifies fetch → loading → (ok|empty|error) → retry cycle works через all 3 modules.
 
 import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';

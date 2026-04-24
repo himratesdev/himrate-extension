@@ -1,4 +1,4 @@
-// TASK-039 Phase D1: Trends API client methods. Consumes Phase C endpoints.
+// TASK-039: Trends API client methods. Consumes Phase C endpoints.
 // Uses existing apiFetch (Bearer + 401 auto-refresh).
 
 import { apiFetch } from './api';

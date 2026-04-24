@@ -1,4 +1,4 @@
-// TASK-039 Phase D1: Insufficient data empty state. Shown when channel <3 streams
+// TASK-039: Insufficient data empty state. Shown when channel <3 streams
 // (SRS Edge Case #1) или aggregates не пропускают min threshold.
 
 import { useTranslation } from 'react-i18next';

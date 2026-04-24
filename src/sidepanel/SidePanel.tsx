@@ -194,7 +194,7 @@ function getAnomalyTabs(cache: TrustCache | null): string[] {
   return ['overview'];
 }
 
-// TASK-039 Phase D1: access_level resolution для Trends API (FR-011..014).
+// TASK-039: access_level resolution для Trends API (FR-011..014).
 // CR S-3: Matches server ChannelPolicy priority order EXACTLY:
 //   effective_business_access? → "business"
 //   owns_channel_access?       → "streamer"  (через auth_providers.is_broadcaster)

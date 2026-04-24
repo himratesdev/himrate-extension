@@ -1,6 +1,7 @@
-// TASK-039 Phase D1: Trends Overview screen — module list (Screen 1 из wireframe).
-// Lays out 3 core modules (D1 scope): M1 ERV hero, M2 TI timeline, M6 Rehabilitation (conditional).
-// D2 добавит M3/M4/M5/M11/M12/M13 + paywalls + Insights banner.
+// TASK-039: Trends Overview screen — module list (Screen 1 из wireframe).
+// Renders 3 core modules: M1 ERV hero, M2 TI timeline, M6 Rehabilitation (conditional).
+// Analytics modules (M3/M4/M5/M11/M12/M13) + paywalls + Insights banner tracked
+// в отдельных feature tickets.
 
 import type { TrendsPeriod } from '../../../../shared/trends-types';
 import { ErvTimeline } from './modules/ErvTimeline';

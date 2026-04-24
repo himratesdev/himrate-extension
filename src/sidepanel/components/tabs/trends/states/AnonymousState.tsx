@@ -1,6 +1,7 @@
-// TASK-039 Phase D1 CR S-4: Dedicated state для anonymous (non-authenticated) users.
+// TASK-039 CR S-4: Dedicated state для anonymous (non-authenticated) users.
 // Показывает explicit sign-in prompt вместо misleading "Error, retry" flow.
-// D2 расширит с Google/Twitch auth buttons (reuse existing Login handler).
+// Extended auth flow (Google/Twitch buttons) — через onSignIn callback wired
+// parent к existing Login handler.
 
 import { useTranslation } from 'react-i18next';
 

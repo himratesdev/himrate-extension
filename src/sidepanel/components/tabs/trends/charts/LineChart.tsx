@@ -1,4 +1,4 @@
-// TASK-039 Phase D1: uPlot React wrapper для TI/ERV timeline.
+// TASK-039: uPlot React wrapper для TI/ERV timeline.
 // SRS §14 OQ-3: uPlot 40KB (vs Chart.js 200KB), 5x faster на 365d — CWS bundle optimized.
 //
 // Build-for-years:

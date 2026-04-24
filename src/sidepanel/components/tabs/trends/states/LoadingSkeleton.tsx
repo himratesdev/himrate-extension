@@ -1,4 +1,4 @@
-// TASK-039 Phase D1: Trends shimmer skeleton. Used when any Trends module loading.
+// TASK-039: Trends shimmer skeleton. Used when any Trends module loading.
 
 interface Props {
   /** Number of module placeholders. Default 3. */

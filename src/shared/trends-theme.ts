@@ -1,10 +1,11 @@
-// TASK-039 Phase D1 CR S-6: Single source of truth для Trends theme colors.
+// TASK-039 CR S-6: Single source of truth для Trends theme colors.
 // uPlot API принимает CSS color strings, dark-mode требует runtime resolution через
 // CSS custom properties. Этот модуль reads --trends-* vars с hex fallback (для
 // testing / older browsers / SSR contexts).
 //
-// Values declared в src/shared/neo-brutiful.css (:root scope). Dark mode override
-// через @media (prefers-color-scheme: dark) — готово к D2 theme switch.
+// Values declared в src/shared/neo-brutiful.css (:root scope). Dark mode ready —
+// runtime CSS custom property resolution означает автоматическое переключение при
+// @media (prefers-color-scheme: dark) override без code change.
 
 const DEFAULTS = {
   erv: '#16a34a',

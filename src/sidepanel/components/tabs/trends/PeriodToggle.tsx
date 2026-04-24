@@ -1,4 +1,4 @@
-// TASK-039 Phase D1: Period toggle — 7/30/60/90/365d segmented control.
+// TASK-039: Period toggle — 7/30/60/90/365d segmented control.
 // Role gating: 365d is Business-only. FR-013.
 //
 // CR S-5 accessibility:

@@ -192,6 +192,306 @@ export interface RehabilitationResponse {
   meta: TrendsMeta;
 }
 
+// === Stability endpoint (FR-003, M3) ===
+// Server shape: app/services/trends/api/stability_endpoint_service.rb. Score = 0..1 decimal
+// (1 - CV(TI) clamped); UI multiplies × 100 for display.
+
+export type StabilityLabel = 'stable' | 'moderate' | 'volatile' | 'insufficient_data';
+
+export interface PercentileQuartiles {
+  p25: number | null;
+  p50: number | null;
+  p75: number | null;
+  p90: number | null;
+}
+
+export interface StabilityPeerComparisonOk {
+  category: string;
+  sample_size: number;
+  channel_values: {
+    ti_avg: number | null;
+    erv_avg_percent: number | null;
+    stability: number | null;
+  };
+  percentiles: {
+    ti: PercentileQuartiles;
+    erv: PercentileQuartiles;
+    stability: PercentileQuartiles;
+  };
+  verdict: { verdict_ru: string | null; verdict_en: string | null };
+  insufficient_data?: false;
+}
+
+export interface StabilityPeerComparisonInsufficient {
+  category: string | null;
+  sample_size: number;
+  insufficient_data: true;
+  reason?: string;
+}
+
+export type StabilityPeerComparison = StabilityPeerComparisonOk | StabilityPeerComparisonInsufficient;
+
+export interface StabilityResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    from: string;
+    to: string;
+    score: number | null;
+    label: StabilityLabel;
+    cv: number | null;
+    ti_mean: number | null;
+    ti_std: number | null;
+    streams_count: number;
+    insufficient_data: boolean;
+    reason?: string;
+    min_streams_required?: number;
+    peer_comparison?: StabilityPeerComparison | null;
+  };
+  meta: TrendsMeta;
+}
+
+// === Anomalies endpoint (FR-004, M4) ===
+// Server shape: app/services/trends/api/anomalies_endpoint_service.rb.
+// Severity derived client-side from confidence threshold (server emits raw confidence).
+
+export interface AnomalyAttributionDetail {
+  source: string;
+  confidence: number;
+  attributed_at: string;
+  raw_source_data?: Record<string, unknown> | null;
+}
+
+export interface AnomalyEvent {
+  anomaly_id: string;
+  date: string;
+  stream_id: string;
+  type: string;
+  cause: string | null;
+  confidence: number | null;
+  ccv_impact: number | null;
+  details: Record<string, unknown> | null;
+  attribution: AnomalyAttributionDetail | null;
+}
+
+export interface AnomalyFrequencyScore {
+  current_per_month: number;
+  baseline_per_month: number | null;
+  delta_percent: number | null;
+  /** Server enum (anomaly_frequency_scorer.rb): elevated / normal / reduced /
+   * insufficient_baseline (when baseline period has too few streams to compare). */
+  verdict: 'elevated' | 'normal' | 'reduced' | 'insufficient_baseline';
+}
+
+export interface AnomalyDistribution {
+  by_day_of_week: Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', number>;
+  by_type: Record<string, number>;
+}
+
+export interface AnomalyPagination {
+  page: number;
+  per_page: number;
+  total_pages: number;
+  has_next: boolean;
+}
+
+export interface AnomaliesResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    from: string;
+    to: string;
+    total: number;
+    unattributed_count: number;
+    anomalies: AnomalyEvent[];
+    pagination: AnomalyPagination;
+    frequency_score: AnomalyFrequencyScore;
+    distribution: AnomalyDistribution;
+  };
+  meta: TrendsMeta;
+}
+
+// === Components endpoint (FR-005, M5) ===
+// Server shape: app/services/trends/api/components_endpoint_service.rb.
+// degradation_signals only (improvement signals not exposed at this endpoint —
+// surfaced via /trends/insights MovementInsights). botted_fraction = single
+// decimal 0..1 (not block).
+
+export interface ComponentDegradationSignal {
+  name: string;
+  delta: number;
+  start_value: number;
+  end_value: number;
+}
+
+export type ComponentValue = number | { value: number | null; confidence?: number | null } | null;
+
+export interface ComponentsPoint {
+  date: string;
+  ti: number | null;
+  components: Record<string, ComponentValue>;
+}
+
+export interface DiscoveryPhase {
+  status: 'organic' | 'anomalous_burst' | 'suspicious' | 'missing' | 'not_applicable';
+  score: number | null;
+  details_ru: string | null;
+  details_en: string | null;
+}
+
+export interface FollowerCcvCouplingTimelineEntry {
+  date: string;
+  r: number | null;
+  health: 'healthy' | 'weakening' | 'decoupled' | null;
+}
+
+export interface FollowerCcvCouplingSummary {
+  current_r: number | null;
+  current_health: 'healthy' | 'weakening' | 'decoupled' | null;
+  avg_r: number | null;
+  healthy_threshold?: number;
+  weakening_threshold?: number;
+}
+
+export interface ComponentsResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    from: string;
+    to: string;
+    group: string | null;
+    components: string[];
+    points: ComponentsPoint[];
+    degradation_signals: ComponentDegradationSignal[];
+    discovery_phase: DiscoveryPhase | null;
+    follower_ccv_coupling_timeline: FollowerCcvCouplingTimelineEntry[];
+    follower_ccv_coupling_summary: FollowerCcvCouplingSummary | null;
+    botted_fraction: number | null;
+  };
+  meta: TrendsMeta;
+}
+
+// === Comparison endpoint (FR-007, M11) ===
+// Server shape: app/services/trends/api/comparison_endpoint_service.rb +
+// app/services/trends/analysis/peer_comparison_service.rb. Returns quartile
+// percentile object (p25/p50/p75/p90) per metric; UI computes channel position.
+
+export type ComparisonResponse =
+  | {
+      data: {
+        channel_id: string;
+        period: TrendsPeriod;
+        from: string;
+        to: string;
+        category: string | null;
+        sample_size?: number;
+        insufficient_data: true;
+        reason: string;
+      };
+      meta: TrendsMeta;
+    }
+  | {
+      data: {
+        channel_id: string;
+        period: TrendsPeriod;
+        from: string;
+        to: string;
+        category: string;
+        sample_size: number;
+        channel_values: {
+          ti_avg: number | null;
+          erv_avg_percent: number | null;
+          stability: number | null;
+        };
+        percentiles: {
+          ti: PercentileQuartiles;
+          erv: PercentileQuartiles;
+          stability: PercentileQuartiles;
+        };
+        verdict: { verdict_ru: string | null; verdict_en: string | null };
+        insufficient_data?: false;
+      };
+      meta: TrendsMeta;
+    };
+
+// === Categories endpoint (FR-008, M13) ===
+// Server shape: app/services/trends/api/categories_endpoint_service.rb +
+// app/services/trends/analysis/category_pattern.rb. is_best derived client-side
+// from top_category. Per-row baseline reconstructed from value − vs_baseline_delta.
+
+export interface CategoryRow {
+  name: string;
+  streams_count: number;
+  ti_avg: number | null;
+  erv_avg_percent: number | null;
+  vs_baseline_ti_delta: number | null;
+  vs_baseline_erv_delta: number | null;
+}
+
+export interface CategoriesResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    from: string;
+    to: string;
+    categories: CategoryRow[];
+    single_category: boolean;
+    top_category: string | null;
+    total_streams: number;
+    verdict: { verdict_ru: string | null; verdict_en: string | null };
+  };
+  meta: TrendsMeta;
+}
+
+// === Weekday patterns endpoint (FR-009, M14) ===
+// Server shape: app/services/trends/api/weekday_patterns_endpoint_service.rb +
+// app/services/trends/analysis/weekday_pattern.rb. best/worst day fields
+// derived client-side from weekday_patterns max/min ti_avg.
+
+export type WeekdayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+
+export interface WeekdayCell {
+  ti_avg: number | null;
+  erv_avg_percent: number | null;
+  streams_count: number;
+}
+
+export interface WeekdayPatternsResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    from: string;
+    to: string;
+    insufficient_data: boolean;
+    weekday_patterns: Record<WeekdayKey, WeekdayCell>;
+    total_days?: number;
+    min_days_required?: number;
+    insight_ru: string | null;
+    insight_en: string | null;
+  };
+  meta: TrendsMeta;
+}
+
+// === Movement Insights endpoint (FR-010, banner) ===
+
+export interface InsightCard {
+  priority: 'P0' | 'P1' | 'P2' | 'P3';
+  icon: string;
+  message_ru: string;
+  message_en: string;
+  action: string | null;
+  recency_score?: number;
+}
+
+export interface InsightsResponse {
+  data: {
+    channel_id: string;
+    period: TrendsPeriod;
+    insights: InsightCard[];
+  };
+  meta: TrendsMeta;
+}
+
 // === Error shape (shared) ===
 
 export interface TrendsApiError {

@@ -1,34 +1,62 @@
-// TASK-039: Trends Tab shell — Period toggle + Overview routing + anonymous gate.
-// Current scope: Overview с 3 core modules (ERV / TI / Rehabilitation).
-// Dedicated drill-down screens + analytics modules (M3..M13) tracked в отдельных feature tickets.
+// TASK-039: Trends Tab shell — Period toggle + Overview routing + access gating.
+// Phase D2 wiring (CR fixes):
+//   M-2: onRequestUpgrade callback threaded к Paywall CTA
+//   S-1: StaleBanner shown when meta.data_freshness === 'stale'
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { TrendsPeriod, AccessLevel } from '../../../../shared/trends-types';
+import type { TrendsPeriod, AccessLevel, TrendsMeta } from '../../../../shared/trends-types';
 import { PeriodToggle } from './PeriodToggle';
 import { TrendsOverview } from './TrendsOverview';
 import { AnonymousState } from './states/AnonymousState';
 import { InsufficientData } from './states/InsufficientData';
+import { StaleBanner } from './states/StaleBanner';
+import { Paywall } from './Paywall';
 
 interface Props {
   channelId: string | null;
   accessLevel: AccessLevel;
   /** Optional hook — when user clicks "Sign in" в AnonymousState. Parent wires to login flow. */
   onRequestSignIn?: () => void;
+  /** Called when user clicks paywall CTA — parent navigates to checkout. */
+  onRequestUpgrade?: (target: 'premium' | 'business') => void;
+  /** Reconnect Twitch OAuth handler — parent triggers re-auth flow. */
+  onReconnectTwitch?: () => void;
+  /** OAuth state: when true, content shows revoked banner с Reconnect CTA. */
+  oauthRevoked?: boolean;
 }
 
 const DEFAULT_PERIOD: TrendsPeriod = '30d';
 
-export function TrendsTab({ channelId, accessLevel, onRequestSignIn }: Props) {
+export function TrendsTab({
+  channelId,
+  accessLevel,
+  onRequestSignIn,
+  onRequestUpgrade,
+  onReconnectTwitch,
+  oauthRevoked = false,
+}: Props) {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<TrendsPeriod>(DEFAULT_PERIOD);
-  const [upgradeToast, setUpgradeToast] = useState<string | null>(null);
+  const [meta, setMeta] = useState<TrendsMeta | null>(null);
 
-  // CR S-4: anonymous — dedicated state instead of misleading "Error, retry".
+  // Stable identity — child useEffect avoid refetch на render.
+  const handleMetaUpdate = useCallback((m: TrendsMeta) => setMeta(m), []);
+
+  // Anonymous viewer — sign-in CTA, no fetches.
   if (accessLevel === 'anonymous') {
     return (
       <div className="trends-tab">
         <AnonymousState onSignIn={onRequestSignIn} />
+      </div>
+    );
+  }
+
+  // Free viewer — full upgrade screen, no fetches.
+  if (accessLevel === 'free') {
+    return (
+      <div className="trends-tab">
+        <Paywall variant="free" onUpgrade={() => onRequestUpgrade?.('premium')} />
       </div>
     );
   }
@@ -41,27 +69,37 @@ export function TrendsTab({ channelId, accessLevel, onRequestSignIn }: Props) {
     );
   }
 
-  const handleRequestUpgrade = (p: TrendsPeriod) => {
-    setUpgradeToast(t('trends.period.business_required'));
-    // Auto-dismiss toast через 4 сек. Full paywall modal tracked отдельным feature request.
-    window.setTimeout(() => setUpgradeToast(null), 4000);
-    void p;
-  };
+  // Premium viewer hits 365d Business gate — Business paywall replaces overview.
+  const showBusinessPaywall = period === '365d' && accessLevel !== 'business';
+
+  const handlePeriodChange = (next: TrendsPeriod) => setPeriod(next);
+  const handleRequestUpgrade = (_p: TrendsPeriod) => setPeriod('365d');
 
   return (
     <div className="trends-tab">
       <PeriodToggle
         currentPeriod={period}
-        onChange={setPeriod}
+        onChange={handlePeriodChange}
         accessLevel={accessLevel}
         onRequestUpgrade={handleRequestUpgrade}
       />
-      {upgradeToast && (
-        <div className="trends-upgrade-toast" role="status" aria-live="polite">
-          {upgradeToast}
-        </div>
+      {oauthRevoked && (
+        <StaleBanner variant="revoked" onReconnect={onReconnectTwitch} />
       )}
-      <TrendsOverview channelId={channelId} period={period} />
+      {!oauthRevoked && meta?.data_freshness === 'stale' && (
+        <StaleBanner variant="stale" relative={t('tooltip.data_stale')} />
+      )}
+      {showBusinessPaywall ? (
+        <Paywall variant="business" onUpgrade={() => onRequestUpgrade?.('business')} />
+      ) : (
+        <TrendsOverview
+          channelId={channelId}
+          period={period}
+          accessLevel={accessLevel}
+          onMetaUpdate={handleMetaUpdate}
+        />
+      )}
+      <span className="sr-only">{t('trends.period.aria')}</span>
     </div>
   );
 }

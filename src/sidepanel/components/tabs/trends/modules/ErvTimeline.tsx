@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { trendsApi } from '../../../../../shared/trends-api';
-import type { ErvResponse, TrendsPeriod } from '../../../../../shared/trends-types';
+import type { ErvResponse, TrendsMeta, TrendsPeriod } from '../../../../../shared/trends-types';
 import { trendsColor } from '../../../../../shared/trends-theme';
 import { useCurrentLocale } from '../../../../../shared/use-current-locale';
 import { LineChart, type Series } from '../charts/LineChart';
@@ -18,9 +18,11 @@ interface Props {
   period: TrendsPeriod;
   /** Overview list variant (denser layout). Default variant = drill-down detail. */
   variant?: 'overview' | 'detail';
+  /** Phase D2 S-1: surface response meta (data_freshness etc.) к parent для banner логики. */
+  onMetaUpdate?: (meta: TrendsMeta) => void;
 }
 
-export function ErvTimeline({ channelId, period, variant = 'detail' }: Props) {
+export function ErvTimeline({ channelId, period, variant = 'detail', onMetaUpdate }: Props) {
   const { t } = useTranslation();
   const locale = useCurrentLocale();
   const [state, setState] = useState<
@@ -41,6 +43,7 @@ export function ErvTimeline({ channelId, period, variant = 'detail' }: Props) {
           setState({ status: result.error === 'insufficient_data' ? 'empty' : 'error' });
           return;
         }
+        onMetaUpdate?.(result.data.meta);
         const points = result.data.data.points;
         setState(points.length < 3 ? { status: 'empty' } : { status: 'ok', data: result.data });
       })
@@ -50,7 +53,7 @@ export function ErvTimeline({ channelId, period, variant = 'detail' }: Props) {
         setState({ status: 'error' });
       });
     return () => ctrl.abort();
-  }, [channelId, period, refreshKey]);
+  }, [channelId, period, refreshKey, onMetaUpdate]);
 
   const handleRetry = () => setRefreshKey((k) => k + 1);
 

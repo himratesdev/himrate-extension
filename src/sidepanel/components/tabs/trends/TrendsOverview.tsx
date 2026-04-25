@@ -1,24 +1,42 @@
-// TASK-039: Trends Overview screen — module list (Screen 1 из wireframe).
-// Renders 3 core modules: M1 ERV hero, M2 TI timeline, M6 Rehabilitation (conditional).
-// Analytics modules (M3/M4/M5/M11/M12/M13) + paywalls + Insights banner tracked
-// в отдельных feature tickets.
+// TASK-039: Trends Overview screen — 9 modules + Movement Insights banner.
+// Modules: M1 ERV, M2 TI, M3 Stability, M4 Anomalies, M5 Components, M6 Rehabilitation
+// (conditional), M11 Comparison, M13 Categories, M14 Weekday.
 
-import type { TrendsPeriod } from '../../../../shared/trends-types';
+import type { AccessLevel, TrendsMeta, TrendsPeriod } from '../../../../shared/trends-types';
 import { ErvTimeline } from './modules/ErvTimeline';
 import { TrustIndexTimeline } from './modules/TrustIndexTimeline';
+import { StabilityModule } from './modules/StabilityModule';
+import { AnomaliesModule } from './modules/AnomaliesModule';
+import { ComponentsModule } from './modules/ComponentsModule';
 import { RehabilitationCurve } from './modules/RehabilitationCurve';
+import { ComparisonModule } from './modules/ComparisonModule';
+import { CategoriesModule } from './modules/CategoriesModule';
+import { WeekdayModule } from './modules/WeekdayModule';
+import { InsightsBanner } from './InsightsBanner';
 
 interface Props {
   channelId: string;
   period: TrendsPeriod;
+  accessLevel: AccessLevel;
+  /** Deep-link handler — parent navigates to module drill-down on insight action. */
+  onInsightAction?: (action: string) => void;
+  /** Surface meta (e.g. data_freshness) к parent для StaleBanner показа. */
+  onMetaUpdate?: (meta: TrendsMeta) => void;
 }
 
-export function TrendsOverview({ channelId, period }: Props) {
+export function TrendsOverview({ channelId, period, accessLevel, onInsightAction, onMetaUpdate }: Props) {
   return (
     <div className="trends-overview">
-      <ErvTimeline channelId={channelId} period={period} variant="overview" />
+      <InsightsBanner channelId={channelId} period={period} onAction={onInsightAction} />
+      <ErvTimeline channelId={channelId} period={period} variant="overview" onMetaUpdate={onMetaUpdate} />
       <TrustIndexTimeline channelId={channelId} period={period} variant="overview" />
+      <StabilityModule channelId={channelId} period={period} variant="overview" accessLevel={accessLevel} />
+      <AnomaliesModule channelId={channelId} period={period} variant="overview" />
+      <ComponentsModule channelId={channelId} period={period} variant="overview" />
       <RehabilitationCurve channelId={channelId} />
+      <ComparisonModule channelId={channelId} period={period} variant="overview" />
+      <CategoriesModule channelId={channelId} period={period} variant="overview" />
+      <WeekdayModule channelId={channelId} period={period} variant="overview" />
     </div>
   );
 }

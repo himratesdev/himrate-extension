@@ -340,6 +340,7 @@
   "trends.modules.anomalies.elevated": "{{factor}}× more often",
   "trends.modules.anomalies.reduced": "{{factor}}× less often",
   "trends.modules.anomalies.normal": "within norm",
+  "trends.modules.anomalies.insufficient_baseline": "insufficient baseline for comparison",
   "trends.modules.anomalies.distribution_title": "When anomalies happen",
   "trends.modules.anomalies.types_title": "By type",
   "trends.modules.anomalies.events_title": "Events",

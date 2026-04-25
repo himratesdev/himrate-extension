@@ -153,7 +153,7 @@ describe('AnomaliesModule', () => {
           pagination: { page: 1, per_page: 50, total_pages: 1, has_next: false },
           frequency_score: {
             current_per_month: 5, baseline_per_month: 2, delta_percent: 150,
-            verdict: 'elevated', verdict_ru: 'ru', verdict_en: 'en',
+            verdict: 'elevated',
           },
           distribution: {
             by_day_of_week: { mon: 1, tue: 0, wed: 0, thu: 0, fri: 0, sat: 2, sun: 2 },
@@ -171,6 +171,25 @@ describe('AnomaliesModule', () => {
     expect(screen.getByText('+320')).toBeInTheDocument();
   });
 
+  it('CR S-2: handles "insufficient_baseline" verdict explicitly (не fallthrough в normal)', async () => {
+    vi.spyOn(trendsApi, 'getAnomalies').mockResolvedValue({
+      ok: true,
+      data: {
+        data: {
+          channel_id: 'c1', period: '7d', from: '', to: '',
+          total: 1, unattributed_count: 0,
+          anomalies: [],
+          pagination: { page: 1, per_page: 50, total_pages: 1, has_next: false },
+          frequency_score: { current_per_month: 4, baseline_per_month: null, delta_percent: null, verdict: 'insufficient_baseline' },
+          distribution: { by_day_of_week: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0, sun: 0 }, by_type: {} },
+        },
+        meta: META,
+      },
+    });
+    r(<AnomaliesModule channelId="c1" period="7d" />);
+    await waitFor(() => expect(screen.getByText('insufficient baseline for comparison')).toBeInTheDocument());
+  });
+
   it('shows event_empty + total_pages > 1 → pagination buttons', async () => {
     vi.spyOn(trendsApi, 'getAnomalies').mockResolvedValue({
       ok: true,
@@ -179,7 +198,7 @@ describe('AnomaliesModule', () => {
           channel_id: 'c1', period: '365d', from: '', to: '',
           total: 120, unattributed_count: 0, anomalies: [],
           pagination: { page: 1, per_page: 50, total_pages: 3, has_next: true },
-          frequency_score: { current_per_month: 0, baseline_per_month: 0, delta_percent: 0, verdict: 'normal', verdict_ru: '', verdict_en: '' },
+          frequency_score: { current_per_month: 0, baseline_per_month: 0, delta_percent: 0, verdict: 'normal' },
           distribution: { by_day_of_week: { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0, sun: 0 }, by_type: {} },
         },
         meta: META,

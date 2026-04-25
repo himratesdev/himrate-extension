@@ -84,8 +84,12 @@ export function AnomaliesModuleView({
       ? freq.current_per_month / freq.baseline_per_month
       : null;
 
+  // CR S-2 fix: handle "insufficient_baseline" verdict (server enum) explicitly —
+  // не fallthrough to "normal" misrepresentation.
   const verdictLabel =
-    freq.verdict === 'elevated' && factor != null
+    freq.verdict === 'insufficient_baseline'
+      ? t('trends.modules.anomalies.insufficient_baseline')
+      : freq.verdict === 'elevated' && factor != null
       ? t('trends.modules.anomalies.elevated', { factor: factor.toFixed(1) })
       : freq.verdict === 'reduced' && factor != null && factor > 0
       ? t('trends.modules.anomalies.reduced', { factor: (1 / factor).toFixed(1) })

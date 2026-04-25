@@ -340,6 +340,7 @@
   "trends.modules.anomalies.elevated": "в {{factor}}× чаще",
   "trends.modules.anomalies.reduced": "в {{factor}}× реже",
   "trends.modules.anomalies.normal": "в норме",
+  "trends.modules.anomalies.insufficient_baseline": "недостаточно базы для сравнения",
   "trends.modules.anomalies.distribution_title": "Когда происходят аномалии",
   "trends.modules.anomalies.types_title": "По типам",
   "trends.modules.anomalies.events_title": "События",

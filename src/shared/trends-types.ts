@@ -278,9 +278,9 @@ export interface AnomalyFrequencyScore {
   current_per_month: number;
   baseline_per_month: number | null;
   delta_percent: number | null;
-  verdict: 'elevated' | 'normal' | 'reduced' | 'insufficient_data';
-  verdict_ru: string;
-  verdict_en: string;
+  /** Server enum (anomaly_frequency_scorer.rb): elevated / normal / reduced /
+   * insufficient_baseline (when baseline period has too few streams to compare). */
+  verdict: 'elevated' | 'normal' | 'reduced' | 'insufficient_baseline';
 }
 
 export interface AnomalyDistribution {

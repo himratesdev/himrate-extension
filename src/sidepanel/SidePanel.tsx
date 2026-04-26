@@ -18,10 +18,12 @@ import type { TrustCache } from '../shared/api';
 const TABS = ['overview', 'trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'] as const;
 export type SidePanelTab = typeof TABS[number];
 
-// Tabs locked per tier (Design Spec §F3)
+// BUG-016: 'trends' removed from guest/free locks — TrendsTab.tsx handles
+// Paywall variants (anonymous → AnonymousState, free → Paywall variant="free").
+// Locking at TabBar level prevented users from EVER reaching paywall conversion path.
 const LOCKED_TABS: Record<string, SidePanelTab[]> = {
-  guest: ['trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid'],
-  free: ['trends', 'audience', 'compare', 'overlap', 'botraid'],
+  guest: ['audience', 'watchlists', 'compare', 'overlap', 'botraid'],
+  free: ['audience', 'compare', 'overlap', 'botraid'],
   premium: [],
   business: [],
   streamer: [],

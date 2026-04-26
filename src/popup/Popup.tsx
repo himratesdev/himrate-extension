@@ -143,11 +143,11 @@ export default function Popup() {
       {/* Footer M4 */}
       <div className="screen-footer">
         {DONATION_URL ? (
-          <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="footer-link">
+          <a href={DONATION_URL} target="_blank" rel="noopener noreferrer" className="sp-footer-link">
             {t('footer.support')}
           </a>
         ) : (
-          <span className="footer-link" style={{ opacity: 0.5, cursor: 'default' }}>
+          <span className="sp-footer-link" style={{ opacity: 0.5, cursor: 'default' }}>
             {t('footer.support')}
           </span>
         )}

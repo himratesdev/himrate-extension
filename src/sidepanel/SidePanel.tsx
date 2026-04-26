@@ -120,27 +120,27 @@ export function SidePanel() {
   return (
     <div className="panel">
       {/* Header */}
-      <div className="panel-header">
-        <div className="panel-header-left">
+      <div className="sp-header">
+        <div className="sp-header-left">
           {currentTab !== 'overview' && (
-            <button className="panel-header-back" onClick={() => setCurrentTab('overview')} aria-label={t('aria.back')}>
+            <button className="sp-header-back" onClick={() => setCurrentTab('overview')} aria-label={t('aria.back')}>
               &#8592;
             </button>
           )}
-          <span className="panel-header-title">
+          <span className="sp-header-title">
             {currentTab === 'overview' && trustCache?.display_name
               ? trustCache.display_name
               : t(`tab.${currentTab}`)}
           </span>
         </div>
-        <div className="panel-header-right">
+        <div className="sp-header-right">
           <LangSwitcher compact />
           {authState.loggedIn && (
             <>
-              <button className="panel-settings" aria-label={t('aria.settings')} onClick={() => setCurrentTab('settings')}>
+              <button className="sp-header-icon" aria-label={t('aria.settings')} onClick={() => setCurrentTab('settings')}>
                 &#9881;&#65039;
               </button>
-              <div className="panel-avatar" aria-label={t('aria.profile')}>
+              <div className="sp-header-avatar" aria-label={t('aria.profile')}>
                 {trustCache?.avatar_url
                   ? <img src={trustCache.avatar_url} alt="" width={20} height={20} style={{ borderRadius: '50%' }} />
                   : (authState.twitchLogin?.[0]?.toUpperCase() || 'U')
@@ -166,7 +166,7 @@ export function SidePanel() {
       />
 
       {/* Content */}
-      <div className="panel-content" role="tabpanel">
+      <div className="sp-content" role="tabpanel">
         {currentTab === 'overview' ? (
           <Overview
             trustCache={trustCache}
@@ -201,12 +201,12 @@ export function SidePanel() {
       )}
 
       {/* Footer */}
-      <div className="panel-footer">
-        <a href="#" className="footer-link">{t('footer.support')}</a>
-        <div className="panel-footer-right">
-          <a href="#" className="footer-link">{t('footer.feedback')}</a>
-          <a href="https://youtube.com/@himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.youtube')}</a>
-          <a href="https://t.me/himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.telegram')}</a>
+      <div className="sp-footer">
+        <a href="#" className="sp-footer-link">{t('footer.support')}</a>
+        <div className="sp-footer-right">
+          <a href="#" className="sp-footer-link">{t('footer.feedback')}</a>
+          <a href="https://youtube.com/@himrate" target="_blank" rel="noopener" className="sp-footer-link">{t('footer.youtube')}</a>
+          <a href="https://t.me/himrate" target="_blank" rel="noopener" className="sp-footer-link">{t('footer.telegram')}</a>
         </div>
       </div>
     </div>

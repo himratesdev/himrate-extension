@@ -14,7 +14,7 @@ export function TabBar({ tabs, currentTab, onTabChange, lockedTabs = [], anomaly
   const { t } = useTranslation();
 
   return (
-    <div className="tab-bar" role="tablist">
+    <div className="sp-tab-bar" role="tablist">
       {tabs.map((tab) => {
         const isActive = tab === currentTab;
         const isLocked = lockedTabs.includes(tab);
@@ -22,15 +22,15 @@ export function TabBar({ tabs, currentTab, onTabChange, lockedTabs = [], anomaly
         return (
           <button
             key={tab}
-            className={`tab-item${isActive ? ' active' : ''}${isLocked ? ' locked' : ''}`}
+            className={`sp-tab${isActive ? ' active' : ''}${isLocked ? ' locked' : ''}`}
             role="tab"
             aria-selected={isActive}
             aria-disabled={isLocked}
             onClick={() => onTabChange(tab)}
           >
             {t(`tab.${tab}`)}
-            {isLocked && <span className="tab-lock"> 🔒</span>}
-            {hasAnomaly && <span className="tab-anomaly-dot" />}
+            {isLocked && <span className="lock-icon"> 🔒</span>}
+            {hasAnomaly && <span className="anomaly-dot" />}
           </button>
         );
       })}

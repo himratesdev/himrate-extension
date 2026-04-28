@@ -209,6 +209,8 @@
   "sp.rep_history_link": "Full history →",
   "sp.rep_streams_count": "{{count}} streams",
   "sp.rep_streams_count_plus": "10+ streams",
+  "sp.rep_change_stable": "Stable over 30 days",
+  "sp.rep_change_delta": "{{sign}}{{delta}} over 30 days",
 
   "signal.auth_ratio": "Auth Ratio",
   "signal.chatter_ccv": "Chatter-to-CCV",

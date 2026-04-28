@@ -209,6 +209,8 @@
   "sp.rep_history_link": "Подробная история\u00a0→",
   "sp.rep_streams_count": "{{count}}\u00a0стримов",
   "sp.rep_streams_count_plus": "10+\u00a0стримов",
+  "sp.rep_change_stable": "Стабильно за\u00a030 дней",
+  "sp.rep_change_delta": "{{sign}}{{delta}} за\u00a030 дней",
 
   "signal.auth_ratio": "Авторизованные зрители",
   "signal.chatter_ccv": "Чат к\u00a0CCV",

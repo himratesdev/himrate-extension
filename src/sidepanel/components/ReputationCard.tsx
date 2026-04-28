@@ -16,6 +16,74 @@ interface Props {
   /** From streamer_rating.streams_count — drives "10+ стримов" badge. */
   streamsCount?: number;
   onNavigate?: (tab: string) => void;
+  /**
+   * Optional 30-day reputation history per component (8 points each, 0..100).
+   * Real data slot — when reputation_history API is available, pass arrays here.
+   * Without it the mini-chart renders a flat line at the current value.
+   */
+  history?: {
+    growth_pattern_score?: number[];
+    follower_quality_score?: number[];
+    engagement_consistency_score?: number[];
+  };
+  /**
+   * Optional 30-day deltas per component. When undefined, the change indicator
+   * defaults to neutral ("→ Стабильно за 30 дней") until API ready.
+   */
+  deltas?: {
+    growth_pattern_score?: number;
+    follower_quality_score?: number;
+    engagement_consistency_score?: number;
+  };
+}
+
+const CHART_W = 200;
+const CHART_H = 32;
+const CHART_POINTS = 8;
+
+function RepDetailChart({ score, history }: { score: number; history?: number[] }) {
+  // y = 0 → top (score 100), y = CHART_H → bottom (score 0). Pad so endpoint dot fits.
+  const yFor = (v: number) => Math.max(2, Math.min(CHART_H - 2, CHART_H - (v / 100) * CHART_H));
+  const xFor = (i: number, n: number) => (i / Math.max(1, n - 1)) * CHART_W;
+
+  const points = history && history.length >= 2 ? history : Array.from({ length: CHART_POINTS }, () => score);
+  const polyline = points.map((v, i) => `${xFor(i, points.length)},${yFor(v)}`).join(' ');
+  const lastX = xFor(points.length - 1, points.length);
+  const lastY = yFor(score);
+
+  return (
+    <svg className="sp-rep-mini-chart" viewBox={`0 0 ${CHART_W} ${CHART_H}`} aria-hidden="true">
+      <polyline fill="none" stroke={PURPLE} strokeWidth="1.5" points={polyline} />
+      <circle cx={lastX} cy={lastY} r="2.5" fill={PURPLE} />
+      <text
+        x={lastX - 30}
+        y={Math.max(8, lastY - 2)}
+        fontSize="8"
+        fill={PURPLE}
+        fontFamily="'JetBrains Mono', monospace"
+      >
+        {Math.round(score)}
+      </text>
+    </svg>
+  );
+}
+
+function RepChange({ delta, t }: { delta?: number; t: (k: string, opts?: Record<string, unknown>) => string }) {
+  // Default to neutral when delta unavailable (no reputation history API yet).
+  if (delta == null) {
+    return <div className="sp-rep-change">→ {t('sp.rep_change_stable')}</div>;
+  }
+  const direction: 'up' | 'down' | 'stable' = delta >= 1 ? 'up' : delta <= -1 ? 'down' : 'stable';
+  const arrow = direction === 'up' ? '↑' : direction === 'down' ? '↓' : '→';
+  if (direction === 'stable') {
+    return <div className="sp-rep-change">{arrow} {t('sp.rep_change_stable')}</div>;
+  }
+  const sign = delta > 0 ? '+' : '';
+  return (
+    <div className={`sp-rep-change ${direction}`}>
+      {arrow} {t('sp.rep_change_delta', { sign, delta })}
+    </div>
+  );
 }
 
 const COMPONENTS = [
@@ -49,6 +117,8 @@ export function ReputationCard({
   expandable = false,
   streamsCount = 0,
   onNavigate,
+  history,
+  deltas,
 }: Props) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -170,6 +240,14 @@ export function ReputationCard({
                   {t(i18nKey)}: {value != null ? value.toFixed(0) : '—'} / 100
                 </div>
                 <div className="sp-rep-detail-text">{t(descKey)}</div>
+                <RepDetailChart
+                  score={pct}
+                  history={history?.[key as keyof NonNullable<typeof history>]}
+                />
+                <RepChange
+                  delta={deltas?.[key as keyof NonNullable<typeof deltas>]}
+                  t={t}
+                />
                 <div style={{ textAlign: 'right', marginTop: 4 }}>
                   <a
                     href="#"

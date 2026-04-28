@@ -179,7 +179,7 @@ export function SidePanel() {
         currentTab={currentTab}
         onTabChange={handleTabChange}
         lockedTabs={lockedTabs}
-        anomalyTabs={getAnomalyTabs(trustCache)}
+        anomalyTabs={getAnomalyTabs(trustCache, lockedTabs)}
       />
 
       {/* Content — canonical sp-content */}
@@ -243,11 +243,21 @@ export function SidePanel() {
   );
 }
 
-function getAnomalyTabs(cache: TrustCache | null): Record<string, 'yellow' | 'red'> {
+function getAnomalyTabs(
+  cache: TrustCache | null,
+  lockedTabs: SidePanelTab[],
+): Record<string, 'yellow' | 'red'> {
   if (!cache?.is_live || cache.erv_percent == null || cache.erv_percent >= 80) return {};
-  // Anomaly dots: yellow (ERV 50-79) или red (ERV < 50). Wireframe spec.
+  // ERV<50 = red, ERV 50-79 = yellow per wireframe.
   const color: 'yellow' | 'red' = cache.erv_percent < 50 ? 'red' : 'yellow';
-  return { overview: color };
+  // Tabs with anomaly-relevant drill-down: overview always; overlap when
+  // user has access (frames 12/26 — locked tabs in Free skip dot).
+  const candidateTabs: SidePanelTab[] = ['overview', 'overlap'];
+  const result: Record<string, 'yellow' | 'red'> = {};
+  for (const tab of candidateTabs) {
+    if (!lockedTabs.includes(tab)) result[tab] = color;
+  }
+  return result;
 }
 
 // TASK-039: access_level resolution для Trends API (FR-011..014).

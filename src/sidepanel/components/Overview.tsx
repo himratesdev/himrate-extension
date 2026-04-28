@@ -93,7 +93,7 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
       {/* M3: Signal Breakdown (Premium / Free live) — data from trustCache, no extra API call */}
       {showDrillDown && (
-        <SignalBreakdown signals={trustCache.signal_breakdown || []} />
+        <SignalBreakdown signals={trustCache.signal_breakdown || []} expandable={isPremium} />
       )}
       {showPaywall && (
         <div className="sp-paywall-blur">

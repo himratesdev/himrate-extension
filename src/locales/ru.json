@@ -127,6 +127,9 @@
 
   "banner.link_twitch": "Привяжите Twitch для точной аналитики → Настройки",
 
+  "paywall.guest_title": "Хотите видеть полный анализ?",
+  "paywall.guest_description": "11 сигналов накрутки, репутация канала, графики и\u00a0тренды\u00a0— бесплатно после\u00a0входа",
+
   "footer.support": "Поддержать проект",
   "footer.feedback": "Обратная связь",
   "footer.youtube": "YouTube",

@@ -103,6 +103,47 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
       )}
 
+      {/* Combined M3+M4 guest paywall (Section 5 wireframe lines 1855-1877) — Live · Guest */}
+      {isGuest && isLive && (
+        <div className="sp-paywall" style={{ minHeight: 180 }}>
+          <div className="sp-paywall-blurred">
+            <SignalBreakdown signals={trustCache.signal_breakdown || []} isPremium={false} />
+            <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
+          </div>
+          <div className="sp-paywall-overlay" style={{ padding: '16px 12px' }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700,
+              fontSize: 14,
+              color: 'var(--ink)',
+            }}>
+              {t('paywall.guest_title')}
+            </div>
+            <div style={{
+              fontSize: 11,
+              color: 'var(--ink-50)',
+              textAlign: 'center',
+              lineHeight: 1.4,
+              maxWidth: 260,
+            }}>
+              {t('paywall.guest_description')}
+            </div>
+            <button
+              className="sp-paywall-cta"
+              onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}
+              style={{
+                background: 'var(--color-twitch)',
+                borderColor: 'var(--color-twitch)',
+                fontSize: 13,
+                padding: '8px 24px',
+              }}
+            >
+              {t('auth.twitch')}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Streamer Mode extensions */}
       {isOwnChannel && (
         <>
@@ -127,8 +168,8 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         <PostStreamCountdown expiresAt={trustCache.expires_at} />
       )}
 
-      {/* Guest CTA */}
-      {isGuest && (
+      {/* Guest CTA (offline only — Live guest gets combined paywall above) */}
+      {isGuest && !isLive && (
         <div className="sp-guest-cta">
           <button className="btn btn-primary" onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}>
             {t('popup.cta_guest')}

@@ -117,28 +117,32 @@ export function SidePanel() {
 
   return (
     <div className="panel">
-      {/* Header */}
-      <div className="panel-header">
-        <div className="panel-header-left">
-          {currentTab !== 'overview' && (
-            <button className="panel-header-back" onClick={() => setCurrentTab('overview')} aria-label={t('aria.back')}>
-              &#8592;
-            </button>
-          )}
-          <span className="panel-header-title">
-            {currentTab === 'overview' && trustCache?.display_name
-              ? trustCache.display_name
-              : t(`tab.${currentTab}`)}
-          </span>
-        </div>
-        <div className="panel-header-right">
+      {/* Header — canonical sp-header §6.2 */}
+      <div className="sp-header">
+        {currentTab !== 'overview' && (
+          <button className="sp-header-back" onClick={() => setCurrentTab('overview')} aria-label={t('aria.back')}>
+            &#8592;
+          </button>
+        )}
+        <span className="sp-header-title">{t(`tab.${currentTab}`)}</span>
+        {currentTab === 'overview' && trustCache?.login && (
+          <span className="sp-header-streamer">{trustCache.login}</span>
+        )}
+        <div className="sp-header-right">
           <LangSwitcher compact />
           {authState.loggedIn && (
             <>
-              <button className="panel-settings" aria-label={t('aria.settings')} onClick={() => setCurrentTab('settings')}>
-                &#9881;&#65039;
+              <button
+                className="sp-header-icon"
+                aria-label={t('aria.settings')}
+                onClick={() => setCurrentTab('settings')}
+              >
+                <svg className="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
               </button>
-              <div className="panel-avatar" aria-label={t('aria.profile')}>
+              <div className="sp-header-avatar" aria-label={t('aria.profile')}>
                 {trustCache?.avatar_url
                   ? <img src={trustCache.avatar_url} alt="" width={20} height={20} style={{ borderRadius: '50%' }} />
                   : (authState.twitchLogin?.[0]?.toUpperCase() || 'U')
@@ -163,8 +167,8 @@ export function SidePanel() {
         anomalyTabs={getAnomalyTabs(trustCache)}
       />
 
-      {/* Content */}
-      <div className="panel-content" role="tabpanel">
+      {/* Content — canonical sp-content */}
+      <div className="sp-content" role="tabpanel">
         {currentTab === 'overview' ? (
           <Overview
             trustCache={trustCache}
@@ -198,14 +202,15 @@ export function SidePanel() {
         />
       )}
 
-      {/* Footer */}
-      <div className="panel-footer">
-        <a href="#" className="footer-link">{t('footer.support')}</a>
-        <div className="panel-footer-right">
-          <a href="#" className="footer-link">{t('footer.feedback')}</a>
-          <a href="https://youtube.com/@himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.youtube')}</a>
-          <a href="https://t.me/himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.telegram')}</a>
-        </div>
+      {/* Footer — canonical sp-footer §6.2 */}
+      <div className="sp-footer">
+        <a href="#" className="sp-footer-link">{t('footer.support')}</a>
+        <span className="sp-footer-sep">·</span>
+        <a href="#" className="sp-footer-link">{t('footer.feedback')}</a>
+        <span className="sp-footer-sep">·</span>
+        <a href="https://youtube.com/@himrate" target="_blank" rel="noopener" className="sp-footer-link">{t('footer.youtube')}</a>
+        <span className="sp-footer-sep">·</span>
+        <a href="https://t.me/himrate" target="_blank" rel="noopener" className="sp-footer-link">{t('footer.telegram')}</a>
       </div>
     </div>
   );

@@ -39,7 +39,34 @@ export function AudiencePreview({ countries, onNavigate }: Props) {
     }
   }, [i18n.language]);
 
-  if (!countries || countries.length === 0) return null;
+  // Empty state placeholder — 3 placeholder rows for canonical structure
+  // visibility (frame 11/14/15 expect M6 Audience Preview present).
+  if (!countries || countries.length === 0) {
+    return (
+      <div className="sp-audience">
+        <div className="sp-audience-header">
+          <span className="sp-audience-title">{t('sp.audience_preview')}</span>
+          <a
+            href="#"
+            className="sp-audience-more"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate?.('audience');
+            }}
+          >
+            {t('sp.more')}
+          </a>
+        </div>
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="sp-audience-row sp-audience-placeholder">
+            <span className="sp-audience-flag">🏳️</span>
+            <span className="sp-audience-country">—</span>
+            <span className="sp-audience-pct">—</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const top3 = countries.slice(0, 3);
 

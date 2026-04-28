@@ -126,7 +126,29 @@ export function ReputationCard({
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
-  if (!reputation) return null;
+  // Empty state placeholder — render canonical 3-row structure с "—" values
+  // when API hasn't populated reputation yet (frames 11/14/15 expect this).
+  if (!reputation) {
+    return (
+      <div className="sp-reputation purple">
+        <div className="sp-reputation-title">
+          <ReputationIcon /> {t('sp.rep_title')}{' '}
+          <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--ink-30)' }}>
+            — {t('sp.rep_subtitle')}
+          </span>
+        </div>
+        {COMPONENTS.map(({ key, i18nKey }) => (
+          <div key={key} className="sp-rep-row sp-rep-placeholder">
+            <span className="sp-rep-name">{t(i18nKey)}</span>
+            <div className="sp-rep-bar-bg">
+              <div className="sp-rep-bar-fill" style={{ width: '0%' }} />
+            </div>
+            <span className="sp-rep-val">—</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const toggleExpand = (key: string) => {
     setExpanded((prev) => {

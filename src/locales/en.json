@@ -301,6 +301,7 @@
   "sp.trend_real_up": "Real viewers up: {{sign}}{{pct}}% over 30min",
   "sp.trend_real_down": "Real viewers down: {{sign}}{{pct}}% over 30min",
   "sp.trend_real_stable": "Real viewers stable: {{sign}}{{pct}}% over 30min",
+  "sp.trend_real_stable_placeholder": "Real viewers stable over 30 min",
   "sp.watchlist_add": "Add to list",
   "sp.watchlist_remove": "In list",
   "sp.watchlist_my_lists": "My lists",

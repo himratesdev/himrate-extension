@@ -297,9 +297,12 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         />
       )}
 
-      {/* M6: Audience Preview (LIVE + offline-with-access) */}
-      {!isOfflineExpired && trustCache.top_countries && (
-        <AudiencePreview countries={trustCache.top_countries} />
+      {/* M6: Audience Preview — renders placeholder rows when API empty. */}
+      {!isOfflineExpired && (showDrillDown || isFreeWithAccess) && (
+        <AudiencePreview
+          countries={trustCache.top_countries}
+          onNavigate={onNavigate}
+        />
       )}
 
       {/* Watchlist Button + Dropdown (frame 27) */}

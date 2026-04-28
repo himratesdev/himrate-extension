@@ -110,7 +110,42 @@ export function MiniSparkline({ channelId, isLive, isPremium, ervColor = 'green'
         </div>
       );
     }
-    return null;
+    // Placeholder skeleton — canonical sp-sparkline structure с empty chart
+    // and "—" stats so frames 14/15 show M5 placeholder before data arrives.
+    return (
+      <div className="sp-sparkline">
+        <div className="sp-sparkline-header">
+          <span className="sp-sparkline-title">
+            {isLive ? t('sp.sparkline_title_live') : t('sp.sparkline_title_7d')}
+          </span>
+        </div>
+        <div className="sp-chart-stats">
+          <div className="sp-chart-stat">
+            <div className="sp-chart-stat-label">{t('sp.chart_now')}</div>
+            <div className="sp-chart-stat-value">—</div>
+          </div>
+          <div className="sp-chart-stat">
+            <div className="sp-chart-stat-label">{t('sp.chart_max')}</div>
+            <div className="sp-chart-stat-value">—</div>
+          </div>
+          <div className="sp-chart-stat">
+            <div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div>
+            <div className="sp-chart-stat-value">—</div>
+          </div>
+        </div>
+        <svg
+          className="sp-sparkline-chart sp-sparkline-placeholder"
+          viewBox={`0 0 ${VIEWBOX_W} ${VIEWBOX_H}`}
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          {Y_LABELS.slice(0, -1).map((y) => (
+            <line key={y} x1={X_START} y1={y} x2={X_END} y2={y} stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
+          ))}
+          <line x1={X_START} y1={Y_BOTTOM} x2={X_END} y2={Y_BOTTOM} stroke="#9CA3AF" strokeWidth="1" />
+        </svg>
+      </div>
+    );
   }
 
   const ervStroke = ERV_COLOR_HEX[ervColor] || ERV_COLOR_HEX.green;

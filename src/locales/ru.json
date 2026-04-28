@@ -301,6 +301,7 @@
   "sp.trend_real_up": "Реальных зрителей стало больше: {{sign}}{{pct}}% за\u00a030мин",
   "sp.trend_real_down": "Реальных зрителей стало меньше: {{sign}}{{pct}}% за\u00a030мин",
   "sp.trend_real_stable": "Реальные зрители стабильны: {{sign}}{{pct}}% за\u00a030мин",
+  "sp.trend_real_stable_placeholder": "Реальные зрители стабильны за\u00a030\u00a0минут",
   "sp.watchlist_add": "В список",
   "sp.watchlist_remove": "В списке",
   "sp.watchlist_my_lists": "Мои списки",

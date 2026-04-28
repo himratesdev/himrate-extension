@@ -33,7 +33,11 @@ export function LiveTrendIndicator({ channelId }: Props) {
     };
   }, [channelId]);
 
-  if (change == null) return null;
+  // Empty state — render neutral "stable" placeholder when sparkline data
+  // unavailable (frame 14 expects sp-trend present below ERV badge).
+  if (change == null) {
+    return <div className="sp-trend stable">→ {t('sp.trend_real_stable_placeholder')}</div>;
+  }
 
   const direction: 'up' | 'down' | 'stable' =
     change >= STABLE_THRESHOLD ? 'up' : change <= -STABLE_THRESHOLD ? 'down' : 'stable';

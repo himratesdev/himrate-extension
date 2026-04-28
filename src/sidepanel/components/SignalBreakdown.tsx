@@ -41,11 +41,48 @@ function signalColor(value: number): 'green' | 'yellow' | 'red' {
   return 'red';
 }
 
+// Canonical signal types per Trust Index v2 (11 signals).
+const CANONICAL_SIGNAL_TYPES = [
+  'auth_ratio',
+  'chatter_to_ccv_ratio',
+  'ccv_step_function',
+  'ccv_tier_clustering',
+  'per_user_chat_behavior',
+  'channel_protection_score',
+  'cross_channel_bot_presence',
+  'known_bot_list_matching',
+  'raid_attribution',
+  'ccv_chat_rate_correlation',
+  'account_profile_scoring',
+] as const;
+
 export function SignalBreakdown({ signals, expandable = false }: Props) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
-  if (signals.length === 0) return null;
+  // Empty state placeholder — render canonical 11-row structure с "—" values
+  // when API hasn't populated signals yet. Frames 11/14/15 expect this structure
+  // visible per wireframe; components must show shape even before data arrives.
+  if (signals.length === 0) {
+    const titleKey = expandable ? 'sp.signals_title_premium' : 'sp.signals_title';
+    return (
+      <div className="sp-signals">
+        <div className="sp-signals-title">{t(titleKey, { count: 11 })}</div>
+        {CANONICAL_SIGNAL_TYPES.map((type) => {
+          const i18n = SIGNAL_I18N[type];
+          return (
+            <div key={type} className="sp-signal-row sp-signal-placeholder">
+              <span className="sp-signal-name">{i18n ? t(i18n.name) : type}</span>
+              <div className="sp-signal-bar-bg">
+                <div className="sp-signal-bar-fill grey" style={{ width: '0%' }} />
+              </div>
+              <span className="sp-signal-val grey">—</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   const sorted = [...signals].sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
 

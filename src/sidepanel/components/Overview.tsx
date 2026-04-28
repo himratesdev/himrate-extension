@@ -57,9 +57,26 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         ervLabelColor={trustCache.erv_label_color}
         confidence={trustCache.confidence}
         coldStartStatus={trustCache.cold_start_status}
+        streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
         isLive={isLive}
         isOwnChannel={isOwnChannel}
       />
+
+      {/* Cold Start collecting status (Section 4 wireframe) */}
+      {trustCache.cold_start_status === 'insufficient' && (
+        <div className="collecting-status">
+          {t('cold_start.collecting_min3')}
+        </div>
+      )}
+      {(trustCache.cold_start_status === 'provisional_low' ||
+        trustCache.cold_start_status === 'provisional') && (
+        <div className="collecting-status">
+          {t('cold_start.collecting_provisional', {
+            current: trustCache.streamer_rating?.streams_count ?? 0,
+            required: 10,
+          })}
+        </div>
+      )}
 
       {/* M2: TI + Classification */}
       <TIBadge

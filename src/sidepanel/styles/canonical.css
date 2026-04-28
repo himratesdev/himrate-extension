@@ -1391,6 +1391,22 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
 .sp-state-subtitle-narrow { max-width: 240px; }
 .sp-search-input-full { width: 100%; }
 
+/* Lang switcher dropdown (anchored to sp-header-icon globe button) */
+.lang-switch-wrapper { position: relative; display: inline-flex; }
+.lang-dropdown {
+    position: absolute; top: calc(100% + 4px); right: 0; z-index: 50;
+    background: white; border: 2px solid var(--border-dark); border-radius: var(--radius-button);
+    padding: 4px; min-width: 140px; box-shadow: 2px 2px 0 var(--border-dark);
+}
+.lang-dropdown-item {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    padding: 6px 8px; border: none; background: transparent;
+    cursor: pointer; border-radius: 4px; font-size: 12px;
+    font-family: 'Inter', sans-serif;
+}
+.lang-dropdown-item:hover { background: var(--color-skeleton-from); }
+.lang-dropdown-item.active { background: var(--color-skeleton-from); }
+
 /* Watchlist error inline */
 .sp-watchlist-error {
     font-size: 11px; color: var(--color-erv-red);

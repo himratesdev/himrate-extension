@@ -39,19 +39,16 @@ export function SidePanel() {
   const [lockedTabPaywall, setLockedTabPaywall] = useState<SidePanelTab | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Boot: get auth state + current channel + trust data
+  // Boot: get auth state + trust data. loading flips false once trust response
+  // arrives — null response means "no current channel" (user not on Twitch),
+  // which Overview state machine routes to NotTwitchOverview.
   useEffect(() => {
     chrome.runtime.sendMessage({ action: 'GET_AUTH_STATE' }, (auth) => {
       if (auth) setAuthState(auth);
     });
     chrome.runtime.sendMessage({ action: 'GET_TRUST_DATA' }, (data) => {
-      if (data) {
-        setTrustCache(data);
-        setLoading(false);
-      }
-    });
-    chrome.runtime.sendMessage({ action: 'GET_CURRENT_CHANNEL' }, (ch) => {
-      if (!ch) setLoading(false);
+      if (data) setTrustCache(data);
+      setLoading(false);
     });
   }, []);
 

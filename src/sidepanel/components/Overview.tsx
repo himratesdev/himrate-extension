@@ -39,12 +39,23 @@ function isPostStreamWindowOpen(cache: TrustCache): boolean {
 export function Overview({ trustCache, loading, tier, isOwnChannel, authState }: Props) {
   const { t } = useTranslation();
 
-  // Screen determination (FR-019 state machine)
-  if (loading || !trustCache) return <SkeletonOverview />;
+  // Screen determination (FR-019 state machine, ordered):
+  // 1. Still loading bg.ts response → Skeleton
+  // 2. Loaded but no channel data OR no login → user not on Twitch (Frame 01)
+  // 3. Backend error response → ErrorOverview (Frame 19)
+  // 4. Channel exists but not tracked → NotTrackedOverview (Frames 03-05)
+  if (loading) return <SkeletonOverview />;
+  if (!trustCache || !trustCache.login) return <NotTwitchOverview />;
   if (trustCache.error) return <ErrorOverview />;
-  if (!trustCache.is_tracked && trustCache.is_live) return <NotTrackedOverview ccv={trustCache.ccv} login={trustCache.login} loggedIn={authState.loggedIn} />;
-  if (!trustCache.is_tracked && !trustCache.is_live) return <NotTrackedOverview ccv={null} login={trustCache.login} loggedIn={authState.loggedIn} />;
-  if (!trustCache.login) return <NotTwitchOverview />;
+  if (!trustCache.is_tracked) {
+    return (
+      <NotTrackedOverview
+        ccv={trustCache.is_live ? trustCache.ccv : null}
+        login={trustCache.login}
+        loggedIn={authState.loggedIn}
+      />
+    );
+  }
 
   const isLive = trustCache.is_live;
   const isPremium = tier === 'premium' || tier === 'business' || tier === 'streamer' || isOwnChannel;

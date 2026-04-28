@@ -105,7 +105,12 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
       {/* M4: Reputation — data from trustCache */}
       {showDrillDown && (
-        <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
+        <ReputationCard
+          reputation={trustCache.streamer_reputation}
+          isLive={isLive}
+          expandable={isPremium}
+          streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
+        />
       )}
 
       {/* Combined M3+M4 guest paywall (Section 5 wireframe lines 1855-1877) — Live · Guest */}

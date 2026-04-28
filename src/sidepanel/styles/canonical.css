@@ -334,7 +334,7 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
 .sp-ti-header {
     display: flex; align-items: center; justify-content: space-between; cursor: pointer;
 }
-.sp-ti-left { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.sp-ti-left { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 .sp-ti-label {
     font-size: 11px; color: var(--ink-50); font-family: 'JetBrains Mono', monospace;
     text-transform: uppercase; letter-spacing: 0.05em;
@@ -365,13 +365,13 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;
 }
 .sp-signal-row {
-    display: flex; align-items: center; gap: 8px; padding: 4px 0;
+    display: flex; align-items: center; gap: 8px; padding: 6px 0;
     transition: background 0.15s; border-radius: 4px;
 }
 .sp-signal-row:hover { background: rgba(0,0,0,0.04); }
 .sp-signal-name {
     font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--ink-50);
-    width: 100px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    width: 120px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .sp-signal-bar-bg {
     flex: 1; height: 8px; background: var(--color-skeleton-from); border-radius: 4px;
@@ -404,7 +404,7 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;
 }
 .sp-rep-row {
-    display: flex; align-items: center; gap: 8px; padding: 4px 0;
+    display: flex; align-items: center; gap: 8px; padding: 6px 0;
     transition: background 0.15s; border-radius: 4px;
 }
 .sp-rep-row:hover { background: rgba(0,0,0,0.04); }
@@ -1491,6 +1491,33 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     font-size: 9px; color: var(--ink-30);
     font-family: 'JetBrains Mono', monospace;
 }
+
+/* Stale / Revoked Banners (Trends frames 46 / 47) */
+.sp-stale-banner {
+    border: 2px solid #EAB308; border-radius: 8px;
+    padding: 10px 12px; background: #FFFBEB;
+    display: flex; align-items: flex-start; gap: 8px;
+    margin-bottom: 8px;
+}
+.sp-stale-banner-body { flex: 1; min-width: 0; }
+.sp-stale-banner-title { font-size: 12px; font-weight: 700; color: #A16207; }
+.sp-stale-banner-detail { font-size: 10px; color: #92400E; margin-top: 2px; }
+.sp-revoked-banner {
+    border: 2px solid #DC2626; border-radius: 8px;
+    padding: 10px 12px; background: #FEF2F2;
+    display: flex; align-items: flex-start; gap: 8px;
+    margin-bottom: 8px;
+}
+.sp-revoked-banner-title { font-size: 12px; font-weight: 700; color: #991B1B; }
+.sp-revoked-banner-detail { font-size: 10px; color: #B91C1C; margin-top: 2px; }
+.sp-revoked-banner-cta {
+    flex-shrink: 0;
+    font-size: 11px; font-weight: 600; padding: 6px 12px;
+    background: #DC2626; color: white; border: none; border-radius: 6px;
+    cursor: pointer; transition: all 0.15s;
+    font-family: 'Space Grotesk', sans-serif;
+}
+.sp-revoked-banner-cta:hover { background: #991B1B; }
 
 /* AlertsBlock — persistent anomaly attribution (frame 26) */
 .sp-alerts-block {

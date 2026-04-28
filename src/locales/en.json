@@ -130,6 +130,7 @@
   "notification.view_analytics": "View analytics →",
 
   "banner.link_twitch": "Link Twitch for accurate analytics → Settings",
+  "banner.guest_signin": "Sign in with Twitch for full access.",
 
   "paywall.guest_title": "Want full analysis?",
   "paywall.guest_description": "11 manipulation signals, channel reputation, charts and trends\u00a0— free after sign\u00a0in",

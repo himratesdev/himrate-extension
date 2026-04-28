@@ -152,15 +152,25 @@ export function SidePanel() {
         </div>
       </div>
 
-      {/* Info Banner — only on tracked Live channels where Twitch link
-          would improve analytics. Hidden on NotTracked/NotTwitch/Error/Offline
-          per wireframe-frames/03,05,17 (banner absent in those states). */}
+      {/* Info Banner — 2 variants:
+          link_twitch (loggedIn + !twitchLinked + tracked): "Привяжите Twitch..."
+          guest_signin (Guest + tracked + Live, frame 10): "Войдите через Twitch..."
+          Hidden on NotTracked / NotTwitch / Error / Offline per frames 03/05/17. */}
       <InfoBanner
         show={
           authState.loggedIn &&
           !authState.twitchLinked &&
           Boolean(trustCache?.is_tracked)
         }
+        variant="link_twitch"
+      />
+      <InfoBanner
+        show={
+          !authState.loggedIn &&
+          Boolean(trustCache?.is_tracked) &&
+          Boolean(trustCache?.is_live)
+        }
+        variant="guest_signin"
       />
 
       {/* Tab Bar */}

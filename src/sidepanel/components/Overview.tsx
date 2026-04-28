@@ -113,11 +113,12 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         </div>
       )}
 
-      {/* M2: TI + Classification + Percentile (cold-start gated per frames 06-09) */}
+      {/* M2: TI + Classification + Percentile (cold-start gated per frames 06-09;
+          percentile hidden for Guest per frame 10 — premium-derived data). */}
       <TIBadge
         tiScore={trustCache.ti_score}
         classification={trustCache.classification}
-        percentile={trustCache.percentile_in_category}
+        percentile={isGuest ? null : trustCache.percentile_in_category}
         showExpand={showDrillDown}
         coldStartStatus={trustCache.cold_start_status}
       />
@@ -151,12 +152,50 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         />
       )}
 
-      {/* Combined M3+M4 guest paywall (Section 5 wireframe) — Live · Guest */}
+      {/* Combined M3+M4 guest paywall (Section 5 wireframe frame 10).
+          Blurred layer renders real data when available, falls back to static
+          preview rows so the blur effect стайт визуально even when server
+          returns empty signal_breakdown for anonymous tier. */}
       {isGuest && isLive && (
         <div className="sp-paywall sp-paywall-guest">
           <div className="sp-paywall-blurred">
-            <SignalBreakdown signals={trustCache.signal_breakdown || []} />
-            <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
+            {trustCache.signal_breakdown && trustCache.signal_breakdown.length > 0 ? (
+              <SignalBreakdown signals={trustCache.signal_breakdown} />
+            ) : (
+              <div className="sp-signals" style={{ padding: 8 }}>
+                <div className="sp-signal-row">
+                  <span className="sp-signal-name">{t('signal.auth_ratio')}</span>
+                  <div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '82%' }} /></div>
+                  <span className="sp-signal-val green">82%</span>
+                </div>
+                <div className="sp-signal-row">
+                  <span className="sp-signal-name">{t('signal.chatter_ccv')}</span>
+                  <div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '75%' }} /></div>
+                  <span className="sp-signal-val green">75%</span>
+                </div>
+                <div className="sp-signal-row">
+                  <span className="sp-signal-name">{t('signal.ccv_step')}</span>
+                  <div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '90%' }} /></div>
+                  <span className="sp-signal-val green">90%</span>
+                </div>
+              </div>
+            )}
+            {trustCache.streamer_reputation ? (
+              <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
+            ) : (
+              <div className="sp-reputation purple" style={{ padding: '4px 8px' }}>
+                <div className="sp-rep-row">
+                  <span className="sp-rep-name">{t('sp.rep_growth')}</span>
+                  <div className="sp-rep-bar-bg"><div className="sp-rep-bar-fill" style={{ width: '72%' }} /></div>
+                  <span className="sp-rep-val">72</span>
+                </div>
+                <div className="sp-rep-row">
+                  <span className="sp-rep-name">{t('sp.rep_quality')}</span>
+                  <div className="sp-rep-bar-bg"><div className="sp-rep-bar-fill" style={{ width: '88%' }} /></div>
+                  <span className="sp-rep-val">88</span>
+                </div>
+              </div>
+            )}
           </div>
           <div className="sp-paywall-overlay sp-paywall-overlay-guest">
             <div className="sp-paywall-headline">{t('paywall.guest_title')}</div>

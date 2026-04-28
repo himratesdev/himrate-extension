@@ -153,7 +153,12 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
       )}
 
       {/* M5: Mini Sparkline */}
-      <MiniSparkline channelId={trustCache.channel_id} isLive={isLive} isPremium={isPremium} />
+      <MiniSparkline
+        channelId={trustCache.channel_id}
+        isLive={isLive}
+        isPremium={isPremium}
+        ervColor={(trustCache.erv_label_color as 'green' | 'yellow' | 'red' | undefined) || 'green'}
+      />
 
       {/* Watchlist Button */}
       {authState.loggedIn && (

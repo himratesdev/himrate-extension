@@ -88,7 +88,7 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
       {/* M3: Signal Breakdown (Premium / Free live) — data from trustCache, no extra API call */}
       {showDrillDown && (
-        <SignalBreakdown signals={trustCache.signal_breakdown || []} isPremium={isPremium} />
+        <SignalBreakdown signals={trustCache.signal_breakdown || []} />
       )}
       {showPaywall && (
         <div className="sp-paywall-blur">
@@ -107,7 +107,7 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
       {isGuest && isLive && (
         <div className="sp-paywall" style={{ minHeight: 180 }}>
           <div className="sp-paywall-blurred">
-            <SignalBreakdown signals={trustCache.signal_breakdown || []} isPremium={false} />
+            <SignalBreakdown signals={trustCache.signal_breakdown || []} />
             <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
           </div>
           <div className="sp-paywall-overlay" style={{ padding: '16px 12px' }}>

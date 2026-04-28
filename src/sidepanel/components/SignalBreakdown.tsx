@@ -1,5 +1,7 @@
-// TASK-035 FR-004: Live-Signal Breakdown — 11 signals with bars.
-// Premium: open. Free/Guest: blur overlay (DS §1.2-A).
+// BUG-016 PR-1 Section 6: SignalBreakdown canonical match (wireframe lines 1965-2001).
+// Wireframe: side-panel-wireframe-TASK-039.html sp-signals + sp-signal-row.
+// Canonical classes: sp-signals + sp-signals-title + sp-signal-row + sp-signal-name
+// + sp-signal-bar-bg + sp-signal-bar-fill.{green/yellow/red} + sp-signal-val.{green/yellow/red}.
 
 import { useTranslation } from 'react-i18next';
 
@@ -14,10 +16,8 @@ interface Signal {
 
 interface Props {
   signals: Signal[];
-  isPremium: boolean;
 }
 
-// Signal type → i18n key mapping
 const SIGNAL_I18N: Record<string, string> = {
   auth_ratio: 'signal.auth_ratio',
   chatter_to_ccv_ratio: 'signal.chatter_ccv',
@@ -32,7 +32,13 @@ const SIGNAL_I18N: Record<string, string> = {
   account_profile_scoring: 'signal.account_scoring',
 };
 
-export function SignalBreakdown({ signals, isPremium }: Props) {
+function signalColor(value: number): 'green' | 'yellow' | 'red' {
+  if (value >= 0.8) return 'green';
+  if (value >= 0.5) return 'yellow';
+  return 'red';
+}
+
+export function SignalBreakdown({ signals }: Props) {
   const { t } = useTranslation();
 
   if (signals.length === 0) return null;
@@ -40,26 +46,28 @@ export function SignalBreakdown({ signals, isPremium }: Props) {
   const sorted = [...signals].sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
 
   return (
-    <div className={`sp-signals ${!isPremium ? 'sp-blur-content' : ''}`}>
-      <div className="sp-signals-header">
-        <span>📊 {t('tab.overview')}</span>
-      </div>
-      {sorted.map((sig, i) => (
-        <div key={sig.type} className="sp-signal-bar" style={{ animationDelay: `${i * 50}ms` }}>
-          <div className="sp-signal-name">{t(SIGNAL_I18N[sig.type] || sig.type)}</div>
-          <div className="sp-signal-track">
-            <div
-              className="sp-signal-fill"
-              style={{ width: `${Math.min(100, sig.value * 100)}%` }}
-              role="progressbar"
-              aria-valuenow={Math.round(sig.value * 100)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            />
+    <div className="sp-signals">
+      <div className="sp-signals-title">{t('sp.signals_title', { count: sorted.length })}</div>
+      {sorted.map((sig) => {
+        const color = signalColor(sig.value);
+        const pct = Math.round(sig.value * 100);
+        return (
+          <div key={sig.type} className="sp-signal-row">
+            <span className="sp-signal-name">{t(SIGNAL_I18N[sig.type] || sig.type)}</span>
+            <div className="sp-signal-bar-bg">
+              <div
+                className={`sp-signal-bar-fill ${color}`}
+                style={{ width: `${Math.min(100, pct)}%` }}
+                role="progressbar"
+                aria-valuenow={pct}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              />
+            </div>
+            <span className={`sp-signal-val ${color}`}>{pct}%</span>
           </div>
-          <div className="sp-signal-value">{(sig.value * 100).toFixed(0)}%</div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

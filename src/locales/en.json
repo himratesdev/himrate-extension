@@ -216,6 +216,7 @@
   "sp.components_toggle": "Components",
   "sp.ti_tooltip": "Trust Index — comprehensive channel trust score",
   "sp.trust_rating": "Trust Rating",
+  "sp.signals_title": "Signals ({{count}})",
   "sp.percentile_above": "Above {{N}}% of channels in category",
   "sp.percentile_below": "Below {{N}}% of channels in category",
 

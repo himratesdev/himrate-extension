@@ -160,12 +160,12 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
 }
 .sp-tab-bar::-webkit-scrollbar { display: none; }
 .sp-tab {
-    flex: 0 0 auto; padding: 8px 6px; font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px; font-weight: 500; color: var(--color-text-secondary); cursor: pointer;
+    flex: 0 0 auto; padding: 8px 5px; font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px; font-weight: 500; color: var(--color-text-secondary); cursor: pointer;
     border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s ease;
     white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none;
     position: relative; display: inline-flex; align-items: center; gap: 3px;
-    line-height: 1;
+    line-height: 1; letter-spacing: -0.01em;
 }
 .sp-tab:hover { color: var(--color-primary); }
 .sp-tab.active {
@@ -1375,6 +1375,36 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     font-size: 12px; color: var(--ink-50); line-height: 1.5;
 }
 .sp-modal-action { font-size: 12px; padding: 10px; }
+
+/* Anonymous State (Trends frame 33) — Guest auth screen */
+.sp-anonymous-state {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; gap: 20px; padding: 20px;
+}
+.sp-anonymous-title {
+    font-size: 16px; font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif; margin-bottom: 6px;
+}
+.sp-anonymous-message {
+    font-size: 12px; color: var(--ink-50);
+    line-height: 1.5; max-width: 260px; margin: 0 auto;
+}
+.sp-oauth-stack {
+    display: flex; flex-direction: column; gap: 8px;
+    width: 100%; max-width: 260px;
+}
+.sp-oauth-btn {
+    width: 100%; padding: 10px;
+    border: 2.5px solid var(--border-dark); border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all 0.15s;
+}
+.sp-oauth-btn:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
+.sp-oauth-btn.twitch { background: #5865F2; color: white; }
+.sp-oauth-btn.google { background: white; color: var(--ink); }
 
 /* Not-tracked overview centered + subtitle */
 .sp-content-centered { justify-content: center; }

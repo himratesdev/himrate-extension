@@ -91,7 +91,28 @@ export function HealthScoreCard({ healthScore, onNavigate, history, deltas }: Pr
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Set<ComponentKey>>(new Set());
 
-  if (!healthScore) return null;
+  // Empty state placeholder — render canonical 5-row structure when API empty
+  // (frame 15 Streamer Live expects M7 HealthScore present even before data).
+  if (!healthScore) {
+    return (
+      <div className="sp-health-score">
+        <div className="sp-health-title">
+          <span>{t('sp.health_score')}</span>
+          <span className="sp-health-provisional yellow">{t('sp.health_insufficient')}</span>
+        </div>
+        <div className="sp-section-subtitle">{t('sp.health_subtitle')}</div>
+        {COMPONENTS_ORDER.map((key) => (
+          <div key={key} className="sp-health-row sp-health-placeholder">
+            <span className="sp-health-name">{t(I18N[key].name)}</span>
+            <div className="sp-health-bar-bg">
+              <div className="sp-health-bar-fill grey" style={{ width: '0%' }} />
+            </div>
+            <span className="sp-health-val">—</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   const isProvisional = healthScore.streams_count < 10;
   const toggle = (key: ComponentKey) => {

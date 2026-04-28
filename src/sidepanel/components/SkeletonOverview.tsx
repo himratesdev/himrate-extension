@@ -1,49 +1,49 @@
-// TASK-035 FR-013: Shimmer skeleton for Overview tab — all modules.
-// No props. Matches Overview module layout: gauge, TI, signals, reputation, sparkline, buttons.
+// BUG-016 PR-1 (Section 2 of wireframe): Shimmer skeleton state.
+// Canonical wireframe: side-panel-wireframe-TASK-039.html lines 1330-1397.
+// Pixel-match: canonical skeleton-rect + skeleton-circle (NOT skeleton-line).
+//
+// Mirror Overview module layout: M1 gauge + M2 TI + M3 signals + M4 reputation +
+// M5 sparkline + M6 audience preview. ARIA busy для AT.
 
 export function SkeletonOverview() {
   return (
-    <div className="sp-overview sp-skeleton" aria-busy="true" aria-label="Loading" style={{ gap: '14px', display: 'flex', flexDirection: 'column', padding: '16px' }}>
-      {/* ERV Gauge placeholder */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-        <div className="skeleton-circle" style={{ width: '120px', height: '120px', borderRadius: '50%' }} />
-        <div className="skeleton-line" style={{ width: '100px', height: '14px' }} />
-        <div className="skeleton-line" style={{ width: '140px', height: '12px' }} />
+    <div aria-busy="true" aria-label="Загрузка данных">
+      {/* M1 Skeleton — gauge + 3 text rects */}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="skeleton-circle" style={{ width: '120px', height: '120px' }} />
+      </div>
+      <div className="skeleton-rect" style={{ width: '180px', height: '24px', margin: '0 auto' }} />
+      <div className="skeleton-rect" style={{ width: '120px', height: '18px', margin: '0 auto' }} />
+      <div className="skeleton-rect" style={{ width: '200px', height: '18px', margin: '0 auto' }} />
+
+      {/* M2 Skeleton — TI badge */}
+      <div className="skeleton-rect" style={{ width: '100%', height: '48px' }} />
+
+      {/* M3 Skeleton — 5 signal rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className="skeleton-rect" style={{ width: '100%', height: '28px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '28px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '28px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '28px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '28px' }} />
       </div>
 
-      {/* TI Badge placeholder */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div className="skeleton-line" style={{ width: '90px', height: '16px' }} />
-        <div className="skeleton-line" style={{ width: '50px', height: '22px' }} />
-        <div className="skeleton-line" style={{ width: '70px', height: '14px' }} />
+      {/* M4 Skeleton — 3 reputation rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div className="skeleton-rect" style={{ width: '100%', height: '40px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '40px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '40px' }} />
       </div>
 
-      {/* Signal bars placeholder */}
-      {[100, 80, 120, 90, 110].map((w, i) => (
-        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div className="skeleton-line" style={{ width: '90px', height: '12px' }} />
-          <div className="skeleton-line" style={{ flex: 1, height: '6px', borderRadius: '3px' }} />
-          <div className="skeleton-line" style={{ width: `${w > 80 ? 32 : 24}px`, height: '12px' }} />
-        </div>
-      ))}
+      {/* M5 Skeleton — sparkline */}
+      <div className="skeleton-rect" style={{ width: '100%', height: '80px' }} />
 
-      {/* Reputation card placeholder */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '10px', borderRadius: '8px' }}>
-        <div className="skeleton-line" style={{ width: '140px', height: '14px' }} />
-        {[1, 2, 3].map((i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div className="skeleton-line" style={{ width: '100px', height: '10px' }} />
-            <div className="skeleton-line" style={{ flex: 1, height: '4px' }} />
-            <div className="skeleton-line" style={{ width: '24px', height: '10px' }} />
-          </div>
-        ))}
+      {/* M6 Skeleton — 3 audience rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <div className="skeleton-rect" style={{ width: '100%', height: '20px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '20px' }} />
+        <div className="skeleton-rect" style={{ width: '100%', height: '20px' }} />
       </div>
-
-      {/* Sparkline placeholder */}
-      <div className="skeleton-line" style={{ width: '100%', height: '80px', borderRadius: '6px' }} />
-
-      {/* Button placeholder */}
-      <div className="skeleton-line" style={{ width: '100%', height: '40px', borderRadius: '6px' }} />
     </div>
   );
 }

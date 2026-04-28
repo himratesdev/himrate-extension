@@ -228,6 +228,8 @@
   "sp.trend_real_up": "Реальных зрителей стало больше: {{sign}}{{pct}}% за\u00a030мин",
   "sp.trend_real_down": "Реальных зрителей стало меньше: {{sign}}{{pct}}% за\u00a030мин",
   "sp.trend_real_stable": "Реальные зрители стабильны: {{sign}}{{pct}}% за\u00a030мин",
+  "sp.watchlist_add": "В список",
+  "sp.watchlist_remove": "В списке",
   "sp.percentile_above": "Выше чем у\u00a0{{N}}% каналов в\u00a0категории",
   "sp.percentile_below": "Ниже чем у\u00a0{{N}}% каналов в\u00a0категории",
 

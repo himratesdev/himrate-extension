@@ -73,8 +73,9 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         <div className="sp-streamer-disclaimer">{t('sp.streamer_disclaimer')}</div>
       )}
 
-      {/* Post-stream countdown — top of offline state (Section 9 wireframe lines 3085-3089) */}
-      {!isLive && trustCache.expires_at && (tier === 'free' || isGuest) && (
+      {/* Post-stream countdown — frames 16/18 (within window or <1h warning).
+          Skipped at frame 17 (>18h expired) — overlay shows expired message. */}
+      {!isLive && trustCache.expires_at && (tier === 'free' || isGuest) && !isOfflineExpired && (
         <PostStreamCountdown expiresAt={trustCache.expires_at} />
       )}
 
@@ -210,12 +211,48 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         </div>
       )}
 
-      {/* Offline expired paywall (Section 9 >18h wireframe lines 3298-3321) */}
+      {/* Offline expired paywall (frame 17). Blurred layer has placeholder rows
+          when API returns null (anonymous tier / not-cached) so blur effect shows. */}
       {isOfflineExpired && (
         <div className="sp-paywall sp-paywall-expired">
           <div className="sp-paywall-blurred">
-            <SignalBreakdown signals={trustCache.signal_breakdown || []} />
-            <ReputationCard reputation={trustCache.streamer_reputation} isLive={false} />
+            {trustCache.signal_breakdown && trustCache.signal_breakdown.length > 0 ? (
+              <SignalBreakdown signals={trustCache.signal_breakdown} />
+            ) : (
+              <div className="sp-signals" style={{ padding: 8 }}>
+                <div className="sp-signal-row">
+                  <span className="sp-signal-name">{t('signal.auth_ratio')}</span>
+                  <div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '82%' }} /></div>
+                  <span className="sp-signal-val green">82%</span>
+                </div>
+                <div className="sp-signal-row">
+                  <span className="sp-signal-name">{t('signal.chatter_ccv')}</span>
+                  <div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '75%' }} /></div>
+                  <span className="sp-signal-val green">75%</span>
+                </div>
+                <div className="sp-signal-row">
+                  <span className="sp-signal-name">{t('signal.ccv_step')}</span>
+                  <div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '90%' }} /></div>
+                  <span className="sp-signal-val green">90%</span>
+                </div>
+              </div>
+            )}
+            {trustCache.streamer_reputation ? (
+              <ReputationCard reputation={trustCache.streamer_reputation} isLive={false} />
+            ) : (
+              <div className="sp-reputation purple" style={{ padding: '4px 8px' }}>
+                <div className="sp-rep-row">
+                  <span className="sp-rep-name">{t('sp.rep_growth')}</span>
+                  <div className="sp-rep-bar-bg"><div className="sp-rep-bar-fill" style={{ width: '72%' }} /></div>
+                  <span className="sp-rep-val">72</span>
+                </div>
+                <div className="sp-rep-row">
+                  <span className="sp-rep-name">{t('sp.rep_quality')}</span>
+                  <div className="sp-rep-bar-bg"><div className="sp-rep-bar-fill" style={{ width: '88%' }} /></div>
+                  <span className="sp-rep-val">88</span>
+                </div>
+              </div>
+            )}
           </div>
           <div className="sp-paywall-overlay sp-paywall-overlay-expired">
             <div className="sp-paywall-headline">{t('sp.offline_paywall_title')}</div>

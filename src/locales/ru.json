@@ -109,7 +109,7 @@
 
 
   "classification.trusted": "Порядочный",
-  "classification.needs_review": "Средний",
+  "classification.needs_review": "Требует проверки",
   "classification.suspicious": "Подозрительный",
   "classification.fraudulent": "Жулик",
 
@@ -215,6 +215,9 @@
   "signal.account_scoring": "Скоринг аккаунтов",
   "sp.components_toggle": "Компоненты",
   "sp.ti_tooltip": "Trust Index — комплексная оценка доверия к\u00a0каналу",
+  "sp.trust_rating": "Рейтинг доверия",
+  "sp.percentile_above": "Выше чем у\u00a0{{N}}% каналов в\u00a0категории",
+  "sp.percentile_below": "Ниже чем у\u00a0{{N}}% каналов в\u00a0категории",
 
   "aria.settings": "Настройки",
   "aria.profile": "Профиль",

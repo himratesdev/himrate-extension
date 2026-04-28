@@ -78,11 +78,11 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         </div>
       )}
 
-      {/* M2: TI + Classification */}
+      {/* M2: TI + Classification + Percentile */}
       <TIBadge
         tiScore={trustCache.ti_score}
         classification={trustCache.classification}
-        streamerRating={trustCache.streamer_rating}
+        percentile={trustCache.percentile_in_category}
         showExpand={showDrillDown}
       />
 

@@ -32,19 +32,19 @@ export function AlertCounter({ trustCache }: Props) {
     const now = Date.now();
     const newAlerts: Alert[] = [];
 
-    // Bot wave: ERV% < 50
+    // Bot wave: ERV% < 50 → frame 13 "Волна ботов"
     if (trustCache.erv_percent != null && trustCache.erv_percent < 50) {
       if (prev.erv_percent == null || prev.erv_percent >= 50) {
-        newAlerts.push({ id: `bot_wave_${now}`, type: 'bot_wave', label: t('alert.error'), createdAt: now });
+        newAlerts.push({ id: `bot_wave_${now}`, type: 'bot_wave', label: t('sp.alert_bot_wave'), createdAt: now });
       }
     }
-    // TI drop: TI dropped by 10+ points
+    // TI drop: TI dropped by 10+ points → "Падение TI"
     if (trustCache.ti_score != null && prev.ti_score != null && prev.ti_score - trustCache.ti_score >= 10) {
-      newAlerts.push({ id: `ti_drop_${now}`, type: 'ti_drop', label: t('popup.trend_down'), createdAt: now });
+      newAlerts.push({ id: `ti_drop_${now}`, type: 'ti_drop', label: t('sp.alert_ti_drop'), createdAt: now });
     }
-    // CCV spike: CCV jumped 50%+ from previous reading
+    // CCV spike: CCV jumped 50%+ from previous reading → "Скачок CCV"
     if (trustCache.ccv != null && prev.ccv != null && prev.ccv > 0 && trustCache.ccv / prev.ccv >= 1.5) {
-      newAlerts.push({ id: `ccv_spike_${now}`, type: 'ccv_spike', label: t('alert.warning'), createdAt: now });
+      newAlerts.push({ id: `ccv_spike_${now}`, type: 'ccv_spike', label: t('sp.alert_ccv_spike'), createdAt: now });
     }
 
     if (newAlerts.length > 0) {
@@ -67,20 +67,24 @@ export function AlertCounter({ trustCache }: Props) {
   const dismiss = (id: string) => setAlerts((prev) => prev.filter((a) => a.id !== id));
 
   return (
-    <div className="sp-alert-counter" role="status" aria-live="polite">
-      {alerts.map((alert) => (
-        <div key={alert.id} className={`sp-alert-badge sp-alert-${alert.type}`}>
-          <span className="sp-alert-dot" />
-          <span className="sp-alert-label">{alert.label}</span>
-          <button
-            className="sp-alert-dismiss"
-            onClick={() => dismiss(alert.id)}
-            aria-label={t('aria.dismiss')}
-          >
-            ×
-          </button>
-        </div>
-      ))}
+    <div className="sp-alert-stack">
+      {alerts.map((alert) => {
+        // bot_wave is red severity (ERV < 50); other alerts are yellow.
+        const severity = alert.type === 'bot_wave' ? 'red' : 'yellow';
+        return (
+          <div key={alert.id} className={`sp-alert ${severity}`} role="alert" aria-live="polite">
+            <span className="sp-alert-dot" />
+            <span>{alert.label}</span>
+            <button
+              className="sp-alert-dismiss"
+              onClick={() => dismiss(alert.id)}
+              aria-label={t('aria.dismiss')}
+            >
+              ×
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }

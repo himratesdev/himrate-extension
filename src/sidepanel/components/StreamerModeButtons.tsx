@@ -7,6 +7,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Modal } from './Modal';
 
 interface Props {
   channelId: string | null;
@@ -170,48 +171,14 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
       )}
 
       {modal && (
-        <div
-          className="sp-modal-overlay"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-          onClick={() => setModal(null)}
+        <Modal
+          title={modal === 'badge' ? t('sp.streamer_badge_action') : t('sp.streamer_card_action')}
+          onClose={() => setModal(null)}
         >
-          <div
-            className="sp-modal"
-            style={{
-              background: '#fff',
-              border: '2px solid #111',
-              borderRadius: 8,
-              padding: 24,
-              minWidth: 260,
-              maxWidth: 320,
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ fontWeight: 700, marginBottom: 12, fontSize: 14 }}>
-              {modal === 'badge'
-                ? t('sp.streamer_badge_title')
-                : t('sp.streamer_card_title')}
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--ink-50)', marginBottom: 16 }}>
-              {t('tab.placeholder_suffix')}
-            </div>
-            <button
-              className="sp-streamer-btn primary"
-              style={{ width: '100%' }}
-              onClick={() => setModal(null)}
-            >
-              {t('sp.no')}
-            </button>
+          <div style={{ fontSize: 12, color: 'var(--ink-50)', textAlign: 'center', padding: '24px 0' }}>
+            {t('tab.placeholder_suffix')}
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

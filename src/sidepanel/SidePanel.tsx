@@ -13,6 +13,7 @@ import { TrendsTab } from './components/tabs/trends/TrendsTab';
 import type { AccessLevel } from '../shared/trends-types';
 import { ChannelSwitchNotification } from './components/ChannelSwitchNotification';
 import { InfoBanner } from './components/InfoBanner';
+import { LockedTabPaywallModal } from './components/LockedTabPaywallModal';
 import type { TrustCache } from '../shared/api';
 
 const TABS = ['overview', 'trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'] as const;
@@ -35,6 +36,7 @@ export function SidePanel() {
     loggedIn: false, tier: 'guest', twitchLinked: false, twitchLogin: null,
   });
   const [pendingChannel, setPendingChannel] = useState<string | null>(null);
+  const [lockedTabPaywall, setLockedTabPaywall] = useState<SidePanelTab | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Boot: get auth state + current channel + trust data
@@ -75,7 +77,7 @@ export function SidePanel() {
     const tabId = tab as SidePanelTab;
     const locked = LOCKED_TABS[authState.tier] || LOCKED_TABS.guest;
     if (locked.includes(tabId)) {
-      // TODO: show paywall modal
+      setLockedTabPaywall(tabId);
       return;
     }
     setCurrentTab(tabId);
@@ -199,6 +201,18 @@ export function SidePanel() {
           channelName={pendingChannel}
           onAccept={() => handleChannelSwitch(true)}
           onDecline={() => handleChannelSwitch(false)}
+        />
+      )}
+
+      {/* Locked Tab Paywall Modal */}
+      {lockedTabPaywall && (
+        <LockedTabPaywallModal
+          tabName={t(`tab.${lockedTabPaywall}`)}
+          onClose={() => setLockedTabPaywall(null)}
+          onUpgrade={() => {
+            setLockedTabPaywall(null);
+            handleRequestUpgrade('premium');
+          }}
         />
       )}
 

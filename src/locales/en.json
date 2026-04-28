@@ -151,6 +151,7 @@
   "sp.yes": "Yes",
   "sp.no": "No",
   "sp.error": "Loading error",
+  "sp.error_title": "Failed to load data",
   "sp.more": "More →",
   "sp.upgrade": "Upgrade to Premium",
   "sp.start_tracking": "Start Tracking — $9.99/mo per channel",

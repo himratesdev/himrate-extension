@@ -86,7 +86,6 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         ervPercent={trustCache.erv_percent}
         ervCount={trustCache.erv_count}
         ccv={trustCache.ccv}
-        ervLabel={trustCache.erv_label}
         ervLabelColor={trustCache.erv_label_color}
         confidence={trustCache.confidence}
         coldStartStatus={trustCache.cold_start_status}
@@ -114,12 +113,13 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         </div>
       )}
 
-      {/* M2: TI + Classification + Percentile */}
+      {/* M2: TI + Classification + Percentile (cold-start gated per frames 06-09) */}
       <TIBadge
         tiScore={trustCache.ti_score}
         classification={trustCache.classification}
         percentile={trustCache.percentile_in_category}
         showExpand={showDrillDown}
+        coldStartStatus={trustCache.cold_start_status}
       />
 
       {/* Stream Summary — offline only (Section 9 wireframe "Итоги стрима").
@@ -197,8 +197,9 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         </div>
       )}
 
-      {/* Streamer Mode extensions */}
-      {isOwnChannel && (
+      {/* Streamer Mode extensions — hidden during cold-start insufficient
+          (frame 06: M3/M4 + Streamer Tools collapsed) */}
+      {isOwnChannel && trustCache.cold_start_status !== 'insufficient' && (
         <>
           <HealthScoreCard healthScore={trustCache.health_score} />
           <StreamerModeButtons channelId={trustCache.channel_id} login={trustCache.login} />

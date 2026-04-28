@@ -15,7 +15,7 @@ interface Props {
   ervPercent: number | null;
   ervCount: number | null;
   ccv: number | null;
-  ervLabel: string | null;
+  /** Color comes from server (green / yellow / red); ERV label text resolved via i18n. */
   ervLabelColor: string | null;
   confidence: number | null;
   coldStartStatus: string | null;
@@ -31,7 +31,7 @@ const ARC_COLORS: Record<string, string> = {
 };
 
 export function ERVGauge({
-  ervPercent, ervCount, ccv, ervLabel, ervLabelColor,
+  ervPercent, ervCount, ccv, ervLabelColor,
   confidence, coldStartStatus, streamsCount, isLive: _isLive, isOwnChannel,
 }: Props) {
   const { t } = useTranslation();
@@ -66,10 +66,12 @@ export function ERVGauge({
       >
         <div className="sp-gauge-wrap">
           <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-            {/* Background circle */}
+            {/* Background circle. Provisional Low (frame 07): yellow dashed
+                outer ring instead of grey solid. */}
             <circle
               cx={center} cy={center} r={radius}
-              fill="none" stroke="#E5E7EB"
+              fill="none"
+              stroke={isProvisionalLow ? '#D97706' : '#E5E7EB'}
               strokeWidth={isProvisionalLow ? 4 : strokeWidth}
               strokeDasharray={isProvisionalLow ? '8 4' : 'none'}
             />
@@ -131,18 +133,21 @@ export function ERVGauge({
             : ''}
       </div>
 
-      {/* ERV Label badge */}
-      {ervLabel && !isInsufficient && (
+      {/* ERV Label badge — text comes from i18n by color (legally-safe v3 wording),
+          NOT raw server string which is EN-only. Per CLAUDE.md ERV labels v3. */}
+      {!isInsufficient && (colorKey === 'green' || colorKey === 'yellow' || colorKey === 'red') && (
         <div style={{ textAlign: 'center' }}>
           <span className={`sp-erv-label ${colorKey}`}>
-            <span className="erv-dot" /> {ervLabel}
+            <span className="erv-dot" /> {t(`erv_label.${colorKey}`)}
             {ervPercent != null ? ` · ${ervPercent}%` : ''}
           </span>
         </div>
       )}
 
-      {/* Confidence */}
-      {confidenceText && !isProvisional && (
+      {/* Confidence — frames 14/16 (full+deep state); hidden during cold start
+          (insufficient → collecting banner; provisional_low → provisional badge;
+          provisional 7-9 → frame 08 has no confidence text either). */}
+      {confidenceText && !isProvisional && !isInsufficient && (
         <div
           className={`sp-confidence ${
             confidence != null && confidence >= 0.7

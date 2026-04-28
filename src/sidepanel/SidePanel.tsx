@@ -132,11 +132,15 @@ export function SidePanel() {
     <div className="panel">
       {/* Header — canonical sp-header §6.2 */}
       <div className="sp-header">
-        {currentTab !== 'overview' && (
-          <button className="sp-header-back" onClick={() => setCurrentTab('overview')} aria-label={t('aria.back')}>
-            &#8592;
-          </button>
-        )}
+        <button
+          className="sp-header-back"
+          onClick={() => setCurrentTab('overview')}
+          aria-label={t('aria.back')}
+          disabled={currentTab === 'overview'}
+          style={currentTab === 'overview' ? { opacity: 0.3, cursor: 'default' } : undefined}
+        >
+          &#8592;
+        </button>
         <span className="sp-header-title">{t(`tab.${currentTab}`)}</span>
         {currentTab === 'overview' && trustCache?.login && (
           <span className="sp-header-streamer" title={trustCache.display_name || trustCache.login}>

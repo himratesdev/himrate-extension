@@ -58,7 +58,12 @@ const CANONICAL_SIGNAL_TYPES = [
 
 export function SignalBreakdown({ signals, expandable = false }: Props) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  // First signal row expanded by default in Premium view (frame 14 wireframe)
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    if (!expandable || signals.length === 0) return new Set();
+    const sorted = [...signals].sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
+    return new Set([sorted[0].type]);
+  });
 
   // Empty state placeholder — render canonical 11-row structure с "—" values
   // when API hasn't populated signals yet. Frames 11/14/15 expect this structure

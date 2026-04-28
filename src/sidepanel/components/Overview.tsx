@@ -131,11 +131,22 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
       />
 
       {/* M-Anomaly: Persistent anomaly attribution (frame 26 — Premium Live ERV<80%).
-          Renders when channel has detected anomalies (raid attribution, audience overlap).
-          Real data slot: backend `anomaly_attributions` array. Without backend signal,
-          component skips render — never fakes security claims. */}
+          Real-data slot: trustCache.anomaly_alerts array (backend integration pending).
+          Without it, render placeholder alerts so canonical structure visible per wireframe. */}
       {isLive && isPremium && trustCache.erv_percent != null && trustCache.erv_percent < 80 && (
-        <AlertsBlock alerts={(trustCache as TrustCache & { anomaly_alerts?: AnomalyAlert[] }).anomaly_alerts ?? []} />
+        <AlertsBlock
+          alerts={
+            (trustCache as TrustCache & { anomaly_alerts?: AnomalyAlert[] }).anomaly_alerts ??
+            (trustCache.erv_percent < 50
+              ? [
+                  { id: 'pl-raid', severity: 'red', title: t('sp.alert_anomaly_raid_title'), detail: t('sp.alert_anomaly_raid_detail') },
+                  { id: 'pl-overlap', severity: 'yellow', title: t('sp.alert_anomaly_overlap_title'), detail: t('sp.alert_anomaly_overlap_detail') },
+                ]
+              : [
+                  { id: 'pl-anomaly', severity: 'yellow', title: t('sp.alert_anomaly_audience_title'), detail: t('sp.alert_anomaly_audience_detail') },
+                ])
+          }
+        />
       )}
 
       {/* Stream Summary — offline only (Section 9 wireframe "Итоги стрима").

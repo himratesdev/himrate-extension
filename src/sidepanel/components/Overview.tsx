@@ -1,5 +1,7 @@
-// TASK-035: Overview tab — conditional layout (LIVE vs OFFLINE).
-// Modular: each section = ModuleSlot. Adding new module = one import + one line.
+// TASK-035 + BUG-016 PR-1: Overview tab — conditional layout (LIVE vs OFFLINE).
+// Per-tier visibility: Guest = headline + locked tabs; Free Live = full drill-down;
+// Free <18h post-stream = drill-down with countdown; Free >18h = expired paywall;
+// Premium = expandable details; Streamer (own channel) = HealthScore + tools.
 
 import { useTranslation } from 'react-i18next';
 import { ERVGauge } from './ERVGauge';
@@ -12,6 +14,7 @@ import { HealthScoreCard } from './HealthScoreCard';
 import { StreamerModeButtons } from './StreamerModeButtons';
 import { WatchlistButton } from './WatchlistButton';
 import { PostStreamCountdown } from './PostStreamCountdown';
+import { StreamSummaryCard } from './StreamSummaryCard';
 import { SkeletonOverview } from './SkeletonOverview';
 import { ErrorOverview } from './ErrorOverview';
 import { NotTrackedOverview } from './NotTrackedOverview';
@@ -28,6 +31,11 @@ interface Props {
   authState: { loggedIn: boolean; tier: string; twitchLinked: boolean; twitchLogin: string | null };
 }
 
+function isPostStreamWindowOpen(cache: TrustCache): boolean {
+  if (!cache.expires_at) return false;
+  return new Date(cache.expires_at).getTime() > Date.now();
+}
+
 export function Overview({ trustCache, loading, tier, isOwnChannel, authState }: Props) {
   const { t } = useTranslation();
 
@@ -40,16 +48,23 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
   const isLive = trustCache.is_live;
   const isPremium = tier === 'premium' || tier === 'business' || tier === 'streamer' || isOwnChannel;
-  const isFreeWithAccess = tier === 'free' && (isLive || isPostStreamWindowOpen(trustCache));
+  const windowOpen = isPostStreamWindowOpen(trustCache);
+  const isFreeWithAccess = tier === 'free' && (isLive || windowOpen);
   const showDrillDown = isPremium || isFreeWithAccess;
-  const showPaywall = !showDrillDown && tier !== 'guest';
   const isGuest = !authState.loggedIn;
+  // Offline + Free with expired post-stream window → drill-down behind paywall (Section 9 >18h)
+  const isOfflineExpired = !isLive && !isPremium && !windowOpen && tier === 'free';
 
   return (
     <div className="sp-overview">
       {/* Streamer disclaimer — own channel only (Section 8 wireframe) */}
       {isOwnChannel && (
         <div className="sp-streamer-disclaimer">{t('sp.streamer_disclaimer')}</div>
+      )}
+
+      {/* Post-stream countdown — top of offline state (Section 9 wireframe lines 3085-3089) */}
+      {!isLive && trustCache.expires_at && (tier === 'free' || isGuest) && (
+        <PostStreamCountdown expiresAt={trustCache.expires_at} />
       )}
 
       {/* Alert Counter — LIVE only */}
@@ -96,19 +111,23 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         showExpand={showDrillDown}
       />
 
-      {/* M3: Signal Breakdown (Premium / Free live) — data from trustCache, no extra API call */}
+      {/* Stream Summary — offline only (Section 9 wireframe "Итоги стрима") */}
+      {!isLive && (
+        <StreamSummaryCard
+          durationText={null}
+          peakCcv={null}
+          avgCcv={trustCache.ccv}
+          ervPercent={trustCache.erv_percent}
+          ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        />
+      )}
+
+      {/* M3: Signal Breakdown — drill-down access (Premium / Free Live / Free <18h) */}
       {showDrillDown && (
         <SignalBreakdown signals={trustCache.signal_breakdown || []} expandable={isPremium} />
       )}
-      {showPaywall && (
-        <div className="sp-paywall-blur">
-          <div className="sp-paywall-cta">
-            <span>{t('sp.upgrade')}</span>
-          </div>
-        </div>
-      )}
 
-      {/* M4: Reputation — data from trustCache */}
+      {/* M4: Reputation — drill-down access */}
       {showDrillDown && (
         <ReputationCard
           reputation={trustCache.streamer_reputation}
@@ -118,7 +137,7 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         />
       )}
 
-      {/* Combined M3+M4 guest paywall (Section 5 wireframe lines 1855-1877) — Live · Guest */}
+      {/* Combined M3+M4 guest paywall (Section 5 wireframe) — Live · Guest */}
       {isGuest && isLive && (
         <div className="sp-paywall" style={{ minHeight: 180 }}>
           <div className="sp-paywall-blurred">
@@ -159,6 +178,53 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         </div>
       )}
 
+      {/* Offline expired paywall (Section 9 >18h wireframe lines 3298-3321) */}
+      {isOfflineExpired && (
+        <div className="sp-paywall" style={{ minHeight: 200 }}>
+          <div className="sp-paywall-blurred">
+            <SignalBreakdown signals={trustCache.signal_breakdown || []} />
+            <ReputationCard reputation={trustCache.streamer_reputation} isLive={false} />
+          </div>
+          <div
+            className="sp-paywall-overlay"
+            style={{ background: 'rgba(255,255,255,0.85)', padding: 20 }}
+          >
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                fontFamily: "'Space Grotesk', sans-serif",
+                marginBottom: 4,
+              }}
+            >
+              {t('sp.offline_paywall_title')}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--ink-50)', marginBottom: 12 }}>
+              {t('sp.offline_paywall_subtitle')}
+            </div>
+            <button
+              className="sp-paywall-cta"
+              style={{ width: '100%', marginBottom: 6 }}
+              onClick={() => chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=premium' })}
+            >
+              {t('sp.offline_paywall_cta_track')}
+            </button>
+            <button
+              className="sp-paywall-cta"
+              style={{
+                width: '100%',
+                background: 'white',
+                color: 'var(--ink)',
+                borderColor: 'var(--border-dark)',
+              }}
+              onClick={() => chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=report' })}
+            >
+              {t('sp.offline_paywall_cta_report')}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Streamer Mode extensions */}
       {isOwnChannel && (
         <>
@@ -168,15 +234,17 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
       )}
 
       {/* M5: Mini Sparkline */}
-      <MiniSparkline
-        channelId={trustCache.channel_id}
-        isLive={isLive}
-        isPremium={isPremium}
-        ervColor={(trustCache.erv_label_color as 'green' | 'yellow' | 'red' | undefined) || 'green'}
-      />
+      {!isOfflineExpired && (
+        <MiniSparkline
+          channelId={trustCache.channel_id}
+          isLive={isLive}
+          isPremium={isPremium}
+          ervColor={(trustCache.erv_label_color as 'green' | 'yellow' | 'red' | undefined) || 'green'}
+        />
+      )}
 
-      {/* M6: Audience Preview (Section 6 wireframe — top 3 countries) */}
-      {isLive && trustCache.top_countries && (
+      {/* M6: Audience Preview (LIVE + offline-with-access) */}
+      {!isOfflineExpired && trustCache.top_countries && (
         <AudiencePreview countries={trustCache.top_countries} />
       )}
 
@@ -186,11 +254,6 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
           channelId={trustCache.channel_id}
           isWatched={trustCache.is_watched_by_user}
         />
-      )}
-
-      {/* Post-stream countdown (OFFLINE Free) */}
-      {!isLive && trustCache.expires_at && tier === 'free' && (
-        <PostStreamCountdown expiresAt={trustCache.expires_at} />
       )}
 
       {/* Guest CTA (offline only — Live guest gets combined paywall above) */}
@@ -204,9 +267,4 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
       )}
     </div>
   );
-}
-
-function isPostStreamWindowOpen(cache: TrustCache): boolean {
-  if (!cache.expires_at) return false;
-  return new Date(cache.expires_at).getTime() > Date.now();
 }

@@ -1,6 +1,6 @@
 // BUG-016 PR-1 Section 9: Stream Summary card (wireframe lines 3120-3141).
 // Wireframe: "Итоги стрима" — 4 stat tiles in 2×2 grid (Длительность / Пик зрителей
-// / Средний онлайн / Реальные зрители %). Uses sp-signals container with custom grid.
+// / Средний онлайн / Реальные зрители %). Canonical sp-summary-grid + sp-summary-tile.
 
 import { useTranslation } from 'react-i18next';
 
@@ -12,31 +12,6 @@ interface Props {
   ervLabelColor?: 'green' | 'yellow' | 'red' | null;
 }
 
-const TILE_STYLE: React.CSSProperties = {
-  background: 'var(--bg-page)',
-  borderRadius: 6,
-  padding: 8,
-  textAlign: 'center',
-};
-
-const TILE_VALUE_STYLE: React.CSSProperties = {
-  fontSize: 16,
-  fontWeight: 700,
-  fontFamily: "'JetBrains Mono', monospace",
-};
-
-const TILE_LABEL_STYLE: React.CSSProperties = {
-  fontSize: 9,
-  color: 'var(--ink-30)',
-};
-
-function colorVar(color?: 'green' | 'yellow' | 'red' | null): string | undefined {
-  if (color === 'green') return 'var(--color-erv-green)';
-  if (color === 'yellow') return 'var(--color-erv-yellow)';
-  if (color === 'red') return 'var(--color-erv-red)';
-  return undefined;
-}
-
 export function StreamSummaryCard({
   durationText,
   peakCcv,
@@ -45,39 +20,33 @@ export function StreamSummaryCard({
   ervLabelColor,
 }: Props) {
   const { t } = useTranslation();
+  const colorClass = ervLabelColor ? ` ${ervLabelColor}` : '';
 
   return (
     <div className="sp-signals" style={{ gap: 4 }}>
       <div className="sp-signals-title">{t('sp.stream_summary_title')}</div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 6,
-          padding: '4px 0',
-        }}
-      >
-        <div style={TILE_STYLE}>
-          <div style={TILE_VALUE_STYLE}>{durationText || '—'}</div>
-          <div style={TILE_LABEL_STYLE}>{t('sp.stream_summary_duration')}</div>
+      <div className="sp-summary-grid">
+        <div className="sp-summary-tile">
+          <div className="sp-summary-tile-value">{durationText || '—'}</div>
+          <div className="sp-summary-tile-label">{t('sp.stream_summary_duration')}</div>
         </div>
-        <div style={TILE_STYLE}>
-          <div style={TILE_VALUE_STYLE}>
+        <div className="sp-summary-tile">
+          <div className="sp-summary-tile-value">
             {peakCcv != null ? peakCcv.toLocaleString() : '—'}
           </div>
-          <div style={TILE_LABEL_STYLE}>{t('sp.stream_summary_peak')}</div>
+          <div className="sp-summary-tile-label">{t('sp.stream_summary_peak')}</div>
         </div>
-        <div style={TILE_STYLE}>
-          <div style={TILE_VALUE_STYLE}>
+        <div className="sp-summary-tile">
+          <div className="sp-summary-tile-value">
             {avgCcv != null ? avgCcv.toLocaleString() : '—'}
           </div>
-          <div style={TILE_LABEL_STYLE}>{t('sp.stream_summary_avg')}</div>
+          <div className="sp-summary-tile-label">{t('sp.stream_summary_avg')}</div>
         </div>
-        <div style={TILE_STYLE}>
-          <div style={{ ...TILE_VALUE_STYLE, color: colorVar(ervLabelColor) }}>
+        <div className="sp-summary-tile">
+          <div className={`sp-summary-tile-value${colorClass}`}>
             {ervPercent != null ? `${Math.round(ervPercent)}%` : '—'}
           </div>
-          <div style={TILE_LABEL_STYLE}>{t('sp.stream_summary_real_pct')}</div>
+          <div className="sp-summary-tile-label">{t('sp.stream_summary_real_pct')}</div>
         </div>
       </div>
     </div>

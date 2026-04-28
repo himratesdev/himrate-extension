@@ -139,38 +139,17 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
       {/* Combined M3+M4 guest paywall (Section 5 wireframe) — Live · Guest */}
       {isGuest && isLive && (
-        <div className="sp-paywall" style={{ minHeight: 180 }}>
+        <div className="sp-paywall sp-paywall-guest">
           <div className="sp-paywall-blurred">
             <SignalBreakdown signals={trustCache.signal_breakdown || []} />
             <ReputationCard reputation={trustCache.streamer_reputation} isLive={isLive} />
           </div>
-          <div className="sp-paywall-overlay" style={{ padding: '16px 12px' }}>
-            <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 700,
-              fontSize: 14,
-              color: 'var(--ink)',
-            }}>
-              {t('paywall.guest_title')}
-            </div>
-            <div style={{
-              fontSize: 11,
-              color: 'var(--ink-50)',
-              textAlign: 'center',
-              lineHeight: 1.4,
-              maxWidth: 260,
-            }}>
-              {t('paywall.guest_description')}
-            </div>
+          <div className="sp-paywall-overlay sp-paywall-overlay-guest">
+            <div className="sp-paywall-headline">{t('paywall.guest_title')}</div>
+            <div className="sp-paywall-subtext">{t('paywall.guest_description')}</div>
             <button
-              className="sp-paywall-cta"
+              className="sp-paywall-cta twitch"
               onClick={() => chrome.runtime.sendMessage({ action: 'AUTH_TWITCH' })}
-              style={{
-                background: 'var(--color-twitch)',
-                borderColor: 'var(--color-twitch)',
-                fontSize: 13,
-                padding: '8px 24px',
-              }}
             >
               {t('auth.twitch')}
             </button>
@@ -180,43 +159,22 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
       {/* Offline expired paywall (Section 9 >18h wireframe lines 3298-3321) */}
       {isOfflineExpired && (
-        <div className="sp-paywall" style={{ minHeight: 200 }}>
+        <div className="sp-paywall sp-paywall-expired">
           <div className="sp-paywall-blurred">
             <SignalBreakdown signals={trustCache.signal_breakdown || []} />
             <ReputationCard reputation={trustCache.streamer_reputation} isLive={false} />
           </div>
-          <div
-            className="sp-paywall-overlay"
-            style={{ background: 'rgba(255,255,255,0.85)', padding: 20 }}
-          >
-            <div
-              style={{
-                fontSize: 14,
-                fontWeight: 700,
-                fontFamily: "'Space Grotesk', sans-serif",
-                marginBottom: 4,
-              }}
-            >
-              {t('sp.offline_paywall_title')}
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--ink-50)', marginBottom: 12 }}>
-              {t('sp.offline_paywall_subtitle')}
-            </div>
+          <div className="sp-paywall-overlay sp-paywall-overlay-expired">
+            <div className="sp-paywall-headline">{t('sp.offline_paywall_title')}</div>
+            <div className="sp-paywall-subtext">{t('sp.offline_paywall_subtitle')}</div>
             <button
-              className="sp-paywall-cta"
-              style={{ width: '100%', marginBottom: 6 }}
+              className="sp-paywall-cta full-width"
               onClick={() => chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=premium' })}
             >
               {t('sp.offline_paywall_cta_track')}
             </button>
             <button
-              className="sp-paywall-cta"
-              style={{
-                width: '100%',
-                background: 'white',
-                color: 'var(--ink)',
-                borderColor: 'var(--border-dark)',
-              }}
+              className="sp-paywall-cta secondary full-width"
               onClick={() => chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=report' })}
             >
               {t('sp.offline_paywall_cta_report')}

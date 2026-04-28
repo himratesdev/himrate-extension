@@ -75,9 +75,7 @@ export function WatchlistButton({ channelId, isWatched: initialIsWatched }: Prop
         <StarIcon /> {isWatched ? t('sp.watchlist_remove') : t('sp.watchlist_add')}
       </button>
       {error && (
-        <div role="alert" style={{ fontSize: 11, color: 'var(--color-erv-red)', textAlign: 'center', marginTop: 4 }}>
-          {error}
-        </div>
+        <div role="alert" className="sp-watchlist-error">{error}</div>
       )}
     </>
   );

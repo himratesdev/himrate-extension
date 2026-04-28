@@ -3,6 +3,7 @@
 // for collapsed, Section 7 lines 2650-2719 for Premium expandable).
 // Free Live: 3 rows visible (no expand). Premium: expandable rows + sp-rep-detail
 // + streams_count badge + premium subtitle paragraph.
+// Purple theme via .sp-reputation.purple modifier (M-2 canonical class).
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,15 +38,37 @@ interface Props {
   };
 }
 
+const COMPONENTS = [
+  { key: 'growth_pattern_score', i18nKey: 'sp.rep_growth', descKey: 'sp.rep_growth_desc' },
+  { key: 'follower_quality_score', i18nKey: 'sp.rep_quality', descKey: 'sp.rep_quality_desc' },
+  { key: 'engagement_consistency_score', i18nKey: 'sp.rep_loyalty', descKey: 'sp.rep_loyalty_desc' },
+] as const;
+
+const PURPLE = '#8B5CF6';
+const PURPLE_DARK = '#7C3AED';
+
 const CHART_W = 200;
 const CHART_H = 32;
 const CHART_POINTS = 8;
 
+function ReputationIcon({ size = 13 }: { size?: number }) {
+  return (
+    <svg
+      className="ico"
+      viewBox="0 0 24 24"
+      style={{ width: size, height: size, stroke: PURPLE_DARK, verticalAlign: '-0.1em' }}
+      aria-hidden="true"
+    >
+      <rect x="18" y="3" width="4" height="18" rx="1" fill="rgba(139,92,246,0.3)" stroke={PURPLE_DARK} />
+      <rect x="10" y="8" width="4" height="13" rx="1" fill="rgba(139,92,246,0.2)" stroke={PURPLE_DARK} />
+      <rect x="2" y="13" width="4" height="8" rx="1" fill="rgba(139,92,246,0.15)" stroke={PURPLE_DARK} />
+    </svg>
+  );
+}
+
 function RepDetailChart({ score, history }: { score: number; history?: number[] }) {
-  // y = 0 → top (score 100), y = CHART_H → bottom (score 0). Pad so endpoint dot fits.
   const yFor = (v: number) => Math.max(2, Math.min(CHART_H - 2, CHART_H - (v / 100) * CHART_H));
   const xFor = (i: number, n: number) => (i / Math.max(1, n - 1)) * CHART_W;
-
   const points = history && history.length >= 2 ? history : Array.from({ length: CHART_POINTS }, () => score);
   const polyline = points.map((v, i) => `${xFor(i, points.length)},${yFor(v)}`).join(' ');
   const lastX = xFor(points.length - 1, points.length);
@@ -68,8 +91,13 @@ function RepDetailChart({ score, history }: { score: number; history?: number[] 
   );
 }
 
-function RepChange({ delta, t }: { delta?: number; t: (k: string, opts?: Record<string, unknown>) => string }) {
-  // Default to neutral when delta unavailable (no reputation history API yet).
+function RepChange({
+  delta,
+  t,
+}: {
+  delta?: number;
+  t: (k: string, opts?: Record<string, unknown>) => string;
+}) {
   if (delta == null) {
     return <div className="sp-rep-change">→ {t('sp.rep_change_stable')}</div>;
   }
@@ -83,31 +111,6 @@ function RepChange({ delta, t }: { delta?: number; t: (k: string, opts?: Record<
     <div className={`sp-rep-change ${direction}`}>
       {arrow} {t('sp.rep_change_delta', { sign, delta })}
     </div>
-  );
-}
-
-const COMPONENTS = [
-  { key: 'growth_pattern_score', i18nKey: 'sp.rep_growth', descKey: 'sp.rep_growth_desc' },
-  { key: 'follower_quality_score', i18nKey: 'sp.rep_quality', descKey: 'sp.rep_quality_desc' },
-  { key: 'engagement_consistency_score', i18nKey: 'sp.rep_loyalty', descKey: 'sp.rep_loyalty_desc' },
-] as const;
-
-const PURPLE = '#8B5CF6';
-const PURPLE_DARK = '#7C3AED';
-const PURPLE_LIGHT = '#DDD6FE';
-
-function ReputationIcon({ size = 13 }: { size?: number }) {
-  return (
-    <svg
-      className="ico"
-      viewBox="0 0 24 24"
-      style={{ width: size, height: size, stroke: PURPLE_DARK, verticalAlign: '-0.1em' }}
-      aria-hidden="true"
-    >
-      <rect x="18" y="3" width="4" height="18" rx="1" fill="rgba(139,92,246,0.3)" stroke={PURPLE_DARK} />
-      <rect x="10" y="8" width="4" height="13" rx="1" fill="rgba(139,92,246,0.2)" stroke={PURPLE_DARK} />
-      <rect x="2" y="13" width="4" height="8" rx="1" fill="rgba(139,92,246,0.15)" stroke={PURPLE_DARK} />
-    </svg>
   );
 }
 
@@ -142,60 +145,20 @@ export function ReputationCard({
         : null;
 
   return (
-    <div
-      className="sp-reputation"
-      style={{
-        border: `2.5px solid ${PURPLE}`,
-        background: 'linear-gradient(180deg, rgba(139,92,246,0.05) 0%, transparent 100%)',
-      }}
-    >
+    <div className="sp-reputation purple">
       {expandable ? (
         <>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 4,
-            }}
-          >
+          <div className="sp-rep-header-row">
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <ReputationIcon size={14} />
-              <span
-                className="sp-reputation-title"
-                style={{ margin: 0, color: PURPLE_DARK, fontSize: 13 }}
-              >
-                {t('sp.rep_title')}
-              </span>
+              <span className="sp-reputation-title">{t('sp.rep_title')}</span>
             </div>
-            {streamsBadge && (
-              <span
-                style={{
-                  fontSize: 9,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  padding: '2px 8px',
-                  background: PURPLE,
-                  color: 'white',
-                  borderRadius: 8,
-                }}
-              >
-                {streamsBadge}
-              </span>
-            )}
+            {streamsBadge && <span className="sp-rep-streams-badge">{streamsBadge}</span>}
           </div>
-          <div
-            style={{
-              fontSize: 10,
-              color: 'var(--ink-30)',
-              marginBottom: 8,
-              lineHeight: 1.4,
-            }}
-          >
-            {t('sp.rep_subtitle_premium')}
-          </div>
+          <div className="sp-section-subtitle">{t('sp.rep_subtitle_premium')}</div>
         </>
       ) : (
-        <div className="sp-reputation-title" style={{ color: PURPLE_DARK }}>
+        <div className="sp-reputation-title">
           <ReputationIcon /> {t('sp.rep_title')}{' '}
           <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--ink-30)' }}>
             — {t('sp.rep_subtitle')}
@@ -217,22 +180,18 @@ export function ReputationCard({
               role={expandable ? 'button' : undefined}
               aria-expanded={expandable ? isOpen : undefined}
             >
-              <span className="sp-rep-name" style={expandable ? { fontWeight: 600 } : undefined}>
-                {t(i18nKey)}
-              </span>
-              <div className="sp-rep-bar-bg" style={{ border: `1px solid ${PURPLE_LIGHT}` }}>
+              <span className="sp-rep-name">{t(i18nKey)}</span>
+              <div className="sp-rep-bar-bg">
                 <div
                   className="sp-rep-bar-fill"
-                  style={{ width: `${Math.min(100, pct)}%`, background: PURPLE }}
+                  style={{ width: `${Math.min(100, pct)}%` }}
                   role="progressbar"
                   aria-valuenow={pct}
                   aria-valuemin={0}
                   aria-valuemax={100}
                 />
               </div>
-              <span className="sp-rep-val" style={{ color: PURPLE_DARK }}>
-                {value != null ? value.toFixed(0) : '—'}
-              </span>
+              <span className="sp-rep-val">{value != null ? value.toFixed(0) : '—'}</span>
             </div>
             {expandable && isOpen && (
               <div className="sp-rep-detail">
@@ -248,24 +207,16 @@ export function ReputationCard({
                   delta={deltas?.[key as keyof NonNullable<typeof deltas>]}
                   t={t}
                 />
-                <div style={{ textAlign: 'right', marginTop: 4 }}>
-                  <a
-                    href="#"
-                    style={{
-                      fontSize: 10,
-                      color: PURPLE_DARK,
-                      cursor: 'pointer',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onNavigate?.('trends');
-                    }}
-                  >
-                    {t('sp.rep_history_link')}
-                  </a>
-                </div>
+                <a
+                  href="#"
+                  className="sp-rep-history-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate?.('trends');
+                  }}
+                >
+                  {t('sp.rep_history_link')}
+                </a>
               </div>
             )}
           </div>
@@ -273,10 +224,7 @@ export function ReputationCard({
       })}
 
       {isLive && (
-        <div
-          className="sp-rep-disclaimer"
-          style={expandable ? { color: PURPLE_DARK, opacity: 0.7 } : undefined}
-        >
+        <div className="sp-rep-disclaimer">
           ⓘ {expandable ? t('sp.rep_disclaimer_premium') : t('sp.reputation_disclaimer')}
         </div>
       )}

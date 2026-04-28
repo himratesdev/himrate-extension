@@ -49,7 +49,7 @@ export function NotTrackedOverview({ ccv, login, loggedIn }: Props) {
         : t('not_tracked.request_btn');
 
   return (
-    <div className="sp-content" style={{ justifyContent: 'center' }}>
+    <div className="sp-content sp-content-centered">
       <div className="sp-not-tracked-banner">
         <span className="sp-nt-icon">!</span>
         <span>{t('not_tracked.banner')}</span>
@@ -58,23 +58,13 @@ export function NotTrackedOverview({ ccv, login, loggedIn }: Props) {
       {isLive && (
         <div className="sp-ccv-display">
           {t('not_tracked.platform_viewers', { N: ccv.toLocaleString() })}{' '}
-          <span style={{ fontSize: '10px', color: 'var(--ink-30)' }}>
+          <span className="sp-ccv-source">
             {t('not_tracked.platform_viewers_source')}
           </span>
         </div>
       )}
 
-      <div
-        style={{
-          fontSize: '12px',
-          color: 'var(--ink-50)',
-          textAlign: 'center',
-          fontFamily: "'Inter', sans-serif",
-          lineHeight: 1.5,
-        }}
-      >
-        {t(subtitleKey)}
-      </div>
+      <div className="sp-not-tracked-subtitle">{t(subtitleKey)}</div>
 
       <button className={buttonClass} onClick={handleRequest} disabled={submitted || loading}>
         {buttonLabel}

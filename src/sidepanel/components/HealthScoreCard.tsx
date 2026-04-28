@@ -117,9 +117,7 @@ export function HealthScoreCard({ healthScore, onNavigate, history, deltas }: Pr
           </span>
         )}
       </div>
-      <div style={{ fontSize: 10, color: 'var(--ink-30)', marginBottom: 6 }}>
-        {t('sp.health_subtitle')}
-      </div>
+      <div className="sp-section-subtitle">{t('sp.health_subtitle')}</div>
 
       {COMPONENTS_ORDER.map((key) => {
         const comp = healthScore.components?.[key];
@@ -152,31 +150,23 @@ export function HealthScoreCard({ healthScore, onNavigate, history, deltas }: Pr
               <span className={`sp-signal-expand-icon${isOpen ? ' open' : ''}`}>▾</span>
             </div>
             {isOpen && (
-              <div className="sp-signal-detail" style={{ margin: '-2px 0 4px' }}>
+              <div className="sp-signal-detail">
                 <div className="sp-signal-detail-title">
                   {t(i18n.name)}: {score != null ? score.toFixed(0) : '—'} / 100
                 </div>
                 {t(i18n.desc)}
                 <MiniChart score={pct} history={history?.[key]} />
                 <Change delta={deltas?.[key]} t={t} />
-                <div style={{ textAlign: 'right', marginTop: 4 }}>
-                  <a
-                    href="#"
-                    style={{
-                      fontSize: 10,
-                      color: 'var(--color-primary)',
-                      cursor: 'pointer',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      onNavigate?.('trends');
-                    }}
-                  >
-                    {t('sp.rep_history_link')}
-                  </a>
-                </div>
+                <a
+                  href="#"
+                  className="sp-hs-history-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate?.('trends');
+                  }}
+                >
+                  {t('sp.rep_history_link')}
+                </a>
               </div>
             )}
           </div>

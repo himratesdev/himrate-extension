@@ -1275,3 +1275,134 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
 .sp-trends-paywall-plan-sub {
     font-size:9px; color:var(--ink-30); font-family:'JetBrains Mono',monospace;
 }
+
+/* === BUG-016 PR-1 CR M-2: classes for inline-style patterns === */
+
+/* Paywall variants (min-height + overlay padding/bg) */
+.sp-paywall-guest { min-height: 180px; }
+.sp-paywall-expired { min-height: 200px; }
+.sp-paywall-overlay-guest { padding: 16px 12px; }
+.sp-paywall-overlay-expired { background: rgba(255,255,255,0.85); padding: 20px; }
+
+/* Paywall overlay content (Section 5 guest, Section 9 expired, locked tab modal) */
+.sp-paywall-headline {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+    font-size: 14px; color: var(--ink); margin-bottom: 4px; text-align: center;
+}
+.sp-paywall-subtext {
+    font-size: 11px; color: var(--ink-50); text-align: center;
+    line-height: 1.4; max-width: 260px; margin-bottom: 12px;
+}
+.sp-paywall-cta.twitch {
+    background: var(--color-twitch); border-color: var(--color-twitch);
+    font-size: 13px; padding: 8px 24px;
+}
+.sp-paywall-cta.full-width { width: 100%; margin-bottom: 6px; }
+
+/* Stream summary tiles (Section 9) */
+.sp-summary-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px 0;
+}
+.sp-summary-tile {
+    background: var(--bg-page); border-radius: 6px; padding: 8px; text-align: center;
+}
+.sp-summary-tile-value {
+    font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+}
+.sp-summary-tile-value.green { color: var(--color-erv-green); }
+.sp-summary-tile-value.yellow { color: var(--color-erv-yellow); }
+.sp-summary-tile-value.red { color: var(--color-erv-red); }
+.sp-summary-tile-label { font-size: 9px; color: var(--ink-30); }
+
+/* Reputation purple theme modifier (Sections 6-9 reputation card) */
+.sp-reputation.purple {
+    border: 2.5px solid #8B5CF6;
+    background: linear-gradient(180deg, rgba(139,92,246,0.05) 0%, transparent 100%);
+}
+.sp-reputation.purple .sp-reputation-title { color: #7C3AED; }
+.sp-reputation.purple .sp-rep-bar-bg { border: 1px solid #DDD6FE; }
+.sp-reputation.purple .sp-rep-bar-fill { background: #8B5CF6; }
+.sp-reputation.purple .sp-rep-val { color: #7C3AED; }
+.sp-reputation.purple .sp-rep-disclaimer { color: #7C3AED; opacity: 0.7; }
+.sp-rep-header-row {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
+}
+.sp-rep-header-row .sp-reputation-title { margin: 0; font-size: 13px; }
+.sp-rep-streams-badge {
+    font-size: 9px; font-family: 'JetBrains Mono', monospace;
+    padding: 2px 8px; background: #8B5CF6; color: white; border-radius: 8px;
+}
+.sp-rep-history-link {
+    display: block; text-align: right; margin-top: 4px;
+    font-size: 10px; color: #7C3AED; cursor: pointer;
+    font-weight: 600; text-decoration: none;
+}
+
+/* Health Score history link (green theme) */
+.sp-hs-history-link {
+    display: block; text-align: right; margin-top: 4px;
+    font-size: 10px; color: var(--color-primary); cursor: pointer;
+    font-weight: 600; text-decoration: none;
+}
+
+/* Streamer tools accordion row + label */
+.sp-tool-row { padding: 8px 0; }
+.sp-tool-label { font-size: 11px; font-weight: 600; }
+.sp-signal-detail .sp-streamer-btn { margin-top: 6px; }
+.sp-signal-detail .sp-streamer-limit { margin-top: 4px; }
+.sp-health-score .sp-signal-detail { margin: -2px 0 4px; }
+.sp-signals.compact { gap: 0; }
+.sp-modal-placeholder {
+    font-size: 12px; color: var(--ink-50);
+    text-align: center; padding: 24px 0;
+}
+
+/* Section subtitle (descriptive text under titles) */
+.sp-section-subtitle {
+    font-size: 10px; color: var(--ink-30);
+    margin-bottom: 6px; line-height: 1.4;
+}
+
+/* Modal body — locked tab paywall content layout */
+.sp-modal-content-centered {
+    text-align: center; display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+}
+.sp-modal-headline {
+    font-size: 14px; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+}
+.sp-modal-subtext {
+    font-size: 12px; color: var(--ink-50); line-height: 1.5;
+}
+.sp-modal-action { font-size: 12px; padding: 10px; }
+
+/* Not-tracked overview centered + subtitle */
+.sp-content-centered { justify-content: center; }
+.sp-ccv-source { font-size: 10px; color: var(--ink-30); }
+.sp-not-tracked-subtitle {
+    font-size: 12px; color: var(--ink-50); text-align: center;
+    font-family: 'Inter', sans-serif; line-height: 1.5;
+}
+
+/* Watchlist error inline */
+.sp-watchlist-error {
+    font-size: 11px; color: var(--color-erv-red);
+    text-align: center; margin-top: 4px;
+}
+
+/* Guest CTA stack (Section 9 offline guest) */
+.sp-guest-cta {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 8px 0;
+}
+.sp-guest-hint {
+    font-size: 11px; color: var(--ink-50); text-align: center; margin: 0;
+}
+
+/* Cold start collecting status banner */
+.collecting-status {
+    font-size: 11px; color: var(--ink-50); text-align: center;
+    padding: 6px 12px; background: var(--color-info-banner);
+    border-radius: var(--radius-button);
+    border: 1.5px solid rgba(59,130,246,0.2);
+}

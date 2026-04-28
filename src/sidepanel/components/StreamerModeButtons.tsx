@@ -75,18 +75,17 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
   };
 
   return (
-    <div className="sp-signals" style={{ gap: 0 }}>
+    <div className="sp-signals compact">
       <div className="sp-signals-title">{t('sp.streamer_tools_title')}</div>
 
       {/* 1. Бейдж доверия */}
       <div
-        className="sp-signal-row sp-signal-expandable"
-        style={{ padding: '8px 0' }}
+        className="sp-signal-row sp-signal-expandable sp-tool-row"
         onClick={() => toggle('badge')}
         role="button"
         aria-expanded={expanded.has('badge')}
       >
-        <span style={{ fontSize: 11, fontWeight: 600 }}>
+        <span className="sp-tool-label">
           <BadgeIcon /> {t('sp.streamer_badge_label')}
         </span>
         <span className={`sp-signal-expand-icon${expanded.has('badge') ? ' open' : ''}`}>▾</span>
@@ -97,7 +96,6 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
           {t('sp.streamer_badge_desc')}
           <button
             className="sp-streamer-btn primary"
-            style={{ marginTop: 6 }}
             onClick={() => setModal('badge')}
             disabled={!channelId}
           >
@@ -108,13 +106,12 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
 
       {/* 2. Карточка канала */}
       <div
-        className="sp-signal-row sp-signal-expandable"
-        style={{ padding: '8px 0' }}
+        className="sp-signal-row sp-signal-expandable sp-tool-row"
         onClick={() => toggle('card')}
         role="button"
         aria-expanded={expanded.has('card')}
       >
-        <span style={{ fontSize: 11, fontWeight: 600 }}>
+        <span className="sp-tool-label">
           <CardIcon /> {t('sp.streamer_card_label')}
         </span>
         <span className={`sp-signal-expand-icon${expanded.has('card') ? ' open' : ''}`}>▾</span>
@@ -125,7 +122,6 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
           {t('sp.streamer_card_desc')}
           <button
             className="sp-streamer-btn secondary"
-            style={{ marginTop: 6 }}
             onClick={() => setModal('card')}
             disabled={!channelId}
           >
@@ -136,13 +132,12 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
 
       {/* 3. Запрос на проверку */}
       <div
-        className="sp-signal-row sp-signal-expandable"
-        style={{ padding: '8px 0' }}
+        className="sp-signal-row sp-signal-expandable sp-tool-row"
         onClick={() => toggle('verify')}
         role="button"
         aria-expanded={expanded.has('verify')}
       >
-        <span style={{ fontSize: 11, fontWeight: 600 }}>
+        <span className="sp-tool-label">
           <VerifyIcon /> {t('sp.streamer_verify_label')}
         </span>
         <span className={`sp-signal-expand-icon${expanded.has('verify') ? ' open' : ''}`}>▾</span>
@@ -151,7 +146,7 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
         <div className="sp-signal-detail">
           <div className="sp-signal-detail-title">{t('sp.streamer_verify_title')}</div>
           {t('sp.streamer_verify_desc')}
-          <div className="sp-streamer-limit" style={{ marginTop: 4 }}>
+          <div className="sp-streamer-limit">
             {t('sp.streamer_verify_usage', {
               used: verificationsUsed,
               limit: VERIFICATION_LIMIT,
@@ -159,7 +154,6 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
           </div>
           <button
             className={`sp-streamer-btn secondary${verificationsRemaining <= 0 ? ' disabled' : ''}`}
-            style={{ marginTop: 6 }}
             onClick={() => setVerifyRequested(true)}
             disabled={verifyRequested || verificationsRemaining <= 0}
           >
@@ -175,9 +169,7 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
           title={modal === 'badge' ? t('sp.streamer_badge_action') : t('sp.streamer_card_action')}
           onClose={() => setModal(null)}
         >
-          <div style={{ fontSize: 12, color: 'var(--ink-50)', textAlign: 'center', padding: '24px 0' }}>
-            {t('tab.placeholder_suffix')}
-          </div>
+          <div className="sp-modal-placeholder">{t('tab.placeholder_suffix')}</div>
         </Modal>
       )}
     </div>

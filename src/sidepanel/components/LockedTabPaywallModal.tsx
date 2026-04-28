@@ -33,27 +33,11 @@ export function LockedTabPaywallModal({ tabName, onClose, onUpgrade }: Props) {
 
   return (
     <Modal title={tabName} onClose={onClose} dim={0.4}>
-      <div
-        style={{
-          textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 10,
-        }}
-      >
+      <div className="sp-modal-content-centered">
         <LockIcon />
-        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>
-          {t('sp.locked_paywall_title')}
-        </div>
-        <div style={{ fontSize: 12, color: 'var(--ink-50)', lineHeight: 1.5 }}>
-          {t('sp.locked_paywall_subtitle')}
-        </div>
-        <button
-          className="btn btn-primary"
-          style={{ fontSize: 12, padding: 10 }}
-          onClick={onUpgrade}
-        >
+        <div className="sp-modal-headline">{t('sp.locked_paywall_title')}</div>
+        <div className="sp-modal-subtext">{t('sp.locked_paywall_subtitle')}</div>
+        <button className="btn btn-primary sp-modal-action" onClick={onUpgrade}>
           {t('sp.locked_paywall_cta')}
         </button>
       </div>

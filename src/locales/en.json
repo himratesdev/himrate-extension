@@ -225,6 +225,9 @@
   "sp.chart_now_label": "now",
   "sp.legend_real_viewers": "Real (ERV)",
   "sp.legend_total_online": "Total online",
+  "sp.trend_real_up": "Real viewers up: {{sign}}{{pct}}% over 30min",
+  "sp.trend_real_down": "Real viewers down: {{sign}}{{pct}}% over 30min",
+  "sp.trend_real_stable": "Real viewers stable: {{sign}}{{pct}}% over 30min",
   "sp.percentile_above": "Above {{N}}% of channels in category",
   "sp.percentile_below": "Below {{N}}% of channels in category",
 

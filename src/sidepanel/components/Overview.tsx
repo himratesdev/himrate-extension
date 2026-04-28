@@ -16,6 +16,8 @@ import { SkeletonOverview } from './SkeletonOverview';
 import { ErrorOverview } from './ErrorOverview';
 import { NotTrackedOverview } from './NotTrackedOverview';
 import { NotTwitchOverview } from './NotTwitchOverview';
+import { LiveTrendIndicator } from './LiveTrendIndicator';
+import { AudiencePreview } from './AudiencePreview';
 import type { TrustCache } from '../../shared/api';
 
 interface Props {
@@ -61,6 +63,9 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         isLive={isLive}
         isOwnChannel={isOwnChannel}
       />
+
+      {/* Live Trend Indicator (Section 6 wireframe — sp-trend) */}
+      {isLive && <LiveTrendIndicator channelId={trustCache.channel_id} />}
 
       {/* Cold Start collecting status (Section 4 wireframe) */}
       {trustCache.cold_start_status === 'insufficient' && (
@@ -159,6 +164,11 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         isPremium={isPremium}
         ervColor={(trustCache.erv_label_color as 'green' | 'yellow' | 'red' | undefined) || 'green'}
       />
+
+      {/* M6: Audience Preview (Section 6 wireframe — top 3 countries) */}
+      {isLive && trustCache.top_countries && (
+        <AudiencePreview countries={trustCache.top_countries} />
+      )}
 
       {/* Watchlist Button */}
       {authState.loggedIn && (

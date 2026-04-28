@@ -211,10 +211,11 @@ export function SidePanel() {
   );
 }
 
-function getAnomalyTabs(cache: TrustCache | null): string[] {
-  if (!cache?.is_live || cache.erv_percent == null || cache.erv_percent >= 80) return [];
-  // Anomaly dots on Overview + relevant tabs when ERV < 80%
-  return ['overview'];
+function getAnomalyTabs(cache: TrustCache | null): Record<string, 'yellow' | 'red'> {
+  if (!cache?.is_live || cache.erv_percent == null || cache.erv_percent >= 80) return {};
+  // Anomaly dots: yellow (ERV 50-79) или red (ERV < 50). Wireframe spec.
+  const color: 'yellow' | 'red' = cache.erv_percent < 50 ? 'red' : 'yellow';
+  return { overview: color };
 }
 
 // TASK-039: access_level resolution для Trends API (FR-011..014).

@@ -3,6 +3,7 @@
 // / Средний онлайн / Реальные зрители %). Canonical sp-summary-grid + sp-summary-tile.
 
 import { useTranslation } from 'react-i18next';
+import { formatNumber } from '../../shared/format';
 
 interface Props {
   durationText: string | null;
@@ -19,7 +20,7 @@ export function StreamSummaryCard({
   ervPercent,
   ervLabelColor,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const colorClass = ervLabelColor ? ` ${ervLabelColor}` : '';
 
   return (
@@ -32,13 +33,13 @@ export function StreamSummaryCard({
         </div>
         <div className="sp-summary-tile">
           <div className="sp-summary-tile-value">
-            {peakCcv != null ? peakCcv.toLocaleString() : '—'}
+            {peakCcv != null ? formatNumber(peakCcv, i18n.language) : '—'}
           </div>
           <div className="sp-summary-tile-label">{t('sp.stream_summary_peak')}</div>
         </div>
         <div className="sp-summary-tile">
           <div className="sp-summary-tile-value">
-            {avgCcv != null ? avgCcv.toLocaleString() : '—'}
+            {avgCcv != null ? formatNumber(avgCcv, i18n.language) : '—'}
           </div>
           <div className="sp-summary-tile-label">{t('sp.stream_summary_avg')}</div>
         </div>

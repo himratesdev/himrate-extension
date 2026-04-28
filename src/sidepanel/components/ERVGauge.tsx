@@ -1,4 +1,4 @@
-// BUG-016 PR-1 (Sections 4-8 of wireframe): ERV Gauge canonical match.
+// BUG-016 PR-1a (Sections 4-8 of wireframe): ERV Gauge canonical match.
 // Wireframe: side-panel-wireframe-TASK-039.html lines 1538-1734 (Cold Start variants)
 // + lines 1894+ (Live Free) + 2442+ (Live Premium) + 2790+ (Live Streamer 160px).
 //
@@ -10,6 +10,7 @@
 //   - Deep (30+): + "Глубокая аналитика · {N} стрима" pill outside (handled by parent)
 
 import { useTranslation } from 'react-i18next';
+import { formatNumber } from '../../shared/format';
 
 interface Props {
   ervPercent: number | null;
@@ -34,7 +35,7 @@ export function ERVGauge({
   ervPercent, ervCount, ccv, ervLabelColor,
   confidence, coldStartStatus, streamsCount, isLive: _isLive, isOwnChannel,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const size = isOwnChannel ? 160 : 120;
   const radius = (size - 8) / 2;
   const center = size / 2;
@@ -120,7 +121,7 @@ export function ERVGauge({
         {isInsufficient
           ? t('cold_start.insufficient_data')
           : ervCount != null
-            ? t('erv.real_viewers_count', { N: ervCount.toLocaleString() })
+            ? t('erv.real_viewers_count', { N: formatNumber(ervCount, i18n.language) })
             : '—'}
       </div>
 
@@ -129,7 +130,7 @@ export function ERVGauge({
         {isInsufficient
           ? t('cold_start.streams_for_analysis', { current: streamsCount, required: 3 })
           : ccv != null
-            ? t('popup.twitch_online', { N: ccv.toLocaleString() })
+            ? t('popup.twitch_online', { N: formatNumber(ccv, i18n.language) })
             : ''}
       </div>
 

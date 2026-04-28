@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../shared/api';
+import { formatNumber } from '../../shared/format';
 
 interface Props {
   ccv: number | null;
@@ -16,7 +17,7 @@ interface Props {
 }
 
 export function NotTrackedOverview({ ccv, login, loggedIn }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const isLive = ccv != null;
@@ -57,7 +58,7 @@ export function NotTrackedOverview({ ccv, login, loggedIn }: Props) {
 
       {isLive && (
         <div className="sp-ccv-display">
-          {t('not_tracked.platform_viewers', { N: ccv.toLocaleString() })}{' '}
+          {t('not_tracked.platform_viewers', { N: formatNumber(ccv, i18n.language) })}{' '}
           <span className="sp-ccv-source">
             {t('not_tracked.platform_viewers_source')}
           </span>

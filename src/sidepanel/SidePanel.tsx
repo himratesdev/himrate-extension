@@ -125,7 +125,9 @@ export function SidePanel() {
         )}
         <span className="sp-header-title">{t(`tab.${currentTab}`)}</span>
         {currentTab === 'overview' && trustCache?.login && (
-          <span className="sp-header-streamer">{trustCache.login}</span>
+          <span className="sp-header-streamer" title={trustCache.display_name || trustCache.login}>
+            {trustCache.login}
+          </span>
         )}
         <div className="sp-header-right">
           <LangSwitcher compact />

@@ -7,6 +7,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../shared/api';
+import { formatNumber } from '../../shared/format';
 import type { SparklinePoint } from '../../shared/api';
 
 interface Props {
@@ -52,7 +53,7 @@ function pctChange(first: number, last: number): number {
 }
 
 export function MiniSparkline({ channelId, isLive, isPremium, ervColor = 'green', onNavigate }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [points, setPoints] = useState<SparklinePoint[]>([]);
 
   useEffect(() => {
@@ -142,11 +143,11 @@ export function MiniSparkline({ channelId, isLive, isPremium, ervColor = 'green'
       <div className="sp-chart-stats">
         <div className="sp-chart-stat">
           <div className="sp-chart-stat-label">{t('sp.chart_now')}</div>
-          <div className={`sp-chart-stat-value ${ervColor}`}>{lastErv.toLocaleString()}</div>
+          <div className={`sp-chart-stat-value ${ervColor}`}>{formatNumber(lastErv, i18n.language)}</div>
         </div>
         <div className="sp-chart-stat">
           <div className="sp-chart-stat-label">{t('sp.chart_max')}</div>
-          <div className="sp-chart-stat-value">{maxErv.toLocaleString()}</div>
+          <div className="sp-chart-stat-value">{formatNumber(maxErv, i18n.language)}</div>
         </div>
         <div className="sp-chart-stat">
           <div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div>

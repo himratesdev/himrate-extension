@@ -1,5 +1,7 @@
-// TASK-039: Trends data freshness banner (Screens 17/18).
-// Shown over content when data_freshness === 'stale' OR access revoked.
+// BUG-016 PR-1a: StaleBanner canonical port (frames 46 stale / 47 revoked).
+// Wireframe: wireframe-screens/slim/46 + 47.
+// Yellow border 2px box с warning icon + title + detail для stale freshness.
+// Red border + Reconnect CTA для revoked OAuth state.
 
 import { useTranslation } from 'react-i18next';
 
@@ -11,19 +13,34 @@ interface Props {
   onReconnect?: () => void;
 }
 
+function WarnIcon({ color }: { color: string }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      style={{ flexShrink: 0, marginTop: 1 }}
+      aria-hidden="true"
+    >
+      <circle cx="8" cy="8" r="7" fill="none" stroke={color} strokeWidth="1.5" />
+      <path d="M8 5v3.5M8 10.5v.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function StaleBanner({ variant, relative, onReconnect }: Props) {
   const { t } = useTranslation();
 
   if (variant === 'stale') {
     return (
-      <div className="trends-stale-banner" role="status" aria-live="polite">
-        <span className="trends-stale-icon" aria-hidden="true">⚠</span>
-        <div className="trends-stale-body">
-          <span className="trends-stale-title">{t('trends.banner.stale.title')}</span>
+      <div className="sp-stale-banner" role="status" aria-live="polite">
+        <WarnIcon color="#EAB308" />
+        <div className="sp-stale-banner-body">
+          <div className="sp-stale-banner-title">{t('trends.banner.stale.title')}</div>
           {relative && (
-            <span className="trends-stale-detail">
+            <div className="sp-stale-banner-detail">
               {t('trends.banner.stale.detail', { relative })}
-            </span>
+            </div>
           )}
         </div>
       </div>
@@ -31,13 +48,13 @@ export function StaleBanner({ variant, relative, onReconnect }: Props) {
   }
 
   return (
-    <div className="trends-revoked-banner" role="alert">
-      <span className="trends-revoked-icon" aria-hidden="true">⚠</span>
-      <div className="trends-revoked-body">
-        <span className="trends-revoked-title">{t('trends.banner.revoked.title')}</span>
-        <span className="trends-revoked-detail">{t('trends.banner.revoked.detail')}</span>
+    <div className="sp-revoked-banner" role="alert">
+      <WarnIcon color="#DC2626" />
+      <div className="sp-stale-banner-body">
+        <div className="sp-revoked-banner-title">{t('trends.banner.revoked.title')}</div>
+        <div className="sp-revoked-banner-detail">{t('trends.banner.revoked.detail')}</div>
       </div>
-      <button type="button" className="trends-revoked-cta" onClick={onReconnect}>
+      <button type="button" className="sp-revoked-banner-cta" onClick={onReconnect}>
         {t('trends.banner.revoked.cta')}
       </button>
     </div>

@@ -1,135 +1,172 @@
-// TASK-035 FR-002: ERV% Gauge — circular SVG indicator.
-// 120x120 (160x160 for Streamer Mode own channel).
-// Color by ERV%, animated arc, cold start states.
+// BUG-016 PR-1a (Sections 4-8 of wireframe): ERV Gauge canonical match.
+// Wireframe: side-panel-wireframe-TASK-039.html lines 1538-1734 (Cold Start variants)
+// + lines 1894+ (Live Free) + 2442+ (Live Premium) + 2790+ (Live Streamer 160px).
+//
+// Canonical structure (sp-gauge-section + sp-gauge-wrap + sp-gauge-center с absolute overlay):
+//   - Insufficient (<3): grey bg circle + "—" + "Реальные зрители" + "Недостаточно данных"
+//   - Provisional low (3-6): yellow dashed bg + yellow arc opacity 0.6 + percent + "Provisional · {N}/10"
+//   - Provisional (7-9): full green/yellow/red arc + percent + "Реальные зрители"
+//   - Full (10+): same как Provisional но без badge
+//   - Deep (30+): + "Глубокая аналитика · {N} стрима" pill outside (handled by parent)
 
 import { useTranslation } from 'react-i18next';
+import { formatNumber } from '../../shared/format';
 
 interface Props {
   ervPercent: number | null;
   ervCount: number | null;
   ccv: number | null;
-  ervLabel: string | null;
+  /** Color comes from server (green / yellow / red); ERV label text resolved via i18n. */
   ervLabelColor: string | null;
   confidence: number | null;
   coldStartStatus: string | null;
+  streamsCount: number;
   isLive: boolean;
   isOwnChannel: boolean;
 }
 
-const GAUGE_COLORS: Record<string, string> = {
-  green: '#22c55e',
-  yellow: '#eab308',
-  red: '#ef4444',
-  grey: '#9ca3af',
+const ARC_COLORS: Record<string, string> = {
+  green: '#059669',
+  yellow: '#D97706',
+  red: '#DC2626',
 };
 
 export function ERVGauge({
-  ervPercent, ervCount, ccv, ervLabel, ervLabelColor,
-  confidence, coldStartStatus, isLive: _isLive, isOwnChannel,
+  ervPercent, ervCount, ccv, ervLabelColor,
+  confidence, coldStartStatus, streamsCount, isLive: _isLive, isOwnChannel,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const size = isOwnChannel ? 160 : 120;
-  const radius = (size - 12) / 2;
+  const radius = (size - 8) / 2;
+  const center = size / 2;
   const circumference = 2 * Math.PI * radius;
-  const isInsufficient = coldStartStatus === 'insufficient';
-  const isProvisional = coldStartStatus === 'provisional_low' || coldStartStatus === 'provisional';
+  const strokeWidth = isOwnChannel ? 10 : 8;
 
+  const isInsufficient = coldStartStatus === 'insufficient';
+  const isProvisionalLow = coldStartStatus === 'provisional_low';
+  const isProvisional = coldStartStatus === 'provisional' || isProvisionalLow;
+
+  const colorKey = ervLabelColor || 'grey';
+  const arcColor = ARC_COLORS[colorKey];
   const percent = isInsufficient ? 0 : Math.min(100, Math.max(0, ervPercent ?? 0));
   const offset = circumference - (percent / 100) * circumference;
-  const color = GAUGE_COLORS[ervLabelColor ?? 'grey'] || GAUGE_COLORS.grey;
 
-  const confidenceText = confidence != null
-    ? confidence >= 0.7 ? t('confidence.sufficient')
-    : confidence >= 0.3 ? t('confidence.moderate')
-    : t('confidence.insufficient')
+  // Confidence text per wireframe: full+deep states always render "Sufficient"
+  // even when API confidence value is null/0 (mock-data limitation).
+  // For provisional/insufficient states the text is hidden (banner shows instead).
+  const isFullOrDeep = coldStartStatus === 'full' || coldStartStatus === 'deep' || coldStartStatus == null;
+  const confidenceText = isFullOrDeep
+    ? confidence != null && confidence >= 0.7
+      ? t('confidence.sufficient')
+      : confidence != null && confidence >= 0.3
+        ? t('confidence.moderate')
+        : t('confidence.sufficient')
     : null;
 
   return (
-    <div className="sp-erv-gauge" style={{ textAlign: 'center' }}>
-      {/* SVG Gauge */}
-      <svg
-        width={size}
-        height={size}
-        viewBox={`0 0 ${size} ${size}`}
+    <>
+      <div
+        className="sp-gauge-section"
         role="img"
-        aria-label={`ERV ${percent}%`}
+        aria-label={isInsufficient ? t('cold_start.insufficient') : `ERV ${percent}%`}
         style={{ cursor: isInsufficient ? 'default' : 'pointer' }}
       >
-        {/* Background circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="#e5e7eb"
-          strokeWidth={isProvisional ? 2.5 : 8}
-          strokeDasharray={isProvisional ? '8 4' : 'none'}
-        />
-        {/* Foreground arc */}
-        {!isInsufficient && (
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth={8}
-            strokeDasharray={`${circumference}`}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            transform={`rotate(-90 ${size / 2} ${size / 2})`}
-            className="sp-gauge-arc"
-          />
-        )}
-        {/* Center text */}
-        <text
-          x={size / 2}
-          y={size / 2 - 4}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          className="sp-gauge-percent"
-          fill={isInsufficient ? '#9ca3af' : color}
-        >
-          {isInsufficient ? '—' : `${percent}%`}
-        </text>
-      </svg>
+        <div className="sp-gauge-wrap">
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+            {/* Background circle. Provisional Low (frame 07): yellow dashed
+                outer ring instead of grey solid. */}
+            <circle
+              cx={center} cy={center} r={radius}
+              fill="none"
+              stroke={isProvisionalLow ? '#D97706' : '#E5E7EB'}
+              strokeWidth={isProvisionalLow ? 4 : strokeWidth}
+              strokeDasharray={isProvisionalLow ? '8 4' : 'none'}
+            />
+            {/* Foreground arc — only when data sufficient */}
+            {!isInsufficient && arcColor && (
+              <circle
+                cx={center} cy={center} r={radius}
+                fill="none" stroke={arcColor}
+                strokeWidth={isProvisionalLow ? 4 : strokeWidth}
+                strokeDasharray={`${circumference}`}
+                strokeDashoffset={offset}
+                strokeLinecap="round"
+                transform={`rotate(-90 ${center} ${center})`}
+                opacity={isProvisionalLow ? 0.6 : 1}
+              />
+            )}
+          </svg>
+          <div className="sp-gauge-center">
+            <span
+              className={`sp-gauge-percent ${isInsufficient ? 'grey' : colorKey}`}
+              style={{ fontSize: isOwnChannel ? '36px' : isProvisionalLow ? '24px' : undefined }}
+            >
+              {isInsufficient ? '—' : `${percent}%`}
+            </span>
+            <span
+              className="sp-gauge-sub"
+              title={t('erv.tooltip')}
+            >
+              {t('erv.real_viewers_label')}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Provisional badge (3-6 streams) */}
+      {isProvisionalLow && streamsCount > 0 && (
+        <div style={{ textAlign: 'center' }}>
+          <span className="sp-health-provisional yellow">
+            {t('cold_start.provisional_streams', { N: streamsCount })}
+          </span>
+        </div>
+      )}
 
       {/* ERV hero number */}
-      {ervCount != null && !isInsufficient ? (
-        <div className="sp-erv-hero" style={{ color }}>
-          ~{ervCount.toLocaleString()}
-        </div>
-      ) : (
-        <div className="sp-erv-hero" style={{ color: '#9ca3af' }}>
-          {isInsufficient ? t('popup.cold_start') : '—'}
+      <div className={`sp-erv-hero ${isInsufficient ? 'grey' : colorKey}`}>
+        {isInsufficient
+          ? t('cold_start.insufficient_data')
+          : ervCount != null
+            ? t('erv.real_viewers_count', { N: formatNumber(ervCount, i18n.language) })
+            : '—'}
+      </div>
+
+      {/* CCV / collecting status sub-line */}
+      <div className="sp-erv-ccv">
+        {isInsufficient
+          ? t('cold_start.streams_for_analysis', { current: streamsCount, required: 3 })
+          : ccv != null
+            ? t('popup.twitch_online', { N: formatNumber(ccv, i18n.language) })
+            : ''}
+      </div>
+
+      {/* ERV Label badge — text comes from i18n by color (legally-safe v3 wording),
+          NOT raw server string which is EN-only. Per CLAUDE.md ERV labels v3. */}
+      {!isInsufficient && (colorKey === 'green' || colorKey === 'yellow' || colorKey === 'red') && (
+        <div style={{ textAlign: 'center' }}>
+          <span className={`sp-erv-label ${colorKey}`}>
+            <span className="erv-dot" /> {t(`erv_label.${colorKey}`)}
+            {ervPercent != null ? ` · ${ervPercent}%` : ''}
+          </span>
         </div>
       )}
 
-      {/* CCV */}
-      {ccv != null && (
-        <div className="sp-erv-ccv">{t('popup.twitch_online', { N: ccv.toLocaleString() })}</div>
-      )}
-
-      {/* ERV Label */}
-      {ervLabel && (
-        <div className={`sp-erv-label ${ervLabelColor || 'grey'}`}>
-          <span className="erv-dot"></span> {ervLabel} {ervPercent != null ? `· ${ervPercent}%` : ''}
-        </div>
-      )}
-
-      {/* Confidence */}
-      {confidenceText && (
-        <div className={`sp-confidence ${confidence != null && confidence >= 0.7 ? 'green' : confidence != null && confidence >= 0.3 ? 'yellow' : 'red'}`}>
+      {/* Confidence — frames 14/16 (full+deep state); hidden during cold start
+          (insufficient → collecting banner; provisional_low → provisional badge;
+          provisional 7-9 → frame 08 has no confidence text either). */}
+      {confidenceText && !isProvisional && !isInsufficient && (
+        <div
+          className={`sp-confidence ${
+            confidence != null && confidence >= 0.7
+              ? 'high'
+              : confidence != null && confidence >= 0.3
+                ? 'medium'
+                : 'low'
+          }`}
+        >
           {confidenceText}
         </div>
       )}
-
-      {/* Provisional badge */}
-      {isProvisional && (
-        <div className="sp-provisional-badge">
-          {t('popup.cold_start')} — {coldStartStatus === 'provisional_low' ? '3-6' : '7-9'}/10
-        </div>
-      )}
-    </div>
+    </>
   );
 }

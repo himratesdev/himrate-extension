@@ -111,12 +111,15 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
         showExpand={showDrillDown}
       />
 
-      {/* Stream Summary — offline only (Section 9 wireframe "Итоги стрима") */}
+      {/* Stream Summary — offline only (Section 9 wireframe "Итоги стрима").
+          Real-data slot: durationText/peakCcv/avgCcv all null until stream session
+          summary endpoint exposes them. trustCache.ccv is current/last live CCV,
+          NOT stream-average — passing it as avgCcv would mislead. */}
       {!isLive && (
         <StreamSummaryCard
           durationText={null}
           peakCcv={null}
-          avgCcv={trustCache.ccv}
+          avgCcv={null}
           ervPercent={trustCache.erv_percent}
           ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
         />

@@ -62,9 +62,14 @@ export function MiniSparkline({ channelId, isLive, isPremium, ervColor = 'green'
       setPoints([]);
       return;
     }
+    let cancelled = false;
     api.getTrustHistory(channelId, period).then((data) => {
+      if (cancelled) return;
       if (data?.points) setPoints(data.points);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [channelId, isLive, isPremium]);
 
   const computed = useMemo(() => {

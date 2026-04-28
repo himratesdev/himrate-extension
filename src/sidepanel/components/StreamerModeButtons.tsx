@@ -61,7 +61,9 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
   const [verifyRequested, setVerifyRequested] = useState(false);
   const [modal, setModal] = useState<'badge' | 'card' | null>(null);
 
-  // Placeholder usage — driven by API in future task (verification quota endpoint)
+  // Placeholder usage counter. Real data slot: verification quota endpoint
+  // (used/limit per month) lives under TASK-041 Streamer Mode + Channel Card —
+  // when that ships, replace with api.getVerificationQuota(channelId) call.
   const verificationsUsed = verifyRequested ? 3 : 2;
   const verificationsRemaining = VERIFICATION_LIMIT - verificationsUsed;
 

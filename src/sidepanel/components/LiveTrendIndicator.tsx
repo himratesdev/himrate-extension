@@ -18,7 +18,9 @@ export function LiveTrendIndicator({ channelId }: Props) {
 
   useEffect(() => {
     if (!channelId) return;
+    let cancelled = false;
     api.getTrustHistory(channelId, '30m').then((data) => {
+      if (cancelled) return;
       if (!data?.points || data.points.length < 2) return;
       const series = data.points.map((p) => p.erv_count ?? 0);
       const first = series[0];
@@ -26,6 +28,9 @@ export function LiveTrendIndicator({ channelId }: Props) {
       if (first === 0) return;
       setChange(Math.round(((last - first) / first) * 100));
     });
+    return () => {
+      cancelled = true;
+    };
   }, [channelId]);
 
   if (change == null) return null;

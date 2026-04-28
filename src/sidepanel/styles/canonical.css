@@ -1384,6 +1384,13 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     font-family: 'Inter', sans-serif; line-height: 1.5;
 }
 
+/* NotTwitch state-icon size variant (smaller than default 56px) */
+.sp-state-icon-lg { width: 48px; height: 48px; font-size: 22px; }
+.sp-state-icon-letter { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+.sp-state-title-sm { font-size: 15px; }
+.sp-state-subtitle-narrow { max-width: 240px; }
+.sp-search-input-full { width: 100%; }
+
 /* Watchlist error inline */
 .sp-watchlist-error {
     font-size: 11px; color: var(--color-erv-red);

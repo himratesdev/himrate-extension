@@ -1,5 +1,7 @@
-// TASK-035 FR-012: "Link Twitch" info banner.
-// Dismiss stores timestamp in chrome.storage.local — hidden for 1 day.
+// BUG-016 PR-1 (Section 5 of wireframe + canonical §4.9): "Link Twitch" info banner.
+// Wireframe: side-panel-wireframe-TASK-039.html lines 1822-1825 (Section 5 use-case)
+// CSS spec: canonical §4.9 lines 206-219.
+// Dismiss stores timestamp в chrome.storage.local — hidden for 1 day.
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,32 +40,25 @@ export function InfoBanner({ show }: Props) {
   };
 
   return (
-    <div
-      className="sp-info-banner"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '8px 12px',
-        background: '#eff6ff',
-        borderBottom: '2px solid #3b82f6',
-        fontSize: '12px',
-        fontWeight: 500,
-      }}
-    >
-      <span style={{ flex: 1 }}>{t('banner.link_twitch')}</span>
+    <div className="sp-info-banner" role="alert">
+      <span className="sp-info-banner-text">
+        <svg
+          className="ico ico-sm"
+          viewBox="0 0 24 24"
+          style={{ verticalAlign: '-0.2em' }}
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        {t('banner.link_twitch')}
+      </span>
       <button
+        type="button"
+        className="sp-info-banner-close"
         onClick={handleDismiss}
         aria-label={t('aria.dismiss')}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '16px',
-          color: '#6b7280',
-          lineHeight: 1,
-          padding: '0 2px',
-        }}
       >
         ×
       </button>

@@ -47,6 +47,11 @@ export function Overview({ trustCache, loading, tier, isOwnChannel, authState }:
 
   return (
     <div className="sp-overview">
+      {/* Streamer disclaimer — own channel only (Section 8 wireframe) */}
+      {isOwnChannel && (
+        <div className="sp-streamer-disclaimer">{t('sp.streamer_disclaimer')}</div>
+      )}
+
       {/* Alert Counter — LIVE only */}
       {isLive && <AlertCounter trustCache={trustCache} />}
 

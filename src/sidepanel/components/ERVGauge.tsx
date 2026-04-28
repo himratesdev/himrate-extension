@@ -90,7 +90,7 @@ export function ERVGauge({
           <div className="sp-gauge-center">
             <span
               className={`sp-gauge-percent ${isInsufficient ? 'grey' : colorKey}`}
-              style={{ fontSize: isOwnChannel ? '32px' : isProvisionalLow ? '24px' : undefined }}
+              style={{ fontSize: isOwnChannel ? '36px' : isProvisionalLow ? '24px' : undefined }}
             >
               {isInsufficient ? '—' : `${percent}%`}
             </span>

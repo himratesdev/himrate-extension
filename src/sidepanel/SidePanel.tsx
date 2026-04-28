@@ -19,10 +19,21 @@ import type { TrustCache } from '../shared/api';
 const TABS = ['overview', 'trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'] as const;
 export type SidePanelTab = typeof TABS[number];
 
-// Tabs locked per tier (Design Spec §F3)
+// Tabs locked per tier (Design Spec §F3).
+// LOCKED_TABS = visual lock indicator (lock icon + opacity) per wireframes 11/32.
+// HARD_LOCKED_TABS = click triggers generic LockedTabPaywallModal.
+// Trends is soft-locked (visual lock only) because TrendsTab renders its own
+// rich Paywall content (frames 32 Free / 33 Guest) — generic modal would lose context.
 const LOCKED_TABS: Record<string, SidePanelTab[]> = {
   guest: ['trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid'],
   free: ['trends', 'audience', 'compare', 'overlap', 'botraid'],
+  premium: [],
+  business: [],
+  streamer: [],
+};
+const HARD_LOCKED_TABS: Record<string, SidePanelTab[]> = {
+  guest: ['audience', 'watchlists', 'compare', 'overlap', 'botraid'],
+  free: ['audience', 'compare', 'overlap', 'botraid'],
   premium: [],
   business: [],
   streamer: [],
@@ -38,13 +49,16 @@ export function SidePanel() {
   const [pendingChannel, setPendingChannel] = useState<string | null>(null);
   const [lockedTabPaywall, setLockedTabPaywall] = useState<SidePanelTab | null>(null);
   const [loading, setLoading] = useState(true);
+  // currentChannel: undefined = not yet known (Skeleton); null = no channel
+  // detected (NotTwitchOverview); string = channel found (wait for trustCache).
+  const [currentChannel, setCurrentChannel] = useState<string | null | undefined>(undefined);
 
-  // Boot: get auth state + trust data. loading flips false once trust response
-  // arrives — null response means "no current channel" (user not on Twitch),
-  // which Overview state machine routes to NotTwitchOverview.
   useEffect(() => {
     chrome.runtime.sendMessage({ action: 'GET_AUTH_STATE' }, (auth) => {
       if (auth) setAuthState(auth);
+    });
+    chrome.runtime.sendMessage({ action: 'GET_CURRENT_CHANNEL' }, (ch) => {
+      setCurrentChannel(typeof ch === 'string' && ch.length > 0 ? ch : null);
     });
     chrome.runtime.sendMessage({ action: 'GET_TRUST_DATA' }, (data) => {
       if (data) setTrustCache(data);
@@ -72,8 +86,8 @@ export function SidePanel() {
 
   const handleTabChange = useCallback((tab: string) => {
     const tabId = tab as SidePanelTab;
-    const locked = LOCKED_TABS[authState.tier] || LOCKED_TABS.guest;
-    if (locked.includes(tabId)) {
+    const hardLocked = HARD_LOCKED_TABS[authState.tier] || HARD_LOCKED_TABS.guest;
+    if (hardLocked.includes(tabId)) {
       setLockedTabPaywall(tabId);
       return;
     }
@@ -190,6 +204,7 @@ export function SidePanel() {
           <Overview
             trustCache={trustCache}
             loading={loading}
+            currentChannel={currentChannel}
             tier={tier}
             isOwnChannel={isOwnChannel}
             authState={authState}

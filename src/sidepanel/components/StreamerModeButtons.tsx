@@ -55,7 +55,7 @@ function VerifyIcon() {
 
 type Tool = 'badge' | 'card' | 'verify';
 
-export function StreamerModeButtons({ channelId, login: _login }: Props) {
+export function StreamerModeButtons({ channelId: _channelId, login: _login }: Props) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Set<Tool>>(new Set());
   const [verifyRequested, setVerifyRequested] = useState(false);
@@ -99,7 +99,6 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
           <button
             className="sp-streamer-btn primary"
             onClick={() => setModal('badge')}
-            disabled={!channelId}
           >
             {t('sp.streamer_badge_action')}
           </button>
@@ -125,7 +124,6 @@ export function StreamerModeButtons({ channelId, login: _login }: Props) {
           <button
             className="sp-streamer-btn secondary"
             onClick={() => setModal('card')}
-            disabled={!channelId}
           >
             {t('sp.streamer_card_action')}
           </button>

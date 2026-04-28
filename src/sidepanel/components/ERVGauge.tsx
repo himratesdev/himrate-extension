@@ -51,10 +51,11 @@ export function ERVGauge({
   const percent = isInsufficient ? 0 : Math.min(100, Math.max(0, ervPercent ?? 0));
   const offset = circumference - (percent / 100) * circumference;
 
-  const confidenceText = confidence != null
-    ? confidence >= 0.7 ? t('confidence.sufficient')
-      : confidence >= 0.3 ? t('confidence.moderate')
-        : t('confidence.insufficient')
+  // Confidence text shown only when value is meaningful (≥0.3).
+  // Below threshold likely means stale / null mock — better to render nothing
+  // than misleading red "Insufficient data" on a mature full+deep channel.
+  const confidenceText = confidence != null && confidence >= 0.3
+    ? confidence >= 0.7 ? t('confidence.sufficient') : t('confidence.moderate')
     : null;
 
   return (

@@ -26,6 +26,8 @@ import type { TrustCache } from '../../shared/api';
 interface Props {
   trustCache: TrustCache | null;
   loading: boolean;
+  /** undefined = still detecting (Skeleton); null = no channel (NotTwitch); string = found */
+  currentChannel: string | null | undefined;
   tier: string;
   isOwnChannel: boolean;
   authState: { loggedIn: boolean; tier: string; twitchLinked: boolean; twitchLogin: string | null };
@@ -36,17 +38,19 @@ function isPostStreamWindowOpen(cache: TrustCache): boolean {
   return new Date(cache.expires_at).getTime() > Date.now();
 }
 
-export function Overview({ trustCache, loading, tier, isOwnChannel, authState }: Props) {
+export function Overview({ trustCache, loading, currentChannel, tier, isOwnChannel, authState }: Props) {
   const { t } = useTranslation();
 
   // Screen determination (FR-019 state machine, ordered):
-  // 1. Still loading bg.ts response → Skeleton
-  // 2. Loaded but no channel data OR no login → user not on Twitch (Frame 01)
-  // 3. Backend error response → ErrorOverview (Frame 19)
-  // 4. Channel exists but not tracked → NotTrackedOverview (Frames 03-05)
-  if (loading) return <SkeletonOverview />;
-  if (!trustCache || !trustCache.login) return <NotTwitchOverview />;
+  // 1. currentChannel undefined OR loading + has channel → Skeleton (frame 02)
+  // 2. currentChannel === null → user not on Twitch (frame 01 NotTwitchOverview)
+  // 3. Trust data error → ErrorOverview (frame 19)
+  // 4. Channel exists but not tracked → NotTrackedOverview (frames 03-05)
+  if (currentChannel === undefined) return <SkeletonOverview />;
+  if (currentChannel === null) return <NotTwitchOverview />;
+  if (loading || !trustCache) return <SkeletonOverview />;
   if (trustCache.error) return <ErrorOverview />;
+  if (!trustCache.login) return <NotTwitchOverview />;
   if (!trustCache.is_tracked) {
     return (
       <NotTrackedOverview

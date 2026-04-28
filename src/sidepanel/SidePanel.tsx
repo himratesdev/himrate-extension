@@ -208,6 +208,7 @@ export function SidePanel() {
             tier={tier}
             isOwnChannel={isOwnChannel}
             authState={authState}
+            onNavigate={(tab) => setCurrentTab(tab as SidePanelTab)}
           />
         ) : currentTab === 'watchlists' ? (
           <Watchlists tier={tier} authState={authState} />

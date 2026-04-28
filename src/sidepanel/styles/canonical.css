@@ -1280,9 +1280,14 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
 
 /* Paywall variants (min-height + overlay padding/bg) */
 .sp-paywall-guest { min-height: 180px; }
-.sp-paywall-expired { min-height: 200px; }
+.sp-paywall-expired { min-height: 280px; }
 .sp-paywall-overlay-guest { padding: 16px 12px; }
-.sp-paywall-overlay-expired { background: rgba(255,255,255,0.85); padding: 20px; }
+.sp-paywall-overlay-expired {
+    background: rgba(255,255,255,0.85); padding: 16px;
+    justify-content: center; gap: 6px;
+}
+.sp-paywall-overlay-expired .sp-paywall-headline { margin-bottom: 0; }
+.sp-paywall-overlay-expired .sp-paywall-subtext { margin-bottom: 8px; }
 
 /* Paywall overlay content (Section 5 guest, Section 9 expired, locked tab modal) */
 .sp-paywall-headline {
@@ -1486,6 +1491,60 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     font-size: 9px; color: var(--ink-30);
     font-family: 'JetBrains Mono', monospace;
 }
+
+/* Watchlist Dropdown (frame 27) */
+.sp-watchlist-wrap { position: relative; }
+.sp-watchlist-btn.open { box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+.sp-watchlist-dropdown {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 20;
+    margin-top: 4px;
+    background: var(--bg-card); border: 2.5px solid var(--color-primary);
+    border-radius: 10px; box-shadow: 3px 3px 0 var(--color-primary);
+    overflow: hidden;
+}
+.sp-watchlist-dropdown-header {
+    padding: 8px 12px;
+    border-bottom: 1.5px solid var(--border-light);
+    font-size: 11px; font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--color-text-secondary);
+}
+.sp-watchlist-dropdown-list { padding: 4px 0; max-height: 200px; overflow-y: auto; }
+.sp-watchlist-dropdown-item {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; padding: 8px 12px; cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.15s;
+}
+.sp-watchlist-dropdown-item:hover { background: var(--color-skeleton-from); }
+.sp-watchlist-dropdown-item.active {
+    background: var(--color-erv-green-bg);
+    border-left-color: var(--color-erv-green);
+}
+.sp-watchlist-dropdown-item-text { flex: 1; min-width: 0; }
+.sp-watchlist-dropdown-item-name { font-size: 12px; font-weight: 600; }
+.sp-watchlist-dropdown-item-count {
+    font-size: 10px; color: var(--color-text-secondary);
+}
+.sp-watchlist-dropdown-empty {
+    padding: 12px; text-align: center;
+    font-size: 11px; color: var(--ink-30);
+}
+.sp-watchlist-dropdown-footer {
+    border-top: 1.5px solid var(--border-light);
+    padding: 4px;
+}
+.sp-watchlist-dropdown-action {
+    width: 100%; padding: 8px 12px;
+    background: none; border: none; cursor: pointer;
+    font-size: 11px; font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--color-primary);
+    border-radius: 6px;
+    text-align: left;
+    transition: background 0.15s;
+}
+.sp-watchlist-dropdown-action:hover { background: var(--color-skeleton-from); }
 
 /* Not-tracked overview centered + subtitle */
 .sp-content-centered { justify-content: center; }

@@ -31,6 +31,7 @@ interface Props {
   tier: string;
   isOwnChannel: boolean;
   authState: { loggedIn: boolean; tier: string; twitchLinked: boolean; twitchLogin: string | null };
+  onNavigate?: (tab: string) => void;
 }
 
 function isPostStreamWindowOpen(cache: TrustCache): boolean {
@@ -38,7 +39,7 @@ function isPostStreamWindowOpen(cache: TrustCache): boolean {
   return new Date(cache.expires_at).getTime() > Date.now();
 }
 
-export function Overview({ trustCache, loading, currentChannel, tier, isOwnChannel, authState }: Props) {
+export function Overview({ trustCache, loading, currentChannel, tier, isOwnChannel, authState, onNavigate }: Props) {
   const { t } = useTranslation();
 
   // Screen determination (FR-019 state machine, ordered):
@@ -301,11 +302,12 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         <AudiencePreview countries={trustCache.top_countries} />
       )}
 
-      {/* Watchlist Button */}
+      {/* Watchlist Button + Dropdown (frame 27) */}
       {authState.loggedIn && (
         <WatchlistButton
           channelId={trustCache.channel_id}
           isWatched={trustCache.is_watched_by_user}
+          onOpenWatchlists={() => onNavigate?.('watchlists')}
         />
       )}
 

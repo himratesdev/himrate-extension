@@ -21,6 +21,7 @@ import { NotTrackedOverview } from './NotTrackedOverview';
 import { NotTwitchOverview } from './NotTwitchOverview';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
+import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
 import type { TrustCache } from '../../shared/api';
 
 interface Props {
@@ -128,6 +129,14 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         showExpand={showDrillDown}
         coldStartStatus={trustCache.cold_start_status}
       />
+
+      {/* M-Anomaly: Persistent anomaly attribution (frame 26 — Premium Live ERV<80%).
+          Renders when channel has detected anomalies (raid attribution, audience overlap).
+          Real data slot: backend `anomaly_attributions` array. Without backend signal,
+          component skips render — never fakes security claims. */}
+      {isLive && isPremium && trustCache.erv_percent != null && trustCache.erv_percent < 80 && (
+        <AlertsBlock alerts={(trustCache as TrustCache & { anomaly_alerts?: AnomalyAlert[] }).anomaly_alerts ?? []} />
+      )}
 
       {/* Stream Summary — offline only (Section 9 wireframe "Итоги стрима").
           Real-data slot: durationText/peakCcv/avgCcv all null until stream session

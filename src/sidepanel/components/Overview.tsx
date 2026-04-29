@@ -90,9 +90,17 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
       )}
 
       {/* Post-stream countdown — frames 16/18 (within window or <1h warning).
-          Skipped at frame 17 (>18h expired) — overlay shows expired message. */}
+          Skipped at frame 17 (>18h expired) — replaced by red expired banner. */}
       {!isLive && trustCache.expires_at && (tier === 'free' || isGuest) && !isOfflineExpired && (
         <PostStreamCountdown expiresAt={trustCache.expires_at} />
+      )}
+
+      {/* Offline expired top banner — frame 17 wireframe (red border + clock icon).
+          Wireframe slim 17: "🕐 Время доступа истекло" — red rounded box at top of content. */}
+      {isOfflineExpired && (
+        <div className="sp-offline-expired-banner" role="alert">
+          🕐 {t('sp.offline_paywall_title')}
+        </div>
       )}
 
       {/* Alert Counter — LIVE only */}

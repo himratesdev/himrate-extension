@@ -1653,6 +1653,16 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     border: 1.5px solid rgba(59,130,246,0.2);
 }
 
+/* Offline expired top banner — frame 17 wireframe (red border, red text) */
+.sp-offline-expired-banner {
+    text-align: center; padding: 8px 12px;
+    border: 1.5px solid var(--color-erv-red, #DC2626);
+    border-radius: var(--radius-button); background: rgba(220,38,38,0.05);
+    color: var(--color-erv-red, #DC2626);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
 /* Deep Analytics badge — frame 09 wireframe deep tier (30+ streams) */
 .sp-deep-analytics-badge-wrap {
     display: flex; justify-content: center; margin-bottom: 8px;

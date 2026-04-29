@@ -19,12 +19,12 @@
 | 8 | `button.sp-tab.locked "Bot-Raid"` | no | YES | 0 | - |
 | 9 | `button.sp-tab "Settings"` | no | YES | 0 | - |
 | 10 | `button.btn.btn-twitch "Sign in to request"` | no | YES | 0 | - |
-| 11 | `a.sp-footer-link "Support"` | no | no | 0 | - |
-| 12 | `a.sp-footer-link "Feedback"` | no | no | 0 | - |
-| 13 | `a.sp-footer-link "YouTube"` | no | no | 0 | - |
-| 14 | `a.sp-footer-link "Telegram"` | no | no | 0 | TypeError: target.click is not a function |
-| 15 | `svg.ico.ico-sm ""` | no | no | 0 | TypeError: target.click is not a function |
-| 16 | `circle ""` | no | no | 0 | TypeError: target.click is not a function |
+| 11 | `a.sp-footer-link "Support"` | no | no | 1 | - |
+| 12 | `a.sp-footer-link "Feedback"` | no | no | 1 | - |
+| 13 | `a.sp-footer-link "YouTube"` | no | no | 1 | - |
+| 14 | `a.sp-footer-link "Telegram"` | no | no | 0 | - |
+| 15 | `svg.ico.ico-sm ""` | no | no | 1 | - |
+| 16 | `circle ""` | no | no | 0 | - |
 | 17 | `path ""` | no | no | 0 | index out of range |
 
 ## Tooltips

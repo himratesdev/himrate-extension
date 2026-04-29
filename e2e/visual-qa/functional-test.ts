@@ -125,10 +125,24 @@ function clickElementInPage(idx: number) {
   });
   const all = [...interactive, ...cursorPointer];
   const target = all[idx] as HTMLElement | undefined;
-  if (!target) return { domDelta: 0, error: 'index out of range', modalOpened: false, visible: false };
+  if (!target) return { domDelta: 0, error: 'index out of range', modalOpened: false, visible: false, scrolledTo: false };
+  // Scroll element into view so it's actually clickable / visible
+  let scrolled = false;
+  try {
+    target.scrollIntoView({ block: 'center', behavior: 'instant' as any });
+    scrolled = true;
+  } catch (e) {}
   const beforeCount = root.querySelectorAll('*').length;
   let err: string | null = null;
-  try { target.click(); } catch (e) { err = String(e); }
+  try {
+    if (typeof (target as any).click === 'function') {
+      (target as any).click();
+    } else {
+      // Synthesise click via dispatch (works for SVG elements too)
+      const ev = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+      target.dispatchEvent(ev);
+    }
+  } catch (e) { err = String(e); }
   const afterCount = root.querySelectorAll('*').length;
   const modal = document.querySelector('.modal, [role="dialog"], .sp-paywall-modal, .sp-channel-switch, .modal-overlay');
   return {
@@ -136,6 +150,7 @@ function clickElementInPage(idx: number) {
     error: err,
     modalOpened: modal != null,
     visible: !!target.offsetParent,
+    scrolledTo: scrolled,
   };
 }
 
@@ -230,9 +245,9 @@ async function testScenario(s: Scenario, idx: number): Promise<FrameReport> {
   const totalInteractive = scan.interactive.length;
   const tooltips = scan.tooltips || [];
 
-  // 2. For each interactive element, click and observe
+  // 2. For each interactive element, click and observe — NO CAP
   const clickResults: ClickResult[] = [];
-  for (let i = 0; i < Math.min(totalInteractive, 25); i++) {
+  for (let i = 0; i < totalInteractive; i++) {
     const el = scan.interactive[i];
     if (!el.isClickable) continue;
     const result: any = await page.evaluate(clickElementInPage, i);

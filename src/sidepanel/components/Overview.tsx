@@ -3,6 +3,7 @@
 // Free <18h post-stream = drill-down with countdown; Free >18h = expired paywall;
 // Premium = expandable details; Streamer (own channel) = HealthScore + tools.
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ERVGauge } from './ERVGauge';
 import { TIBadge } from './TIBadge';
@@ -29,6 +30,10 @@ import { Frame14LivePremiumGreen } from './Frame14LivePremiumGreen';
 import { Frame15LiveStreamerOwnChannel } from './Frame15LiveStreamerOwnChannel';
 import { Frame16OfflineWithin18h } from './Frame16OfflineWithin18h';
 import { Frame17OfflineExpired } from './Frame17OfflineExpired';
+import { Frame20BadgeModal } from './Frame20BadgeModal';
+import { Frame21ChannelCardModal } from './Frame21ChannelCardModal';
+import { Frame22VerificationModal } from './Frame22VerificationModal';
+import { Frame23VerificationLimitModal } from './Frame23VerificationLimitModal';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -52,6 +57,18 @@ function isPostStreamWindowOpen(cache: TrustCache): boolean {
 
 export function Overview({ trustCache, loading, currentChannel, tier, isOwnChannel, authState, onNavigate }: Props) {
   const { t } = useTranslation();
+
+  // Streamer Tools modal state — frames 20/21/22/23
+  type ModalKey = 'badge' | 'card' | 'verification' | 'verificationLimit' | null;
+  const [activeModal, setActiveModal] = useState<ModalKey>(null);
+  const verificationRequestsUsed = 2; // TBD: from backend (TASK-085)
+  const handleOpenVerification = () => {
+    setActiveModal(verificationRequestsUsed >= 5 ? 'verificationLimit' : 'verification');
+  };
+  const handleVerificationSubmit = async (_message: string) => {
+    // TBD: api.submitVerificationRequest(_message) — backend endpoint pending TASK-085
+    // Currently just close modal — UI feedback only
+  };
 
   // Screen determination (FR-019 state machine, ordered):
   // 1. currentChannel undefined OR loading + has channel → Skeleton (frame 02)
@@ -139,22 +156,62 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   // Frame 15 — Live Streamer Own Channel: literal port from slim/15. Own channel +
   // streamer disclaimer + ERV gauge 160px + signals + reputation + Health Score.
   if (trustCache.is_live && isOwnChannel) {
+    const tiScoreSafe = trustCache.ti_score ?? 0;
+    const channelLogin = trustCache.login || '';
+    const avatarLetter = (authState.twitchLogin?.[0] || channelLogin[0] || 'M').toUpperCase();
     return (
-      <Frame15LiveStreamerOwnChannel
-        ervPercent={trustCache.erv_percent}
-        ervCount={trustCache.erv_count}
-        ccv={trustCache.ccv}
-        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
-        tiScore={trustCache.ti_score}
-        percentile={trustCache.percentile_in_category}
-        streamsCount={trustCache.streamer_rating?.streams_count ?? 342}
-        channelId={trustCache.channel_id}
-        signals={trustCache.signal_breakdown ?? []}
-        reputation={trustCache.streamer_reputation}
-        healthScore={trustCache.health_score}
-        topCountries={trustCache.top_countries}
-        onNavigate={onNavigate}
-      />
+      <>
+        <Frame15LiveStreamerOwnChannel
+          ervPercent={trustCache.erv_percent}
+          ervCount={trustCache.erv_count}
+          ccv={trustCache.ccv}
+          ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+          tiScore={trustCache.ti_score}
+          percentile={trustCache.percentile_in_category}
+          streamsCount={trustCache.streamer_rating?.streams_count ?? 342}
+          channelId={trustCache.channel_id}
+          signals={trustCache.signal_breakdown ?? []}
+          reputation={trustCache.streamer_reputation}
+          healthScore={trustCache.health_score}
+          topCountries={trustCache.top_countries}
+          verificationRequestsUsed={verificationRequestsUsed}
+          onNavigate={onNavigate}
+          onOpenBadgeModal={() => setActiveModal('badge')}
+          onOpenChannelCardModal={() => setActiveModal('card')}
+          onOpenVerificationModal={handleOpenVerification}
+        />
+        {activeModal === 'badge' && (
+          <Frame20BadgeModal
+            channelLogin={channelLogin}
+            tiScore={tiScoreSafe}
+            onClose={() => setActiveModal(null)}
+          />
+        )}
+        {activeModal === 'card' && (
+          <Frame21ChannelCardModal
+            channelLogin={channelLogin}
+            avatarLetter={avatarLetter}
+            streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
+            tiScore={tiScoreSafe}
+            ervPercent={trustCache.erv_percent ?? 0}
+            classification={trustCache.classification ? t(`classification.${trustCache.classification}`) : ''}
+            healthScore={trustCache.health_score}
+            reputation={trustCache.streamer_reputation}
+            onClose={() => setActiveModal(null)}
+            onNavigate={onNavigate}
+          />
+        )}
+        {activeModal === 'verification' && (
+          <Frame22VerificationModal
+            requestsUsed={verificationRequestsUsed}
+            onClose={() => setActiveModal(null)}
+            onSubmit={handleVerificationSubmit}
+          />
+        )}
+        {activeModal === 'verificationLimit' && (
+          <Frame23VerificationLimitModal onClose={() => setActiveModal(null)} />
+        )}
+      </>
     );
   }
 

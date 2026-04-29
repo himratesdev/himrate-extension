@@ -28,6 +28,7 @@ import { Frame11LiveFreeGreen } from './Frame11LiveFreeGreen';
 import { Frame14LivePremiumGreen } from './Frame14LivePremiumGreen';
 import { Frame15LiveStreamerOwnChannel } from './Frame15LiveStreamerOwnChannel';
 import { Frame16OfflineWithin18h } from './Frame16OfflineWithin18h';
+import { Frame17OfflineExpired } from './Frame17OfflineExpired';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -210,9 +211,25 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   const hideAllModules = isInsufficient || isProvisionalLow;
   const hideMostModules = hideAllModules || isProvisional;
 
-  // Frame 16 — Offline within 18h window: literal port from slim/16. Free user
-  // post-stream sees full drill-down (signals/reputation visible) + countdown +
-  // stream summary + sparkline.
+  // Frame 17 — Offline >18h expired: literal port from slim/17. Top section visible
+  // (gauge/ERV/TI/stream summary), bottom blurred paywall + 2 CTAs ($9.99 / $4.99).
+  if (isOfflineExpired) {
+    return (
+      <Frame17OfflineExpired
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+        streamDuration={null}
+        peakViewers={null}
+        avgCcv={null}
+      />
+    );
+  }
+
+  // Frame 16/18 — Offline within 18h window: literal port from slim/16 (default) or
+  // slim/18 (warning when <1h remaining). Free user post-stream sees full drill-down.
   if (!isLive && windowOpen && !isOfflineExpired) {
     const remainingMin = trustCache.expires_at
       ? Math.max(0, Math.floor((new Date(trustCache.expires_at).getTime() - Date.now()) / 60_000))

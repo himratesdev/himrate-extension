@@ -1,7 +1,23 @@
-// LITERAL PORT — JSX 1:1 от wireframe-screens/slim/17_offline-18ch-free-expired.html.
+// LITERAL PORT + DATA WIRING — wireframe slim/17_offline-18ch-free-expired.html.
+// Top section visible (gauge/erv/ti/summary). Bottom drill-down BLURRED behind paywall.
 
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
+
+interface Signal {
+  type: string;
+  value: number;
+  confidence: number | null;
+  weight: number | null;
+  contribution: number;
+  metadata: Record<string, unknown> | null;
+}
+
+interface ReputationData {
+  growth_pattern_score: number | null;
+  follower_quality_score: number | null;
+  engagement_consistency_score: number | null;
+}
 
 interface Props {
   ervPercent: number | null;
@@ -12,17 +28,45 @@ interface Props {
   streamDuration: string | null;
   peakViewers: number | null;
   avgCcv: number | null;
+  signals?: Signal[];
+  reputation?: ReputationData | null;
 }
 
 const CIRCUMFERENCE = 326.7;
 const ERV_STROKE: Record<string, string> = { green: '#059669', yellow: '#D97706', red: '#DC2626' };
 
+function signalColor(value: number): 'green' | 'yellow' | 'red' {
+  if (value >= 0.8) return 'green';
+  if (value >= 0.5) return 'yellow';
+  return 'red';
+}
+
 export function Frame17OfflineExpired({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore,
   streamDuration, peakViewers, avgCcv,
+  signals = [], reputation = null,
 }: Props) {
   const { t, i18n } = useTranslation();
   const color = ervLabelColor || 'green';
+
+  // Signals lookup для blurred preview
+  const signalMap = new Map<string, Signal>();
+  for (const s of signals) signalMap.set(s.type, s);
+  function sig(type: string, defaultPct: number, defaultDisplay: string) {
+    const s = signalMap.get(type);
+    if (s != null) {
+      const p = Math.round(s.value * 100);
+      return { pct: p, display: `${p}%`, color: signalColor(s.value) };
+    }
+    return { pct: defaultPct, display: defaultDisplay, color: signalColor(defaultPct / 100) };
+  }
+  const s1 = sig('auth_ratio', 82, '82%');
+  const s2 = sig('chatter_to_ccv_ratio', 75, '1:8');
+  const s3 = sig('ccv_step_function', 95, t('signal.value_norm'));
+  const s4 = sig('ccv_tier_clustering', 88, t('signal.value_norm'));
+  const s5 = sig('per_user_chat_behavior', 70, '70%');
+  const repGrowth = reputation?.growth_pattern_score ?? 72;
+  const repQuality = reputation?.follower_quality_score ?? 88;
   const stroke = ERV_STROKE[color];
   const pct = ervPercent ?? 85;
   const offset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
@@ -100,12 +144,12 @@ export function Frame17OfflineExpired({
       <div className="sp-paywall" style={{ minHeight: '200px' }}>
         <div className="sp-paywall-blurred">
           <div className="sp-signals" style={{ padding: '4px' }}>
-            <div className="sp-signals-title">Анализ аудитории (11 показателей)</div>
-            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.auth_ratio')}</span><div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '82%' }}></div></div><span className="sp-signal-val green">82%</span></div>
-            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.chatter_ccv')}</span><div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '75%' }}></div></div><span className="sp-signal-val green">1:8</span></div>
-            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.ccv_step')}</span><div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '95%' }}></div></div><span className="sp-signal-val green">{t('signal.value_norm')}</span></div>
-            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.ccv_tier')}</span><div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '88%' }}></div></div><span className="sp-signal-val green">{t('signal.value_norm')}</span></div>
-            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.chat_behavior')}</span><div className="sp-signal-bar-bg"><div className="sp-signal-bar-fill green" style={{ width: '70%' }}></div></div><span className="sp-signal-val green">70%</span></div>
+            <div className="sp-signals-title">{t('sp.signals_title_premium', { count: 11 }).split('— нажмите')[0].trim()}</div>
+            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.auth_ratio')}</span><div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s1.color}`} style={{ width: `${s1.pct}%` }}></div></div><span className={`sp-signal-val ${s1.color}`}>{s1.display}</span></div>
+            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.chatter_ccv')}</span><div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s2.color}`} style={{ width: `${s2.pct}%` }}></div></div><span className={`sp-signal-val ${s2.color}`}>{s2.display}</span></div>
+            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.ccv_step')}</span><div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s3.color}`} style={{ width: `${s3.pct}%` }}></div></div><span className={`sp-signal-val ${s3.color}`}>{s3.display}</span></div>
+            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.ccv_tier')}</span><div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s4.color}`} style={{ width: `${s4.pct}%` }}></div></div><span className={`sp-signal-val ${s4.color}`}>{s4.display}</span></div>
+            <div className="sp-signal-row"><span className="sp-signal-name">{t('signal.chat_behavior')}</span><div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s5.color}`} style={{ width: `${s5.pct}%` }}></div></div><span className={`sp-signal-val ${s5.color}`}>{s5.display}</span></div>
           </div>
           <div className="sp-reputation" style={{ padding: '4px', border: '2.5px solid #8B5CF6', borderRadius: '12px', background: 'linear-gradient(180deg, rgba(139,92,246,0.05) 0%, transparent 100%)' }}>
             <div className="sp-reputation-title" style={{ color: '#7C3AED' }}>
@@ -118,16 +162,16 @@ export function Frame17OfflineExpired({
             <div className="sp-rep-row">
               <span className="sp-rep-name">{t('sp.rep_growth')}</span>
               <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
-                <div className="sp-rep-bar-fill" style={{ width: '72%', background: '#8B5CF6' }}></div>
+                <div className="sp-rep-bar-fill" style={{ width: `${repGrowth}%`, background: '#8B5CF6' }}></div>
               </div>
-              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>72</span>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>{Math.round(repGrowth)}</span>
             </div>
             <div className="sp-rep-row">
               <span className="sp-rep-name">{t('sp.rep_quality')}</span>
               <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
-                <div className="sp-rep-bar-fill" style={{ width: '88%', background: '#8B5CF6' }}></div>
+                <div className="sp-rep-bar-fill" style={{ width: `${repQuality}%`, background: '#8B5CF6' }}></div>
               </div>
-              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>88</span>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>{Math.round(repQuality)}</span>
             </div>
           </div>
         </div>

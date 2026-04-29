@@ -1,9 +1,30 @@
-// LITERAL PORT — JSX 1:1 от wireframe-screens/slim/11_live-free-green-85.html.
-// Каждый <div>, <svg>, <circle>, <line>, <text>, <path>, <polyline>, <span>, <a>, <button>
-// + class + inline style скопирован вербатим из wireframe.
+// LITERAL PORT + DATA WIRING — wireframe slim/11/12/13. Color variants via ervLabelColor.
+// M3/M4 в paywall blurred preview — read-only (no expand handlers, full UX в Premium).
+// Audience real data; sparkline coords остаются hardcoded (defer to chart-wiring pass).
 
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
+
+interface Signal {
+  type: string;
+  value: number;
+  confidence: number | null;
+  weight: number | null;
+  contribution: number;
+  metadata: Record<string, unknown> | null;
+}
+
+interface ReputationData {
+  growth_pattern_score: number | null;
+  follower_quality_score: number | null;
+  engagement_consistency_score: number | null;
+}
+
+interface Country {
+  country_code: string;
+  percentage: number;
+  viewer_count: number;
+}
 
 interface Props {
   ervPercent: number | null;
@@ -13,13 +34,31 @@ interface Props {
   tiScore: number | null;
   classification: string | null;
   percentile: number | null;
+  signals?: Signal[];
+  reputation?: ReputationData | null;
+  topCountries?: Country[] | null;
+  onNavigate?: (tab: string) => void;
 }
 
 const CIRCUMFERENCE = 326.7;
 const ERV_STROKE: Record<string, string> = { green: '#059669', yellow: '#D97706', red: '#DC2626' };
 
+function signalColor(value: number): 'green' | 'yellow' | 'red' {
+  if (value >= 0.8) return 'green';
+  if (value >= 0.5) return 'yellow';
+  return 'red';
+}
+
+function flagEmoji(code: string): string {
+  if (code.length !== 2) return '🏳️';
+  const A = 0x1f1e6;
+  const upper = code.toUpperCase();
+  return String.fromCodePoint(A + upper.charCodeAt(0) - 'A'.charCodeAt(0), A + upper.charCodeAt(1) - 'A'.charCodeAt(0));
+}
+
 export function Frame11LiveFreeGreen({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, classification, percentile,
+  signals = [], reputation = null, topCountries = null, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
 
@@ -31,6 +70,41 @@ export function Frame11LiveFreeGreen({
   const handleUpgrade = () => {
     chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=premium' });
   };
+
+  // Signal lookup
+  const signalMap = new Map<string, Signal>();
+  for (const s of signals) signalMap.set(s.type, s);
+  function sig(type: string, defaultPct: number, defaultDisplay: string) {
+    const s = signalMap.get(type);
+    if (s != null) {
+      const p = Math.round(s.value * 100);
+      return { pct: p, display: `${p}%`, color: signalColor(s.value) };
+    }
+    return { pct: defaultPct, display: defaultDisplay, color: signalColor(defaultPct / 100) };
+  }
+
+  // Reputation values
+  const repGrowth = reputation?.growth_pattern_score ?? 72;
+  const repQuality = reputation?.follower_quality_score ?? 88;
+  const repLoyalty = reputation?.engagement_consistency_score ?? 91;
+
+  // Countries
+  const countries = (topCountries && topCountries.length > 0) ? topCountries.slice(0, 3) : [
+    { country_code: 'RU', percentage: 45, viewer_count: 0 },
+    { country_code: 'UA', percentage: 20, viewer_count: 0 },
+    { country_code: 'KZ', percentage: 10, viewer_count: 0 },
+  ];
+  const countryName = (code: string): string => {
+    try { return new Intl.DisplayNames([i18n.language || 'en'], { type: 'region' }).of(code) || code; }
+    catch { return code; }
+  };
+
+  // M3 paywall preview — 5 first signals
+  const s1 = sig('auth_ratio', 82, '82%');
+  const s2 = sig('chatter_to_ccv_ratio', 75, t('signal.value_norm'));
+  const s3 = sig('ccv_step_function', 95, t('signal.value_norm'));
+  const s4 = sig('ccv_tier_clustering', 88, '88%');
+  const s5 = sig('per_user_chat_behavior', 70, '70%');
 
   return (
     // <div class="sp-content">
@@ -169,45 +243,31 @@ export function Frame11LiveFreeGreen({
           <div className="sp-signals">
             {/* <div class="sp-signals-title">Сигналы (11)</div> */}
             <div className="sp-signals-title">{t('sp.signals_title', { count: 11 })}</div>
-            {/* <div class="sp-signal-row"><span>Авторизация</span>...<span class="sp-signal-val green">82%</span></div> */}
+            {/* M3 paywall preview rows — values from real signals[] with wireframe defaults fallback */}
             <div className="sp-signal-row">
               <span className="sp-signal-name">{t('signal.auth_ratio')}</span>
-              <div className="sp-signal-bar-bg">
-                <div className="sp-signal-bar-fill green" style={{ width: '82%' }}></div>
-              </div>
-              <span className="sp-signal-val green">82%</span>
+              <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s1.color}`} style={{ width: `${s1.pct}%` }}></div></div>
+              <span className={`sp-signal-val ${s1.color}`}>{s1.display}</span>
             </div>
-            {/* <div class="sp-signal-row"><span>Чат/зрители</span>...<span class="sp-signal-val green">норма</span></div> */}
             <div className="sp-signal-row">
               <span className="sp-signal-name">{t('signal.chatter_ccv')}</span>
-              <div className="sp-signal-bar-bg">
-                <div className="sp-signal-bar-fill green" style={{ width: '75%' }}></div>
-              </div>
-              <span className="sp-signal-val green">{t('signal.value_norm')}</span>
+              <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s2.color}`} style={{ width: `${s2.pct}%` }}></div></div>
+              <span className={`sp-signal-val ${s2.color}`}>{s2.display}</span>
             </div>
-            {/* <div class="sp-signal-row"><span>Рост зрителей</span>...<span class="sp-signal-val green">норма</span></div> */}
             <div className="sp-signal-row">
               <span className="sp-signal-name">{t('signal.ccv_step')}</span>
-              <div className="sp-signal-bar-bg">
-                <div className="sp-signal-bar-fill green" style={{ width: '95%' }}></div>
-              </div>
-              <span className="sp-signal-val green">{t('signal.value_norm')}</span>
+              <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s3.color}`} style={{ width: `${s3.pct}%` }}></div></div>
+              <span className={`sp-signal-val ${s3.color}`}>{s3.display}</span>
             </div>
-            {/* <div class="sp-signal-row"><span>Подписки</span>...<span class="sp-signal-val green">88%</span></div> */}
             <div className="sp-signal-row">
               <span className="sp-signal-name">{t('signal.ccv_tier')}</span>
-              <div className="sp-signal-bar-bg">
-                <div className="sp-signal-bar-fill green" style={{ width: '88%' }}></div>
-              </div>
-              <span className="sp-signal-val green">88%</span>
+              <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s4.color}`} style={{ width: `${s4.pct}%` }}></div></div>
+              <span className={`sp-signal-val ${s4.color}`}>{s4.display}</span>
             </div>
-            {/* <div class="sp-signal-row"><span>Скорость чата</span>...<span class="sp-signal-val green">70%</span></div> */}
             <div className="sp-signal-row">
               <span className="sp-signal-name">{t('signal.chat_behavior')}</span>
-              <div className="sp-signal-bar-bg">
-                <div className="sp-signal-bar-fill green" style={{ width: '70%' }}></div>
-              </div>
-              <span className="sp-signal-val green">70%</span>
+              <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s5.color}`} style={{ width: `${s5.pct}%` }}></div></div>
+              <span className={`sp-signal-val ${s5.color}`}>{s5.display}</span>
             </div>
           </div>
         </div>
@@ -251,27 +311,27 @@ export function Frame11LiveFreeGreen({
                 — {t('sp.rep_subtitle')}
               </span>
             </div>
-            {/* <div class="sp-rep-row"><span>Естественность роста</span>...<span class="sp-rep-val" style="color:#7C3AED;">72</span></div> */}
+            {/* M4 paywall preview rows — values from real reputation prop with defaults fallback */}
             <div className="sp-rep-row">
               <span className="sp-rep-name">{t('sp.rep_growth')}</span>
               <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
-                <div className="sp-rep-bar-fill" style={{ width: '72%', background: '#8B5CF6' }}></div>
+                <div className="sp-rep-bar-fill" style={{ width: `${repGrowth}%`, background: '#8B5CF6' }}></div>
               </div>
-              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>72</span>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>{Math.round(repGrowth)}</span>
             </div>
             <div className="sp-rep-row">
               <span className="sp-rep-name">{t('sp.rep_quality')}</span>
               <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
-                <div className="sp-rep-bar-fill" style={{ width: '88%', background: '#8B5CF6' }}></div>
+                <div className="sp-rep-bar-fill" style={{ width: `${repQuality}%`, background: '#8B5CF6' }}></div>
               </div>
-              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>88</span>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>{Math.round(repQuality)}</span>
             </div>
             <div className="sp-rep-row">
               <span className="sp-rep-name">{t('sp.rep_loyalty')}</span>
               <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
-                <div className="sp-rep-bar-fill" style={{ width: '91%', background: '#8B5CF6' }}></div>
+                <div className="sp-rep-bar-fill" style={{ width: `${repLoyalty}%`, background: '#8B5CF6' }}></div>
               </div>
-              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>91</span>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>{Math.round(repLoyalty)}</span>
             </div>
           </div>
         </div>
@@ -302,8 +362,7 @@ export function Frame11LiveFreeGreen({
         <div className="sp-sparkline-header">
           {/* <span class="sp-sparkline-title">Зрители за 30 минут</span> */}
           <span className="sp-sparkline-title">{t('sp.sparkline_title_live')}</span>
-          {/* <a class="sp-sparkline-more" href="#">Подробнее →</a> */}
-          <a className="sp-sparkline-more" href="#" onClick={(e) => e.preventDefault()}>
+          <a className="sp-sparkline-more" href="#" onClick={(e) => { e.preventDefault(); onNavigate?.('trends'); }}>
             {t('sp.more')}
           </a>
         </div>
@@ -394,36 +453,35 @@ export function Frame11LiveFreeGreen({
       <div className="sp-audience">
         {/* <div class="sp-audience-header"> */}
         <div className="sp-audience-header">
-          {/* <span class="sp-audience-title">Аудитория</span> */}
           <span className="sp-audience-title">{t('sp.audience_preview')}</span>
-          {/* <a class="sp-audience-more" href="#">Подробнее →</a> */}
-          <a className="sp-audience-more" href="#" onClick={(e) => e.preventDefault()}>
+          <a className="sp-audience-more" href="#" onClick={(e) => { e.preventDefault(); onNavigate?.('audience'); }}>
             {t('sp.more')}
           </a>
         </div>
-        {/* <div class="sp-audience-row"><span class="sp-audience-flag">🇷🇺</span><span class="sp-audience-country">Россия</span><span class="sp-audience-pct">45%</span></div> */}
+        {/* Audience rows real from countries[] */}
         <div className="sp-audience-row">
-          <span className="sp-audience-flag">🇷🇺</span>
-          <span className="sp-audience-country">Россия</span>
-          <span className="sp-audience-pct">45%</span>
+          <span className="sp-audience-flag">{flagEmoji(countries[0].country_code)}</span>
+          <span className="sp-audience-country">{countryName(countries[0].country_code)}</span>
+          <span className="sp-audience-pct">{Math.round(countries[0].percentage)}%</span>
         </div>
-        <div className="sp-audience-row">
-          <span className="sp-audience-flag">🇺🇦</span>
-          <span className="sp-audience-country">Украина</span>
-          <span className="sp-audience-pct">20%</span>
-        </div>
-        <div className="sp-audience-row">
-          <span className="sp-audience-flag">🇰🇿</span>
-          <span className="sp-audience-country">Казахстан</span>
-          <span className="sp-audience-pct">10%</span>
-        </div>
+        {countries[1] && (
+          <div className="sp-audience-row">
+            <span className="sp-audience-flag">{flagEmoji(countries[1].country_code)}</span>
+            <span className="sp-audience-country">{countryName(countries[1].country_code)}</span>
+            <span className="sp-audience-pct">{Math.round(countries[1].percentage)}%</span>
+          </div>
+        )}
+        {countries[2] && (
+          <div className="sp-audience-row">
+            <span className="sp-audience-flag">{flagEmoji(countries[2].country_code)}</span>
+            <span className="sp-audience-country">{countryName(countries[2].country_code)}</span>
+            <span className="sp-audience-pct">{Math.round(countries[2].percentage)}%</span>
+          </div>
+        )}
       </div>
 
-      {/* <!-- Watchlist Button --> */}
-      {/* <button class="sp-watchlist-btn">
-            <svg class="ico ico-sm" viewBox="0 0 24 24" style="vertical-align:-0.2em;stroke-width:1.5;"><polygon ...></polygon></svg> В список
-          </button> */}
-      <button className="sp-watchlist-btn">
+      {/* Watchlist button — click navigates to Watchlists tab */}
+      <button className="sp-watchlist-btn" onClick={() => onNavigate?.('watchlists')}>
         <svg
           className="ico ico-sm"
           viewBox="0 0 24 24"

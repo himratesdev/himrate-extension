@@ -1,6 +1,7 @@
-// LITERAL PORT — JSX 1:1 от wireframe-screens/slim/09_cold-start-30-strimov-streamer.html.
-// Каждый <div>, <svg>, <circle>, <rect>, <span>, <a> + class + inline style скопирован вербатим.
+// LITERAL PORT + DATA WIRING — wireframe slim/09_cold-start-30-strimov-streamer.html.
+// HealthScore values from props; expand state for 5 rows (TI default open).
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 
@@ -18,6 +19,14 @@ interface Props {
   hsEngagement?: number | null;
   hsGrowth?: number | null;
   hsConsistency?: number | null;
+  onNavigate?: (tab: string) => void;
+}
+
+function healthColor(score: number | null): 'green' | 'yellow' | 'red' | 'grey' {
+  if (score == null) return 'grey';
+  if (score >= 80) return 'green';
+  if (score >= 60) return 'yellow';
+  return 'red';
 }
 
 const CIRCUMFERENCE_160 = 427.3; // 2π × r=68
@@ -25,9 +34,17 @@ const ERV_STROKE: Record<string, string> = { green: '#059669', yellow: '#D97706'
 
 export function Frame09ColdStartDeepStreamer({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, percentile, streamsCount,
-  hsTi, hsStability, hsEngagement, hsGrowth, hsConsistency,
+  hsTi, hsStability, hsEngagement, hsGrowth, hsConsistency, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
+  // First row (TI) open by default per wireframe slim/09. Click toggle each row.
+  const [hsExpanded, setHsExpanded] = useState<Set<string>>(() => new Set(['ti']));
+  const toggleHs = (k: string) => setHsExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const tiVal = hsTi ?? 88;
+  const stabVal = hsStability ?? 91;
+  const engVal = hsEngagement ?? 90;
+  const growVal = hsGrowth ?? 82;
+  const consVal = hsConsistency ?? 86;
 
   const color = ervLabelColor || 'green';
   const stroke = ERV_STROKE[color];
@@ -166,81 +183,48 @@ export function Frame09ColdStartDeepStreamer({
           {t('sp.health_subtitle_compact')}
         </div>
 
-        {/* <!-- Trust Index --> */}
-        {/* <div class="sp-health-row sp-signal-expandable"><span class="sp-health-name">Рейтинг доверия</span><div class="sp-health-bar-bg"><div class="sp-health-bar-fill green" style="width:88%"></div></div><span class="sp-health-val">88</span><span class="sp-signal-expand-icon open">▾</span></div> */}
-        <div className="sp-health-row sp-signal-expandable">
-          <span className="sp-health-name">{t('sp.hs_ti')}</span>
-          <div className="sp-health-bar-bg">
-            <div className="sp-health-bar-fill green" style={{ width: `${hsTi ?? 88}%` }}></div>
-          </div>
-          <span className="sp-health-val">{hsTi ?? 88}</span>
-          <span className="sp-signal-expand-icon open">▾</span>
-        </div>
-        {/* <div class="sp-signal-detail" style="margin:-2px 0 4px;font-size:10px;"> */}
-        <div className="sp-signal-detail" style={{ margin: '-2px 0 4px', fontSize: '10px' }}>
-          {/* Совокупный индекс доверия (11 сигналов). 80+ = доверенный канал */}
-          {t('sp.hs_ti_desc_compact')}
-          {/* <svg class="sp-rep-mini-chart" viewBox="0 0 200 24" style="margin-top:2px;"> */}
-          <svg className="sp-rep-mini-chart" viewBox="0 0 200 24" style={{ marginTop: '2px' }}>
-            {/* <polyline fill="none" stroke="#059669" stroke-width="1.5" points="0,18 50,15 100,12 150,10 200,8"/> */}
-            <polyline fill="none" stroke="#059669" strokeWidth="1.5" points="0,18 50,15 100,12 150,10 200,8" />
-            {/* <circle cx="200" cy="8" r="2" fill="#059669"/> */}
-            <circle cx="200" cy="8" r="2" fill="#059669" />
-          </svg>
-          {/* <div style="text-align:right;"><a style="font-size:9px;color:var(--color-primary);cursor:pointer;font-weight:600;">История →</a></div> */}
-          <div style={{ textAlign: 'right' }}>
-            <a
-              style={{
-                fontSize: '9px',
-                color: 'var(--color-primary)',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              {t('sp.hs_history_link')}
-            </a>
-          </div>
-        </div>
-
-        {/* <!-- Стабильность ERV --> */}
-        <div className="sp-health-row sp-signal-expandable">
-          <span className="sp-health-name">{t('sp.hs_stability')}</span>
-          <div className="sp-health-bar-bg">
-            <div className="sp-health-bar-fill green" style={{ width: `${hsStability ?? 91}%` }}></div>
-          </div>
-          <span className="sp-health-val">{hsStability ?? 91}</span>
-          <span className="sp-signal-expand-icon">▾</span>
-        </div>
-
-        {/* <!-- Вовлечённость --> */}
-        <div className="sp-health-row sp-signal-expandable">
-          <span className="sp-health-name">{t('sp.hs_engagement')}</span>
-          <div className="sp-health-bar-bg">
-            <div className="sp-health-bar-fill green" style={{ width: `${hsEngagement ?? 90}%` }}></div>
-          </div>
-          <span className="sp-health-val">{hsEngagement ?? 90}</span>
-          <span className="sp-signal-expand-icon">▾</span>
-        </div>
-
-        {/* <!-- Рост аудитории --> */}
-        <div className="sp-health-row sp-signal-expandable">
-          <span className="sp-health-name">{t('sp.hs_growth')}</span>
-          <div className="sp-health-bar-bg">
-            <div className="sp-health-bar-fill green" style={{ width: `${hsGrowth ?? 82}%` }}></div>
-          </div>
-          <span className="sp-health-val">{hsGrowth ?? 82}</span>
-          <span className="sp-signal-expand-icon">▾</span>
-        </div>
-
-        {/* <!-- Постоянство --> */}
-        <div className="sp-health-row sp-signal-expandable">
-          <span className="sp-health-name">{t('sp.hs_consistency')}</span>
-          <div className="sp-health-bar-bg">
-            <div className="sp-health-bar-fill green" style={{ width: `${hsConsistency ?? 86}%` }}></div>
-          </div>
-          <span className="sp-health-val">{hsConsistency ?? 86}</span>
-          <span className="sp-signal-expand-icon">▾</span>
-        </div>
+        {/* HealthScore 5 rows — click toggle, TI default open per slim/09 */}
+        {[
+          { key: 'ti', name: 'sp.hs_ti', desc: 'sp.hs_ti_desc_compact', value: tiVal },
+          { key: 'stability', name: 'sp.hs_stability', desc: 'sp.hs_stability_desc', value: stabVal },
+          { key: 'engagement', name: 'sp.hs_engagement', desc: 'sp.hs_engagement_desc', value: engVal },
+          { key: 'growth', name: 'sp.hs_growth', desc: 'sp.hs_growth_desc', value: growVal },
+          { key: 'consistency', name: 'sp.hs_consistency', desc: 'sp.hs_consistency_desc', value: consVal },
+        ].map((cfg) => {
+          const c = healthColor(cfg.value);
+          const open = hsExpanded.has(cfg.key);
+          return (
+            <div key={cfg.key}>
+              <div className="sp-health-row sp-signal-expandable" onClick={() => toggleHs(cfg.key)} role="button" aria-expanded={open}>
+                <span className="sp-health-name">{t(cfg.name)}</span>
+                <div className="sp-health-bar-bg"><div className={`sp-health-bar-fill ${c}`} style={{ width: `${cfg.value}%` }}></div></div>
+                <span className="sp-health-val">{Math.round(cfg.value)}</span>
+                <span className={`sp-signal-expand-icon${open ? ' open' : ''}`}>▾</span>
+              </div>
+              {open && (
+                <div className="sp-signal-detail" style={cfg.key === 'ti' ? { margin: '-2px 0 4px', fontSize: '10px' } : undefined}>
+                  {cfg.key === 'ti' ? (
+                    <>
+                      {t(cfg.desc)}
+                      <svg className="sp-rep-mini-chart" viewBox="0 0 200 24" style={{ marginTop: '2px' }}>
+                        <polyline fill="none" stroke="#059669" strokeWidth="1.5" points="0,18 50,15 100,12 150,10 200,8" />
+                        <circle cx="200" cy="8" r="2" fill="#059669" />
+                      </svg>
+                    </>
+                  ) : (
+                    <>
+                      <div className="sp-signal-detail-title">{t(cfg.name)}: {Math.round(cfg.value)} / 100</div>
+                      {t(cfg.desc)}
+                    </>
+                  )}
+                  <div style={{ textAlign: 'right', marginTop: '4px' }}>
+                    <a style={{ fontSize: '10px', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600 }} onClick={() => onNavigate?.('trends')}>{t('sp.hs_history_link')}</a>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* <!-- Streamer disclaimer --> */}

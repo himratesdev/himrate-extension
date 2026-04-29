@@ -105,6 +105,10 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         tiScore={trustCache.ti_score}
         classification={trustCache.classification}
         percentile={trustCache.percentile_in_category}
+        signals={trustCache.signal_breakdown ?? []}
+        reputation={trustCache.streamer_reputation}
+        topCountries={trustCache.top_countries}
+        onNavigate={onNavigate}
       />
     );
   }
@@ -197,6 +201,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         hsEngagement={hs?.engagement?.score ?? null}
         hsGrowth={hs?.growth?.score ?? null}
         hsConsistency={hs?.consistency?.score ?? null}
+        onNavigate={onNavigate}
       />
     );
   }
@@ -233,6 +238,8 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         streamDuration={null}
         peakViewers={null}
         avgCcv={null}
+        signals={trustCache.signal_breakdown ?? []}
+        reputation={trustCache.streamer_reputation}
       />
     );
   }
@@ -258,6 +265,10 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         streamDuration={null}
         peakViewers={null}
         avgCcv={null}
+        signals={trustCache.signal_breakdown ?? []}
+        reputation={trustCache.streamer_reputation}
+        topCountries={trustCache.top_countries}
+        onNavigate={onNavigate}
       />
     );
   }

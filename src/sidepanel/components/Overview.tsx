@@ -142,6 +142,11 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         tiScore={trustCache.ti_score}
         percentile={trustCache.percentile_in_category}
         streamsCount={trustCache.streamer_rating?.streams_count ?? 342}
+        signals={trustCache.signal_breakdown ?? []}
+        reputation={trustCache.streamer_reputation}
+        healthScore={trustCache.health_score}
+        topCountries={trustCache.top_countries}
+        onNavigate={onNavigate}
       />
     );
   }

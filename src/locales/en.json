@@ -141,6 +141,10 @@
   "paywall.upgrade_premium_cta": "Upgrade to Premium",
 
   "footer.support": "Support",
+  "signal.value_norm": "normal",
+  "signal.value_clean": "clean",
+  "aria.close": "Close",
+  "aria.expand": "Expand components",
   "footer.feedback": "Feedback",
   "footer.youtube": "YouTube",
   "footer.telegram": "Telegram",

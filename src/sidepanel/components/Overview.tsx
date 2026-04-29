@@ -23,6 +23,7 @@ import { Frame06ColdStartInsufficient } from './Frame06ColdStartInsufficient';
 import { Frame07ColdStartProvisionalLow } from './Frame07ColdStartProvisionalLow';
 import { Frame08ColdStartProvisional } from './Frame08ColdStartProvisional';
 import { Frame09ColdStartDeepStreamer } from './Frame09ColdStartDeepStreamer';
+import { Frame10LiveGuestGreen } from './Frame10LiveGuestGreen';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -71,6 +72,20 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   // wireframe slim/06. Replaces abstract ERVGauge/TIBadge composition.
   if (trustCache.cold_start_status === 'insufficient') {
     return <Frame06ColdStartInsufficient streamsCount={trustCache.streamer_rating?.streams_count ?? 0} />;
+  }
+
+  // Frame 10 — Live Guest Green: literal port from slim/10. Combined sign-in paywall
+  // with blurred M3+M4 preview + Twitch CTA.
+  if (trustCache.is_live && !authState.loggedIn) {
+    return (
+      <Frame10LiveGuestGreen
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+      />
+    );
   }
 
   // Frame 07 — Cold Start 3-6 streams (provisional_low): literal port from slim/07.

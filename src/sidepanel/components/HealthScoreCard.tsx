@@ -1,8 +1,9 @@
-// BUG-016 PR-1 Section 8: HealthScoreCard canonical match (wireframe lines 2887-2964).
-// Wireframe: side-panel-wireframe-TASK-039.html sp-health-score.
-// Canonical: sp-health-score + sp-health-title + sp-health-badge-full + sp-health-row
-// + sp-health-bar-bg + sp-health-bar-fill.{green/yellow/red} + sp-health-val.
-// Each row expandable → reuses sp-signal-detail + sp-rep-mini-chart + sp-rep-change.
+// BUG-016 PR-1a: HealthScoreCard LITERAL PORT from wireframe slim/09 + slim/15.
+// Wireframe sp-health-score section: title + badge + subtitle + 5 rows
+// + per-row sp-signal-detail block (title + description + sparkline + change + history link).
+//
+// Frame 09 (deep streamer): first row expanded with full detail.
+// Frame 15 (live streamer): all rows expandable; first open with chart/delta/history.
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +12,7 @@ import type { HealthScoreData } from '../../shared/api';
 interface Props {
   healthScore: HealthScoreData | null;
   onNavigate?: (tab: string) => void;
-  /** Optional 30-day history per component (8 points 0..100). Real data slot. */
   history?: Partial<Record<ComponentKey, number[]>>;
-  /** Optional 30-day deltas per component. */
   deltas?: Partial<Record<ComponentKey, number>>;
 }
 
@@ -89,32 +88,14 @@ function Change({
 
 export function HealthScoreCard({ healthScore, onNavigate, history, deltas }: Props) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState<Set<ComponentKey>>(new Set());
 
-  // Empty state placeholder — render canonical 5-row structure when API empty
-  // (frame 15 Streamer Live expects M7 HealthScore present even before data).
-  if (!healthScore) {
-    return (
-      <div className="sp-health-score">
-        <div className="sp-health-title">
-          <span>{t('sp.health_score')}</span>
-          <span className="sp-health-provisional yellow">{t('sp.health_insufficient')}</span>
-        </div>
-        <div className="sp-section-subtitle">{t('sp.health_subtitle')}</div>
-        {COMPONENTS_ORDER.map((key) => (
-          <div key={key} className="sp-health-row sp-health-placeholder">
-            <span className="sp-health-name">{t(I18N[key].name)}</span>
-            <div className="sp-health-bar-bg">
-              <div className="sp-health-bar-fill grey" style={{ width: '0%' }} />
-            </div>
-            <span className="sp-health-val">—</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
+  // First row (Trust Index) expanded by default per wireframe frame 09 + frame 15.
+  const [expanded, setExpanded] = useState<Set<ComponentKey>>(() => new Set(['ti']));
 
-  const isProvisional = healthScore.streams_count < 10;
+  const streamsCount = healthScore?.streams_count ?? 0;
+  const isProvisional = streamsCount > 0 && streamsCount < 10;
+  const isInsufficient = streamsCount === 0;
+
   const toggle = (key: ComponentKey) => {
     setExpanded((prev) => {
       const next = new Set(prev);
@@ -126,27 +107,34 @@ export function HealthScoreCard({ healthScore, onNavigate, history, deltas }: Pr
 
   return (
     <div className="sp-health-score">
+      {/* Title row + badge */}
       <div className="sp-health-title">
         <span>{t('sp.health_score')}</span>
-        {isProvisional ? (
+        {isInsufficient ? (
+          <span className="sp-health-provisional yellow">{t('sp.health_insufficient')}</span>
+        ) : isProvisional ? (
           <span className="sp-health-provisional yellow">
-            {t('sp.health_provisional', { N: healthScore.streams_count })}
+            {t('sp.health_provisional', { N: streamsCount })}
           </span>
         ) : (
           <span className="sp-health-badge-full">
-            {t('sp.health_badge_full', { count: healthScore.streams_count })}
+            {t('sp.health_badge_full', { count: streamsCount })}
           </span>
         )}
       </div>
+
+      {/* Subtitle description */}
       <div className="sp-section-subtitle">{t('sp.health_subtitle')}</div>
 
+      {/* 5 rows — always all 5 rendered (placeholder when no API data) */}
       {COMPONENTS_ORDER.map((key) => {
-        const comp = healthScore.components?.[key];
+        const comp = healthScore?.components?.[key];
         const score = comp?.score ?? null;
         const color = healthColor(score);
         const i18n = I18N[key];
         const isOpen = expanded.has(key);
         const pct = score ?? 0;
+        const valueLabel = score != null ? score.toFixed(0) : '—';
 
         return (
           <div key={key}>
@@ -167,13 +155,14 @@ export function HealthScoreCard({ healthScore, onNavigate, history, deltas }: Pr
                   aria-valuemax={100}
                 />
               </div>
-              <span className="sp-health-val">{score != null ? score.toFixed(0) : '—'}</span>
+              <span className="sp-health-val">{valueLabel}</span>
               <span className={`sp-signal-expand-icon${isOpen ? ' open' : ''}`}>▾</span>
             </div>
+
             {isOpen && (
               <div className="sp-signal-detail">
                 <div className="sp-signal-detail-title">
-                  {t(i18n.name)}: {score != null ? score.toFixed(0) : '—'} / 100
+                  {t(i18n.name)}: {valueLabel} / 100
                 </div>
                 {t(i18n.desc)}
                 <MiniChart score={pct} history={history?.[key]} />

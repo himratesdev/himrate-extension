@@ -27,6 +27,7 @@ import { Frame10LiveGuestGreen } from './Frame10LiveGuestGreen';
 import { Frame11LiveFreeGreen } from './Frame11LiveFreeGreen';
 import { Frame14LivePremiumGreen } from './Frame14LivePremiumGreen';
 import { Frame15LiveStreamerOwnChannel } from './Frame15LiveStreamerOwnChannel';
+import { Frame16OfflineWithin18h } from './Frame16OfflineWithin18h';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -140,6 +141,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
     );
   }
 
+
   // Frame 07 — Cold Start 3-6 streams (provisional_low): literal port from slim/07.
   if (trustCache.cold_start_status === 'provisional_low') {
     return (
@@ -207,6 +209,32 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   const isProvisional = trustCache.cold_start_status === 'provisional';
   const hideAllModules = isInsufficient || isProvisionalLow;
   const hideMostModules = hideAllModules || isProvisional;
+
+  // Frame 16 — Offline within 18h window: literal port from slim/16. Free user
+  // post-stream sees full drill-down (signals/reputation visible) + countdown +
+  // stream summary + sparkline.
+  if (!isLive && windowOpen && !isOfflineExpired) {
+    const remainingMin = trustCache.expires_at
+      ? Math.max(0, Math.floor((new Date(trustCache.expires_at).getTime() - Date.now()) / 60_000))
+      : 0;
+    const hours = Math.floor(remainingMin / 60);
+    const minutes = remainingMin % 60;
+    const countdownText = hours > 0 ? `${hours}ч ${minutes}м` : `${minutes}м`;
+    return (
+      <Frame16OfflineWithin18h
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+        percentile={trustCache.percentile_in_category}
+        countdownText={countdownText}
+        streamDuration={null}
+        peakViewers={null}
+        avgCcv={null}
+      />
+    );
+  }
 
   return (
     // <div class="sp-content"> — wireframe slim/11/14/15 wraps live overview in default sp-content

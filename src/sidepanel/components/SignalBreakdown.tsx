@@ -1,7 +1,9 @@
-// BUG-016 PR-1 Section 6+7: SignalBreakdown canonical with Premium expand UX.
-// Wireframe: side-panel-wireframe-TASK-039.html sp-signals (Section 6 lines 1965-2001
-// for collapsed state, Section 7 lines 2502-2648 for Premium expandable).
-// Free Live: drill-down rows visible (no expand). Premium: expandable rows + detail.
+// BUG-016 PR-1a: SignalBreakdown LITERAL PORT from wireframe slim/14_live-premium-green-91.html
+// Wireframe sp-signals section (lines 58-204): 11 rows × {name + bar + value + expand-icon}
+// + per-row sp-signal-detail block with title + description + "Обновлено N назад".
+//
+// Premium (expandable=true): all 11 rows open by default per frame 14.
+// Free (expandable=false): rows visible without expand icons or detail blocks.
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +19,8 @@ interface Signal {
 
 interface Props {
   signals: Signal[];
-  /** Premium: expandable rows with sp-signal-detail. Free: collapsed rows. */
+  /** Premium: expandable rows with sp-signal-detail (all open by default per wf14).
+      Free: collapsed rows only (no expand icons, no details). */
   expandable?: boolean;
 }
 
@@ -35,13 +38,7 @@ const SIGNAL_I18N: Record<string, { name: string; desc: string }> = {
   account_profile_scoring: { name: 'signal.account_scoring', desc: 'signal.account_scoring_desc' },
 };
 
-function signalColor(value: number): 'green' | 'yellow' | 'red' {
-  if (value >= 0.8) return 'green';
-  if (value >= 0.5) return 'yellow';
-  return 'red';
-}
-
-// Canonical signal types per Trust Index v2 (11 signals).
+// Canonical signal types in wireframe display order (frame 14 lines 62-203).
 const CANONICAL_SIGNAL_TYPES = [
   'auth_ratio',
   'chatter_to_ccv_ratio',
@@ -56,40 +53,24 @@ const CANONICAL_SIGNAL_TYPES = [
   'account_profile_scoring',
 ] as const;
 
+function signalColor(value: number): 'green' | 'yellow' | 'red' {
+  if (value >= 0.8) return 'green';
+  if (value >= 0.5) return 'yellow';
+  return 'red';
+}
+
 export function SignalBreakdown({ signals, expandable = false }: Props) {
   const { t } = useTranslation();
-  // First signal row expanded by default in Premium view (frame 14 wireframe)
-  const [expanded, setExpanded] = useState<Set<string>>(() => {
-    if (!expandable || signals.length === 0) return new Set();
-    const sorted = [...signals].sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
-    return new Set([sorted[0].type]);
-  });
 
-  // Empty state placeholder — render canonical 11-row structure с "—" values
-  // when API hasn't populated signals yet. Frames 11/14/15 expect this structure
-  // visible per wireframe; components must show shape even before data arrives.
-  if (signals.length === 0) {
-    const titleKey = expandable ? 'sp.signals_title_premium' : 'sp.signals_title';
-    return (
-      <div className="sp-signals">
-        <div className="sp-signals-title">{t(titleKey, { count: 11 })}</div>
-        {CANONICAL_SIGNAL_TYPES.map((type) => {
-          const i18n = SIGNAL_I18N[type];
-          return (
-            <div key={type} className="sp-signal-row sp-signal-placeholder">
-              <span className="sp-signal-name">{i18n ? t(i18n.name) : type}</span>
-              <div className="sp-signal-bar-bg">
-                <div className="sp-signal-bar-fill grey" style={{ width: '0%' }} />
-              </div>
-              <span className="sp-signal-val grey">—</span>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
+  // Per-signal lookup from real API data (if present).
+  const byType = new Map<string, Signal>();
+  for (const sig of signals) byType.set(sig.type, sig);
 
-  const sorted = [...signals].sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution));
+  // Premium: all 11 rows open by default (wireframe frame 14 — every row has
+  // sp-signal-expand-icon `open` class). Free: nothing expanded.
+  const [expanded, setExpanded] = useState<Set<string>>(() =>
+    expandable ? new Set(CANONICAL_SIGNAL_TYPES) : new Set()
+  );
 
   const toggleExpand = (type: string) => {
     setExpanded((prev) => {
@@ -104,42 +85,46 @@ export function SignalBreakdown({ signals, expandable = false }: Props) {
 
   return (
     <div className="sp-signals">
-      <div className="sp-signals-title">{t(titleKey, { count: sorted.length })}</div>
-      {sorted.map((sig) => {
-        const color = signalColor(sig.value);
-        const pct = Math.round(sig.value * 100);
-        const i18n = SIGNAL_I18N[sig.type];
-        const label = i18n ? t(i18n.name) : sig.type;
-        const isOpen = expanded.has(sig.type);
+      <div className="sp-signals-title">{t(titleKey, { count: 11 })}</div>
+
+      {CANONICAL_SIGNAL_TYPES.map((type) => {
+        const i18n = SIGNAL_I18N[type];
+        const sig = byType.get(type);
+        const hasData = sig != null;
+        const pct = hasData ? Math.round(sig.value * 100) : 0;
+        const color: 'green' | 'yellow' | 'red' | 'grey' = hasData ? signalColor(sig.value) : 'grey';
+        const valueLabel = hasData ? `${pct}%` : '—';
+        const isOpen = expanded.has(type);
 
         return (
-          <div key={sig.type}>
+          <div key={type}>
             <div
               className={`sp-signal-row${expandable ? ' sp-signal-expandable' : ''}`}
-              onClick={expandable ? () => toggleExpand(sig.type) : undefined}
+              onClick={expandable ? () => toggleExpand(type) : undefined}
               role={expandable ? 'button' : undefined}
               aria-expanded={expandable ? isOpen : undefined}
             >
-              <span className="sp-signal-name">{label}</span>
+              <span className="sp-signal-name">{t(i18n.name)}</span>
               <div className="sp-signal-bar-bg">
                 <div
                   className={`sp-signal-bar-fill ${color}`}
-                  style={{ width: `${Math.min(100, pct)}%` }}
+                  style={{ width: `${pct}%` }}
                   role="progressbar"
                   aria-valuenow={pct}
                   aria-valuemin={0}
                   aria-valuemax={100}
                 />
               </div>
-              <span className={`sp-signal-val ${color}`}>{pct}%</span>
+              <span className={`sp-signal-val ${color}`}>{valueLabel}</span>
               {expandable && (
                 <span className={`sp-signal-expand-icon${isOpen ? ' open' : ''}`}>▾</span>
               )}
             </div>
-            {expandable && isOpen && i18n && (
+
+            {expandable && isOpen && (
               <div className="sp-signal-detail">
                 <div className="sp-signal-detail-title">
-                  {t(i18n.name)}: {pct}%
+                  {t(i18n.name)}: {valueLabel}
                 </div>
                 {t(i18n.desc)}
                 <div className="sp-signal-detail-source">{t('sp.signal_freshness')}</div>

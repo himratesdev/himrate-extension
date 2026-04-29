@@ -186,23 +186,64 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         />
       )}
 
-      {/* M3: Signal Breakdown — drill-down access (Premium / Free Live / Free <18h).
-          Hidden during all cold-start tiers (frames 06/07/08 don't render M3). */}
-      {showDrillDown && !hideMostModules && (
-        <SignalBreakdown signals={trustCache.signal_breakdown || []} expandable={isPremium} />
+      {/* M3: Signal Breakdown.
+          - Premium / own channel: full visible + expandable
+          - Free registered live (frame 11): paywall blur + "Upgrade to Premium" overlay
+          - Cold-start tiers (06/07/08): hidden via hideMostModules
+          - Guest live: handled by combined M3+M4 guest paywall block below */}
+      {!hideMostModules && !isGuest && isPremium && (
+        <SignalBreakdown signals={trustCache.signal_breakdown || []} expandable={true} />
+      )}
+      {!hideMostModules && !isGuest && !isPremium && isFreeWithAccess && (
+        <div className="sp-paywall">
+          <div className="sp-paywall-blurred">
+            <SignalBreakdown signals={trustCache.signal_breakdown || []} expandable={false} />
+          </div>
+          <div className="sp-paywall-overlay">
+            <span className="sp-paywall-text">{t('paywall.signals_full_analysis')}</span>
+            <button
+              className="sp-paywall-cta"
+              onClick={() => chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=premium' })}
+            >
+              {t('paywall.upgrade_premium_cta')}
+            </button>
+          </div>
+        </div>
       )}
 
-      {/* M4: Reputation — drill-down access.
-          - insufficient/provisional_low (06/07): fully hidden
-          - provisional (08): rendered with placeholder via ReputationCard's empty-state
-          - full/deep (11+): rendered with real data */}
-      {showDrillDown && !hideAllModules && (
+      {/* M4: Reputation.
+          - Premium / own channel: full visible + expandable
+          - Free registered live (frame 11): paywall blur + "Upgrade to Premium" overlay
+          - insufficient/provisional_low (06/07): hidden
+          - provisional (08): placeholder via ReputationCard's empty-state */}
+      {!hideAllModules && !isGuest && isPremium && (
         <ReputationCard
           reputation={trustCache.streamer_reputation}
           isLive={isLive}
-          expandable={isPremium}
+          expandable={true}
           streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
         />
+      )}
+      {!hideAllModules && !isGuest && !isPremium && isFreeWithAccess && (
+        <div className="sp-paywall">
+          <div className="sp-paywall-blurred">
+            <ReputationCard
+              reputation={trustCache.streamer_reputation}
+              isLive={isLive}
+              expandable={false}
+              streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
+            />
+          </div>
+          <div className="sp-paywall-overlay">
+            <span className="sp-paywall-text">{t('paywall.reputation_title')}</span>
+            <button
+              className="sp-paywall-cta"
+              onClick={() => chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=premium' })}
+            >
+              {t('paywall.upgrade_premium_cta')}
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Combined M3+M4 guest paywall (Section 5 wireframe frame 10).

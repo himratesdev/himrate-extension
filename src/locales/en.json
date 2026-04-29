@@ -135,6 +135,9 @@
 
   "paywall.guest_title": "Want full analysis?",
   "paywall.guest_description": "11 audience signals, channel reputation, charts and trends\u00a0— free after sign\u00a0in",
+  "paywall.signals_full_analysis": "Full signal analysis",
+  "paywall.reputation_title": "Streamer reputation",
+  "paywall.upgrade_premium_cta": "Upgrade to Premium",
 
   "footer.support": "Support",
   "footer.feedback": "Feedback",

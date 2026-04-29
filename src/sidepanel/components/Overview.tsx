@@ -247,7 +247,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   }
 
   // Frame 16/18 — Offline within 18h window: literal port from slim/16 (default) or
-  // slim/18 (warning when <1h remaining). Free user post-stream sees full drill-down.
+  // slim/18 (warning red border when <1h remaining). Free user post-stream sees full drill-down.
   if (!isLive && windowOpen && !isOfflineExpired) {
     const remainingMin = trustCache.expires_at
       ? Math.max(0, Math.floor((new Date(trustCache.expires_at).getTime() - Date.now()) / 60_000))
@@ -255,6 +255,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
     const hours = Math.floor(remainingMin / 60);
     const minutes = remainingMin % 60;
     const countdownText = hours > 0 ? `${hours}ч ${minutes}м` : `${minutes}м`;
+    const isWarning = remainingMin > 0 && remainingMin < 60; // Frame18 trigger
     return (
       <Frame16OfflineWithin18h
         ervPercent={trustCache.erv_percent}
@@ -264,6 +265,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         tiScore={trustCache.ti_score}
         percentile={trustCache.percentile_in_category}
         countdownText={countdownText}
+        countdownWarning={isWarning}
         streamDuration={null}
         peakViewers={null}
         avgCcv={null}

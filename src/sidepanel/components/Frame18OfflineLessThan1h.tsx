@@ -1,7 +1,28 @@
-// LITERAL PORT — JSX 1:1 от wireframe-screens/slim/18_offline-1ch-ostalos.html.
-// Идентично Frame16, отличия: countdown WARNING variant ("Осталось 42м" в красной рамке).
+// LITERAL PORT — wireframe slim/18_offline-1ch-ostalos.html.
+// Идентично Frame16, отличие: countdown WARNING variant ("Осталось N м" в красной рамке).
 
 import { Frame16OfflineWithin18h } from './Frame16OfflineWithin18h';
+
+interface Signal {
+  type: string;
+  value: number;
+  confidence: number | null;
+  weight: number | null;
+  contribution: number;
+  metadata: Record<string, unknown> | null;
+}
+
+interface ReputationData {
+  growth_pattern_score: number | null;
+  follower_quality_score: number | null;
+  engagement_consistency_score: number | null;
+}
+
+interface Country {
+  country_code: string;
+  percentage: number;
+  viewer_count: number;
+}
 
 interface Props {
   ervPercent: number | null;
@@ -14,14 +35,20 @@ interface Props {
   streamDuration: string | null;
   peakViewers: number | null;
   avgCcv: number | null;
+  signals?: Signal[];
+  reputation?: ReputationData | null;
+  topCountries?: Country[] | null;
+  onNavigate?: (tab: string) => void;
 }
 
 export function Frame18OfflineLessThan1h(props: Props) {
-  // Wireframe slim/18 = slim/16 + countdown.warning + "Осталось" instead of "Доступно ещё".
-  // Routing handled by Overview based on remainingMinutes < 60 → use Frame18 with warning prop.
-  // Internally renders Frame16 with countdown warning text.
-  // Note: Frame16 doesn't currently accept warning variant prop — for full literal port,
-  // either extend Frame16 with `warningVariant` prop OR write Frame18 as standalone copy.
-  // Pragmatic: render Frame16 with countdown text formatted as "Осталось Nм".
-  return <Frame16OfflineWithin18h {...props} countdownText={`${props.remainingMinutes}м`} />;
+  // Frame18 = Frame16 с countdown warning variant (<1h remaining → red border).
+  // Wireframe slim/18: <div class="sp-countdown warning"><span>⏱</span><span>Осталось</span><span class="sp-countdown-time">42м</span></div>
+  return (
+    <Frame16OfflineWithin18h
+      {...props}
+      countdownText={`${props.remainingMinutes}м`}
+      countdownWarning={true}
+    />
+  );
 }

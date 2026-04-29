@@ -34,6 +34,8 @@ interface Props {
   tiScore: number | null;
   percentile: number | null;
   countdownText: string;
+  /** Frame18: <1h remaining → red border + "Осталось N м". Default: blue border + "Доступно ещё". */
+  countdownWarning?: boolean;
   streamDuration: string | null;
   peakViewers: number | null;
   avgCcv: number | null;
@@ -61,7 +63,7 @@ function flagEmoji(code: string): string {
 
 export function Frame16OfflineWithin18h({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, percentile,
-  countdownText, streamDuration, peakViewers, avgCcv,
+  countdownText, countdownWarning = false, streamDuration, peakViewers, avgCcv,
   signals = [], reputation = null, topCountries = null, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
@@ -106,11 +108,12 @@ export function Frame16OfflineWithin18h({
 
   return (
     <div className="sp-content" role="tabpanel">
-      {/* <!-- PostStream Countdown --> */}
-      {/* <div class="sp-countdown"><span>⏱</span><span>Доступно ещё</span><span class="sp-countdown-time">14ч 32м</span></div> */}
-      <div className="sp-countdown">
+      {/* PostStream Countdown — warning variant (red border) при <1h, иначе default blue.
+          slim/16: <div class="sp-countdown">
+          slim/18: <div class="sp-countdown warning"> + "Осталось" instead of "Доступно ещё" */}
+      <div className={`sp-countdown${countdownWarning ? ' warning' : ''}`}>
         <span aria-hidden="true">⏱</span>
-        <span>{t('sp.countdown_available')}</span>
+        <span>{countdownWarning ? t('sp.countdown_remaining') : t('sp.countdown_available')}</span>
         <span className="sp-countdown-time">{countdownText}</span>
       </div>
 

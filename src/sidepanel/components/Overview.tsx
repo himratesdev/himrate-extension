@@ -71,6 +71,9 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   const isGuest = !authState.loggedIn;
   // Offline + Free with expired post-stream window → drill-down behind paywall (Section 9 >18h)
   const isOfflineExpired = !isLive && !isPremium && !windowOpen && tier === 'free';
+  // Cold-start insufficient (frame 06 wireframe): hide M3/M4/M5/M6 + LiveTrendIndicator.
+  // Wireframe sublabel "ERV Gauge серый, M3/M4 скрыты" — only ERV + TI placeholder + collecting banner render.
+  const isInsufficient = trustCache.cold_start_status === 'insufficient';
 
   return (
     <div className="sp-overview">
@@ -101,10 +104,22 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         isOwnChannel={isOwnChannel}
       />
 
-      {/* Live Trend Indicator (Section 6 wireframe — sp-trend) */}
-      {isLive && <LiveTrendIndicator channelId={trustCache.channel_id} />}
+      {/* Live Trend Indicator (Section 6 wireframe — sp-trend).
+          Hidden during cold-start insufficient — frame 06 sublabel "M3/M4 скрыты". */}
+      {isLive && !isInsufficient && <LiveTrendIndicator channelId={trustCache.channel_id} />}
 
-      {/* Cold Start collecting status (Section 4 wireframe) */}
+      {/* M2: TI + Classification + Percentile (cold-start gated per frames 06-09;
+          percentile hidden for Guest per frame 10 — premium-derived data).
+          Wireframe order: TI badge BEFORE collecting-status banner (frame 06 lines 32-42). */}
+      <TIBadge
+        tiScore={trustCache.ti_score}
+        classification={trustCache.classification}
+        percentile={isGuest ? null : trustCache.percentile_in_category}
+        showExpand={showDrillDown}
+        coldStartStatus={trustCache.cold_start_status}
+      />
+
+      {/* Cold Start collecting status (Section 4 wireframe — frames 06-08) */}
       {trustCache.cold_start_status === 'insufficient' && (
         <div className="collecting-status">
           {t('cold_start.collecting_min3')}
@@ -119,16 +134,6 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
           })}
         </div>
       )}
-
-      {/* M2: TI + Classification + Percentile (cold-start gated per frames 06-09;
-          percentile hidden for Guest per frame 10 — premium-derived data). */}
-      <TIBadge
-        tiScore={trustCache.ti_score}
-        classification={trustCache.classification}
-        percentile={isGuest ? null : trustCache.percentile_in_category}
-        showExpand={showDrillDown}
-        coldStartStatus={trustCache.cold_start_status}
-      />
 
       {/* M-Anomaly: Persistent anomaly attribution (frame 26 — Premium Live ERV<80%).
           Real-data slot: trustCache.anomaly_alerts array (backend integration pending).
@@ -163,13 +168,14 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         />
       )}
 
-      {/* M3: Signal Breakdown — drill-down access (Premium / Free Live / Free <18h) */}
-      {showDrillDown && (
+      {/* M3: Signal Breakdown — drill-down access (Premium / Free Live / Free <18h).
+          Hidden during cold-start insufficient (frame 06 wireframe). */}
+      {showDrillDown && !isInsufficient && (
         <SignalBreakdown signals={trustCache.signal_breakdown || []} expandable={isPremium} />
       )}
 
-      {/* M4: Reputation — drill-down access */}
-      {showDrillDown && (
+      {/* M4: Reputation — drill-down access. Hidden during insufficient. */}
+      {showDrillDown && !isInsufficient && (
         <ReputationCard
           reputation={trustCache.streamer_reputation}
           isLive={isLive}
@@ -307,8 +313,8 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         </>
       )}
 
-      {/* M5: Mini Sparkline */}
-      {!isOfflineExpired && (
+      {/* M5: Mini Sparkline. Hidden during insufficient cold-start. */}
+      {!isOfflineExpired && !isInsufficient && (
         <MiniSparkline
           channelId={trustCache.channel_id}
           isLive={isLive}
@@ -317,16 +323,17 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         />
       )}
 
-      {/* M6: Audience Preview — renders placeholder rows when API empty. */}
-      {!isOfflineExpired && (showDrillDown || isFreeWithAccess) && (
+      {/* M6: Audience Preview — renders placeholder rows when API empty.
+          Hidden during insufficient cold-start. */}
+      {!isOfflineExpired && !isInsufficient && (showDrillDown || isFreeWithAccess) && (
         <AudiencePreview
           countries={trustCache.top_countries}
           onNavigate={onNavigate}
         />
       )}
 
-      {/* Watchlist Button + Dropdown (frame 27) */}
-      {authState.loggedIn && (
+      {/* Watchlist Button + Dropdown (frame 27). Hidden during insufficient cold-start. */}
+      {authState.loggedIn && !isInsufficient && (
         <WatchlistButton
           channelId={trustCache.channel_id}
           isWatched={trustCache.is_watched_by_user}

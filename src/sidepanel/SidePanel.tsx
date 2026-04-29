@@ -130,19 +130,26 @@ export function SidePanel() {
 
   return (
     <div className="panel">
-      {/* Header — canonical sp-header §6.2 */}
+      {/* Header — literal port wireframe slim/06 lines 5-13.
+          <div class="sp-header">
+            <button class="sp-header-back">←</button>
+            <span class="sp-header-title">Overview</span>
+            <span class="sp-header-streamer">name</span>  ← ALWAYS rendered when streamer login known
+            <div class="sp-header-right">...</div>
+          </div>
+          Back arrow ВСЕГДА full opacity per wireframe (no greyed-out state).
+          Streamer name shown if trustCache.login available, на ЛЮБОМ tab (не только overview). */}
       <div className="sp-header">
         <button
           className="sp-header-back"
           onClick={() => setCurrentTab('overview')}
           aria-label={t('aria.back')}
           disabled={currentTab === 'overview'}
-          style={currentTab === 'overview' ? { opacity: 0.3, cursor: 'default' } : undefined}
         >
           &#8592;
         </button>
         <span className="sp-header-title">{t(`tab.${currentTab}`)}</span>
-        {currentTab === 'overview' && trustCache?.login && (
+        {trustCache?.login && (
           <span className="sp-header-streamer" title={trustCache.display_name || trustCache.login}>
             {trustCache.login}
           </span>

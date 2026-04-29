@@ -122,8 +122,9 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
       />
 
       {/* Live Trend Indicator (Section 6 wireframe — sp-trend).
-          Hidden during all cold-start tiers (insufficient/provisional_low/provisional). */}
-      {isLive && !hideMostModules && <LiveTrendIndicator channelId={trustCache.channel_id} />}
+          Hidden during all cold-start tiers + for guests (wireframe frame 10 shows
+          only ERV+TI+paywall for guest live, no trend / charts). */}
+      {isLive && !hideMostModules && !isGuest && <LiveTrendIndicator channelId={trustCache.channel_id} />}
 
       {/* M2: TI + Classification + Percentile (cold-start gated per frames 06-09;
           percentile hidden for Guest per frame 10 — premium-derived data).
@@ -333,8 +334,9 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         </>
       )}
 
-      {/* M5: Mini Sparkline. Hidden during all cold-start tiers. */}
-      {!isOfflineExpired && !hideMostModules && (
+      {/* M5: Mini Sparkline. Hidden during cold-start tiers + for guests
+          (wireframe frame 10: guest paywall ends content, no M5/M6 trail). */}
+      {!isOfflineExpired && !hideMostModules && !isGuest && (
         <MiniSparkline
           channelId={trustCache.channel_id}
           isLive={isLive}
@@ -343,8 +345,8 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         />
       )}
 
-      {/* M6: Audience Preview. Hidden during all cold-start tiers. */}
-      {!isOfflineExpired && !hideMostModules && (showDrillDown || isFreeWithAccess) && (
+      {/* M6: Audience Preview. Hidden during cold-start tiers + for guests. */}
+      {!isOfflineExpired && !hideMostModules && !isGuest && (showDrillDown || isFreeWithAccess) && (
         <AudiencePreview
           countries={trustCache.top_countries}
           onNavigate={onNavigate}

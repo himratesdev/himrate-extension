@@ -327,6 +327,8 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         streamDuration={null}
         peakViewers={null}
         avgCcv={null}
+        channelId={trustCache.channel_id}
+        isWatched={trustCache.is_watched_by_user}
         signals={trustCache.signal_breakdown ?? []}
         reputation={trustCache.streamer_reputation}
         topCountries={trustCache.top_countries}

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 import { useSparkline } from '../hooks/useSparkline';
+import { WatchlistButton } from './WatchlistButton';
 
 interface Signal {
   type: string;
@@ -415,14 +416,13 @@ export function Frame14LivePremiumGreen({
         {countries[2] && (<div className="sp-audience-row"><span className="sp-audience-flag">{flagEmoji(countries[2].country_code)}</span><span className="sp-audience-country">{countryName(countries[2].country_code)}</span><span className="sp-audience-pct">{Math.round(countries[2].percentage)}%</span></div>)}
       </div>
 
-      {/* Watchlist active button — opens Watchlists tab (toggle UX requires watchlist selection
-          which is multi-step; navigating to tab gives full UI for add/remove). */}
-      <button className={`sp-watchlist-btn${isWatched ? ' active' : ''}`} onClick={() => onNavigate?.('watchlists')}>
-        <svg className="ico ico-sm" viewBox="0 0 24 24" style={{ verticalAlign: '-0.2em', fill: 'currentColor', stroke: 'currentColor', strokeWidth: 1.5 }}>
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>{' '}
-        {isWatched ? t('sp.watchlist_in') : t('sp.watchlist_add')}
-      </button>
+      {/* Watchlist button — full dropdown UX (frame 27 interactive state).
+          WatchlistButton handles open/close + lazy fetch + toggle add/remove + navigate. */}
+      <WatchlistButton
+        channelId={channelId ?? null}
+        isWatched={isWatched}
+        onOpenWatchlists={() => onNavigate?.('watchlists')}
+      />
     </div>
   );
 }

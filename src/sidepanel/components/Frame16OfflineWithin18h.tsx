@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
+import { WatchlistButton } from './WatchlistButton';
 
 interface Signal {
   type: string;
@@ -39,6 +40,8 @@ interface Props {
   streamDuration: string | null;
   peakViewers: number | null;
   avgCcv: number | null;
+  channelId?: string | null;
+  isWatched?: boolean;
   signals?: Signal[];
   reputation?: ReputationData | null;
   topCountries?: Country[] | null;
@@ -64,6 +67,7 @@ function flagEmoji(code: string): string {
 export function Frame16OfflineWithin18h({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, percentile,
   countdownText, countdownWarning = false, streamDuration, peakViewers, avgCcv,
+  channelId = null, isWatched = true,
   signals = [], reputation = null, topCountries = null, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
@@ -331,13 +335,12 @@ export function Frame16OfflineWithin18h({
         {countries[2] && (<div className="sp-audience-row"><span className="sp-audience-flag">{flagEmoji(countries[2].country_code)}</span><span className="sp-audience-country">{countryName(countries[2].country_code)}</span><span className="sp-audience-pct">{Math.round(countries[2].percentage)}%</span></div>)}
       </div>
 
-      {/* Watchlist active */}
-      <button className="sp-watchlist-btn active" onClick={() => onNavigate?.('watchlists')}>
-        <svg className="ico ico-sm" viewBox="0 0 24 24" style={{ verticalAlign: '-0.2em', fill: 'currentColor', stroke: 'currentColor', strokeWidth: 1.5 }}>
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>{' '}
-        {t('sp.watchlist_in') || 'В\u00a0списке'}
-      </button>
+      {/* Watchlist button — full dropdown UX (frame 27 interactive). */}
+      <WatchlistButton
+        channelId={channelId}
+        isWatched={isWatched}
+        onOpenWatchlists={() => onNavigate?.('watchlists')}
+      />
     </div>
   );
 }

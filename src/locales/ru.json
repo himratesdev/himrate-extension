@@ -110,6 +110,7 @@
 
 
   "classification.trusted": "Порядочный",
+  "classification.fully_trusted": "Доверенный",
   "classification.needs_review": "Требует проверки",
   "classification.suspicious": "Подозрительный",
   "classification.fraudulent": "Жулик",
@@ -218,6 +219,10 @@
   "sp.hs_growth_desc": "Динамика роста реальных зрителей (ERV-based). Учитывает: тренд среднего ERV за\u00a030/90\u00a0дней, рост уникальных зрителей, увеличение повторных визитов. Не\u00a0путать с\u00a0ростом CCV на\u00a0Twitch.",
   "sp.hs_consistency_desc": "Регулярность стримов и\u00a0стабильность расписания. Учитывает: частоту стримов в\u00a0неделю, длительность перерывов, предсказуемость. Высокое постоянство\u00a0= лояльная аудитория возвращается.",
   "sp.health_subtitle": "Комплексная оценка канала. Каждый показатель раскрывается\u00a0→ подробности и\u00a0исторический график.",
+  "sp.health_subtitle_compact": "Нажмите на\u00a0показатель\u00a0→ подробности + история",
+  "sp.health_badge_compact": "Full Health Score",
+  "sp.hs_ti_desc_compact": "Совокупный индекс доверия (11\u00a0сигналов). 80+\u00a0= доверенный канал",
+  "sp.hs_history_link": "История\u00a0→",
   "sp.health_badge_full": "Полная аналитика\u00a0· {{count}}\u00a0стримов",
   "sp.hs_change_stable": "Стабильно за\u00a030 дней",
   "sp.hs_change_delta": "{{sign}}{{delta}} за\u00a030 дней",

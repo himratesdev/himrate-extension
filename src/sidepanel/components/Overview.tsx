@@ -22,6 +22,7 @@ import { NotTwitchOverview } from './NotTwitchOverview';
 import { Frame06ColdStartInsufficient } from './Frame06ColdStartInsufficient';
 import { Frame07ColdStartProvisionalLow } from './Frame07ColdStartProvisionalLow';
 import { Frame08ColdStartProvisional } from './Frame08ColdStartProvisional';
+import { Frame09ColdStartDeepStreamer } from './Frame09ColdStartDeepStreamer';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -96,6 +97,27 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         tiScore={trustCache.ti_score}
         classification={trustCache.classification}
         streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
+      />
+    );
+  }
+
+  // Frame 09 — Cold Start 30+ streams Streamer (deep + own channel): literal port from slim/09.
+  if (trustCache.cold_start_status === 'deep' && isOwnChannel) {
+    const hs = trustCache.health_score?.components;
+    return (
+      <Frame09ColdStartDeepStreamer
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+        percentile={trustCache.percentile_in_category}
+        streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
+        hsTi={hs?.ti?.score ?? null}
+        hsStability={hs?.stability?.score ?? null}
+        hsEngagement={hs?.engagement?.score ?? null}
+        hsGrowth={hs?.growth?.score ?? null}
+        hsConsistency={hs?.consistency?.score ?? null}
       />
     );
   }

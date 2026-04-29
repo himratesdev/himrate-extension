@@ -110,6 +110,7 @@
 
 
   "classification.trusted": "Trusted",
+  "classification.fully_trusted": "Fully Trusted",
   "classification.needs_review": "Needs Review",
   "classification.suspicious": "Suspicious",
   "classification.fraudulent": "Fraudulent",
@@ -218,6 +219,10 @@
   "sp.hs_growth_desc": "Real-viewer growth dynamics (ERV-based). Covers 30/90-day average ERV trend, unique-viewer growth, repeat-visit increase. Not the same as Twitch CCV growth.",
   "sp.hs_consistency_desc": "Stream regularity and schedule stability. Covers streams per week, gap duration, predictability. High consistency = loyal audience returns.",
   "sp.health_subtitle": "Composite channel rating. Each metric expands → details and historical chart.",
+  "sp.health_subtitle_compact": "Tap a metric\u00a0→ details + history",
+  "sp.health_badge_compact": "Full Health Score",
+  "sp.hs_ti_desc_compact": "Composite trust index (11\u00a0signals). 80+\u00a0= trusted channel",
+  "sp.hs_history_link": "History\u00a0→",
   "sp.health_badge_full": "Full analytics · {{count}} streams",
   "sp.hs_change_stable": "Stable over 30 days",
   "sp.hs_change_delta": "{{sign}}{{delta}} over 30 days",

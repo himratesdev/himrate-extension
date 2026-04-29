@@ -168,7 +168,13 @@ export function SidePanel() {
                   <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                 </svg>
               </button>
-              <div className="sp-header-avatar" aria-label={t('aria.profile')}>
+              <div
+                className="sp-header-avatar"
+                aria-label={t('aria.profile')}
+                role="button"
+                onClick={() => setCurrentTab('settings')}
+                style={{ cursor: 'pointer' }}
+              >
                 {trustCache?.avatar_url
                   ? <img src={trustCache.avatar_url} alt="" width={20} height={20} style={{ borderRadius: '50%' }} />
                   : (authState.twitchLogin?.[0]?.toUpperCase() || 'U')
@@ -252,15 +258,32 @@ export function SidePanel() {
         />
       )}
 
-      {/* Footer — canonical sp-footer §6.2 */}
+      {/* Footer — canonical sp-footer §6.2. Все 4 link через chrome.tabs.create
+          для надёжной работы в extension context (anchor href может не работать). */}
       <div className="sp-footer">
-        <a href="#" className="sp-footer-link">{t('footer.support')}</a>
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://himrate.com/support' }); }}
+        >{t('footer.support')}</a>
         <span className="sp-footer-sep">·</span>
-        <a href="#" className="sp-footer-link">{t('footer.feedback')}</a>
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://himrate.com/feedback' }); }}
+        >{t('footer.feedback')}</a>
         <span className="sp-footer-sep">·</span>
-        <a href="https://youtube.com/@himrate" target="_blank" rel="noopener" className="sp-footer-link">{t('footer.youtube')}</a>
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://youtube.com/@himrate' }); }}
+        >{t('footer.youtube')}</a>
         <span className="sp-footer-sep">·</span>
-        <a href="https://t.me/himrate" target="_blank" rel="noopener" className="sp-footer-link">{t('footer.telegram')}</a>
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://t.me/himrate' }); }}
+        >{t('footer.telegram')}</a>
       </div>
     </div>
   );

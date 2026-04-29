@@ -2,6 +2,7 @@
 // M3/M4 в paywall blurred preview — read-only (no expand handlers, full UX в Premium).
 // Audience real data; sparkline coords остаются hardcoded (defer to chart-wiring pass).
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 
@@ -99,6 +100,10 @@ export function Frame11LiveFreeGreen({
     catch { return code; }
   };
 
+  // Alert dismiss state — local toggle (alerts hide on click ×)
+  const [dismissed, setDismissed] = useState<Set<string>>(() => new Set());
+  const dismiss = (key: string) => setDismissed(p => { const n = new Set(p); n.add(key); return n; });
+
   // M3 paywall preview — 5 first signals
   const s1 = sig('auth_ratio', 82, '82%');
   const s2 = sig('chatter_to_ccv_ratio', 75, t('signal.value_norm'));
@@ -111,27 +116,31 @@ export function Frame11LiveFreeGreen({
     <div className="sp-content" role="tabpanel">
       {/* <!-- Alert Counter — frame 12 wireframe (yellow ERV) + frame 13 (red ERV).
             Frame 11 (green) не показывает alerts. --> */}
-      {color === 'yellow' && (
+      {color === 'yellow' && !dismissed.has('yellow_surge') && (
         <div className="sp-alert-stack">
           <div className="sp-alert yellow" role="alert" aria-live="polite">
             <span className="sp-alert-dot"></span>
             <span>{t('sp.alert_yellow_surge', { count: '2,400', minutes: 5 })}</span>
-            <button className="sp-alert-dismiss" aria-label={t('aria.close')}>×</button>
+            <button className="sp-alert-dismiss" aria-label={t('aria.close')} onClick={() => dismiss('yellow_surge')}>×</button>
           </div>
         </div>
       )}
-      {color === 'red' && (
+      {color === 'red' && (!dismissed.has('red_surge') || !dismissed.has('red_unauth')) && (
         <div className="sp-alert-stack">
-          <div className="sp-alert red" role="alert">
-            <span className="sp-alert-dot"></span>
-            <span>{t('sp.alert_red_surge', { count: '5,000', minutes: 2 })}</span>
-            <button className="sp-alert-dismiss" aria-label={t('aria.close')}>×</button>
-          </div>
-          <div className="sp-alert red" role="alert">
-            <span className="sp-alert-dot"></span>
-            <span>{t('sp.alert_red_unauthorized', { pct: 80 })}</span>
-            <button className="sp-alert-dismiss" aria-label={t('aria.close')}>×</button>
-          </div>
+          {!dismissed.has('red_surge') && (
+            <div className="sp-alert red" role="alert">
+              <span className="sp-alert-dot"></span>
+              <span>{t('sp.alert_red_surge', { count: '5,000', minutes: 2 })}</span>
+              <button className="sp-alert-dismiss" aria-label={t('aria.close')} onClick={() => dismiss('red_surge')}>×</button>
+            </div>
+          )}
+          {!dismissed.has('red_unauth') && (
+            <div className="sp-alert red" role="alert">
+              <span className="sp-alert-dot"></span>
+              <span>{t('sp.alert_red_unauthorized', { pct: 80 })}</span>
+              <button className="sp-alert-dismiss" aria-label={t('aria.close')} onClick={() => dismiss('red_unauth')}>×</button>
+            </div>
+          )}
         </div>
       )}
 

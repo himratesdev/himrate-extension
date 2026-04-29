@@ -358,13 +358,11 @@ async function processTab(page: Page, scenarioName: string, tabIdx: number): Pro
   return { tabName: tabClick.tabName, modalOpened: tabClick.modalOpened, tabSetup, interactions, clickableTotal: primaryIndexes.length };
 }
 
-(async () => {
-  const s = SCENARIOS.find((x) => x.name === SCENARIO_NAME);
-  if (!s) { console.error('Scenario not found:', SCENARIO_NAME); process.exit(1); }
-  console.log(`=== Per-tab thorough test: ${s.name} ===`);
+async function runOneScenario(s: any, idx: number) {
+  console.log(`\n=== [${idx + 1}] Per-tab thorough test: ${s.name} ===`);
 
-  fs.rmSync(PROFILE, { recursive: true, force: true });
-  const ctx = await chromium.launchPersistentContext(PROFILE, {
+  fs.rmSync(PROFILE + '-' + idx, { recursive: true, force: true });
+  const ctx = await chromium.launchPersistentContext(PROFILE + '-' + idx, {
     headless: false,
     args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, '--no-first-run'],
     viewport: { width: 420, height: 900 },
@@ -460,8 +458,34 @@ async function processTab(page: Page, scenarioName: string, tabIdx: number): Pro
   const totalNavigations = tabResults.reduce((sum, t) => sum + t.interactions.reduce((s2: any, i: any) => s2 + i.tabsCreated, 0), 0);
   const totalModals = tabResults.reduce((sum, t) => sum + t.interactions.filter((i: any) => i.modalOpened).length, 0);
   const totalClassChanged = tabResults.reduce((sum, t) => sum + t.interactions.filter((i: any) => i.classChanged).length, 0);
-  console.log(`\nTotals: ${totalInteractions} interactions, ${totalNavigations} navigations, ${totalModals} modals, ${totalClassChanged} class changes`);
+  console.log(`Totals: ${totalInteractions} interactions, ${totalNavigations} navigations, ${totalModals} modals, ${totalClassChanged} class changes`);
 
   await ctx.close();
+  return { name: s.name, totalInteractions, totalNavigations, totalModals, totalClassChanged, tabResults };
+}
+
+(async () => {
+  const target = ['wf01-not-streaming-site', 'wf02-skeleton-loading', 'wf03-not-tracked-live-registered-en', 'wf04-not-tracked-live-guest', 'wf05-not-tracked-offline', 'wf06-cold-start-lt3', 'wf07-cold-start-3-6', 'wf08-cold-start-7-9', 'wf09-cold-start-30plus-streamer', 'wf10-live-guest-green-en', 'wf11-live-free-green-en', 'wf12-live-free-yellow-en', 'wf13-live-free-red-en', 'wf14-live-premium-green-en', 'wf15-live-streamer-own-en', 'wf16-offline-lt18h-en', 'wf17-offline-gt18h-expired', 'wf18-offline-lt1h-warning', 'wf19-error-generic'];
+  const filter = process.argv.find((a) => a.startsWith('--scenario='))?.split('=')[1];
+  const scenarios = filter ? SCENARIOS.filter((s) => s.name === filter) : SCENARIOS.filter((s) => target.includes(s.name));
+  console.log(`Running ${scenarios.length} scenario(s)`);
+  const allSummary: any[] = [];
+  let i = 0;
+  for (const s of scenarios) {
+    try {
+      const summary = await runOneScenario(s, i++);
+      allSummary.push(summary);
+    } catch (e) {
+      console.error(`✗ ${s.name}:`, (e as Error).message);
+    }
+  }
+  // Master summary
+  let master = `# Per-tab Deep Audit — Master Summary\n\n**Generated:** ${new Date().toISOString()}\n\n`;
+  master += `| Scenario | Tabs visited | Interactions | Navigations | Modals | Class changes |\n|---|---|---|---|---|---|\n`;
+  for (const r of allSummary) {
+    master += `| ${r.name} | ${r.tabResults.length} | ${r.totalInteractions} | ${r.totalNavigations} | ${r.totalModals} | ${r.totalClassChanged} |\n`;
+  }
+  fs.writeFileSync(path.join(OUT_REPORT, '_MASTER.md'), master);
+  console.log(`\nMaster: ${path.join(OUT_REPORT, '_MASTER.md')}`);
   process.exit(0);
 })();

@@ -25,6 +25,7 @@ import { Frame08ColdStartProvisional } from './Frame08ColdStartProvisional';
 import { Frame09ColdStartDeepStreamer } from './Frame09ColdStartDeepStreamer';
 import { Frame10LiveGuestGreen } from './Frame10LiveGuestGreen';
 import { Frame11LiveFreeGreen } from './Frame11LiveFreeGreen';
+import { Frame14LivePremiumGreen } from './Frame14LivePremiumGreen';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -101,6 +102,23 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         tiScore={trustCache.ti_score}
         classification={trustCache.classification}
         percentile={trustCache.percentile_in_category}
+      />
+    );
+  }
+
+  // Frame 14 — Live Premium Green: literal port from slim/14. All 11 signals + 3 reputation
+  // rows expanded with descriptions/charts/history. Premium user, not own channel.
+  if (trustCache.is_live && (tier === 'premium' || tier === 'business') && !isOwnChannel) {
+    return (
+      <Frame14LivePremiumGreen
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+        classification={trustCache.classification}
+        percentile={trustCache.percentile_in_category}
+        isWatched={trustCache.is_watched_by_user}
       />
     );
   }

@@ -285,7 +285,7 @@
   "signal.account_scoring": "Признаки аномалий",
   "sp.components_toggle": "Компоненты",
   "sp.ti_tooltip": "Trust Index — комплексная оценка доверия к\u00a0каналу",
-  "sp.trust_rating": "Индекс доверия",
+  "sp.trust_rating": "Рейтинг доверия",
   "sp.signals_title": "Сигналы ({{count}})",
   "sp.signals_title_premium": "Анализ аудитории ({{count}} показателей)\u00a0— нажмите на\u00a0любой для\u00a0подробностей",
   "sp.signal_freshness": "Обновлено 30с назад",

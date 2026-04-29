@@ -20,6 +20,7 @@ import { ErrorOverview } from './ErrorOverview';
 import { NotTrackedOverview } from './NotTrackedOverview';
 import { NotTwitchOverview } from './NotTwitchOverview';
 import { Frame06ColdStartInsufficient } from './Frame06ColdStartInsufficient';
+import { Frame07ColdStartProvisionalLow } from './Frame07ColdStartProvisionalLow';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -68,6 +69,19 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   // wireframe slim/06. Replaces abstract ERVGauge/TIBadge composition.
   if (trustCache.cold_start_status === 'insufficient') {
     return <Frame06ColdStartInsufficient streamsCount={trustCache.streamer_rating?.streams_count ?? 0} />;
+  }
+
+  // Frame 07 — Cold Start 3-6 streams (provisional_low): literal port from slim/07.
+  if (trustCache.cold_start_status === 'provisional_low') {
+    return (
+      <Frame07ColdStartProvisionalLow
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        tiScore={trustCache.ti_score}
+        streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
+      />
+    );
   }
 
   const isLive = trustCache.is_live;

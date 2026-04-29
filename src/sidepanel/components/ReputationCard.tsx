@@ -1,9 +1,10 @@
-// BUG-016 PR-1 Section 6+7: ReputationCard canonical with Premium expand UX.
-// Wireframe: side-panel-wireframe-TASK-039.html sp-reputation (Section 6 lines 2003-2029
-// for collapsed, Section 7 lines 2650-2719 for Premium expandable).
-// Free Live: 3 rows visible (no expand). Premium: expandable rows + sp-rep-detail
-// + streams_count badge + premium subtitle paragraph.
-// Purple theme via .sp-reputation.purple modifier (M-2 canonical class).
+// BUG-016 PR-1a: ReputationCard LITERAL PORT from wireframe slim/14_live-premium-green-91.html
+// Wireframe sp-reputation section (lines 207-275): purple-themed card with 3 rows
+// + per-row sp-rep-detail block (title + description + mini-chart svg + change delta + history link)
+// + footer disclaimer.
+//
+// Premium (expandable=true): all 3 rows open by default per wireframe frame 14.
+// Free (expandable=false): rows visible without expand icons or detail blocks.
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,25 +13,14 @@ import type { ReputationData } from '../../shared/api';
 interface Props {
   reputation: ReputationData | null;
   isLive: boolean;
-  /** Premium drill-down: expandable rows + streams badge + descriptive subtitle. */
   expandable?: boolean;
-  /** From streamer_rating.streams_count — drives "10+ стримов" badge. */
   streamsCount?: number;
   onNavigate?: (tab: string) => void;
-  /**
-   * Optional 30-day reputation history per component (8 points each, 0..100).
-   * Real data slot — when reputation_history API is available, pass arrays here.
-   * Without it the mini-chart renders a flat line at the current value.
-   */
   history?: {
     growth_pattern_score?: number[];
     follower_quality_score?: number[];
     engagement_consistency_score?: number[];
   };
-  /**
-   * Optional 30-day deltas per component. When undefined, the change indicator
-   * defaults to neutral ("→ Стабильно за 30 дней") until API ready.
-   */
   deltas?: {
     growth_pattern_score?: number;
     follower_quality_score?: number;
@@ -116,7 +106,7 @@ function RepChange({
 
 export function ReputationCard({
   reputation,
-  isLive,
+  isLive: _isLive,
   expandable = false,
   streamsCount = 0,
   onNavigate,
@@ -124,31 +114,12 @@ export function ReputationCard({
   deltas,
 }: Props) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
-  // Empty state placeholder — render canonical 3-row structure с "—" values
-  // when API hasn't populated reputation yet (frames 11/14/15 expect this).
-  if (!reputation) {
-    return (
-      <div className="sp-reputation purple">
-        <div className="sp-reputation-title">
-          <ReputationIcon /> {t('sp.rep_title')}{' '}
-          <span style={{ fontSize: 10, fontWeight: 400, color: 'var(--ink-30)' }}>
-            — {t('sp.rep_subtitle')}
-          </span>
-        </div>
-        {COMPONENTS.map(({ key, i18nKey }) => (
-          <div key={key} className="sp-rep-row sp-rep-placeholder">
-            <span className="sp-rep-name">{t(i18nKey)}</span>
-            <div className="sp-rep-bar-bg">
-              <div className="sp-rep-bar-fill" style={{ width: '0%' }} />
-            </div>
-            <span className="sp-rep-val">—</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
+  // Premium: all 3 rows open by default (wireframe frame 14 — every sp-rep-row
+  // followed by visible sp-rep-detail block).
+  const [expanded, setExpanded] = useState<Set<string>>(() =>
+    expandable ? new Set(COMPONENTS.map((c) => c.key)) : new Set()
+  );
 
   const toggleExpand = (key: string) => {
     setExpanded((prev) => {
@@ -168,6 +139,7 @@ export function ReputationCard({
 
   return (
     <div className="sp-reputation purple">
+      {/* Header row — bar-chart icon + title + (Premium) streams badge */}
       {expandable ? (
         <>
           <div className="sp-rep-header-row">
@@ -188,9 +160,13 @@ export function ReputationCard({
         </div>
       )}
 
+      {/* 3 reputation rows — always all 3 rendered (placeholder when no API data) */}
       {COMPONENTS.map(({ key, i18nKey, descKey }) => {
-        const value = reputation[key as keyof ReputationData] as number | null;
-        const pct = value ?? 0;
+        const value = reputation
+          ? (reputation[key as keyof ReputationData] as number | null)
+          : null;
+        const hasValue = value != null;
+        const pct = hasValue ? value : 0;
         const isOpen = expanded.has(key);
         const rowClass = expandable ? 'sp-rep-row sp-rep-expandable' : 'sp-rep-row';
 
@@ -213,12 +189,13 @@ export function ReputationCard({
                   aria-valuemax={100}
                 />
               </div>
-              <span className="sp-rep-val">{value != null ? value.toFixed(0) : '—'}</span>
+              <span className="sp-rep-val">{hasValue ? value!.toFixed(0) : '—'}</span>
             </div>
+
             {expandable && isOpen && (
               <div className="sp-rep-detail">
                 <div className="sp-rep-detail-title">
-                  {t(i18nKey)}: {value != null ? value.toFixed(0) : '—'} / 100
+                  {t(i18nKey)}: {hasValue ? value!.toFixed(0) : '—'} / 100
                 </div>
                 <div className="sp-rep-detail-text">{t(descKey)}</div>
                 <RepDetailChart
@@ -245,9 +222,10 @@ export function ReputationCard({
         );
       })}
 
-      {isLive && (
+      {/* Footer disclaimer — Premium full view only (wireframe frame 14 line 274) */}
+      {expandable && (
         <div className="sp-rep-disclaimer">
-          ⓘ {expandable ? t('sp.rep_disclaimer_premium') : t('sp.reputation_disclaimer')}
+          ⓘ {t('sp.rep_disclaimer_premium')}
         </div>
       )}
     </div>

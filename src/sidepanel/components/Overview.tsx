@@ -21,6 +21,7 @@ import { NotTrackedOverview } from './NotTrackedOverview';
 import { NotTwitchOverview } from './NotTwitchOverview';
 import { Frame06ColdStartInsufficient } from './Frame06ColdStartInsufficient';
 import { Frame07ColdStartProvisionalLow } from './Frame07ColdStartProvisionalLow';
+import { Frame08ColdStartProvisional } from './Frame08ColdStartProvisional';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -79,6 +80,21 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         ervCount={trustCache.erv_count}
         ccv={trustCache.ccv}
         tiScore={trustCache.ti_score}
+        streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
+      />
+    );
+  }
+
+  // Frame 08 — Cold Start 7-9 streams (provisional): literal port from slim/08.
+  if (trustCache.cold_start_status === 'provisional') {
+    return (
+      <Frame08ColdStartProvisional
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+        classification={trustCache.classification}
         streamsCount={trustCache.streamer_rating?.streams_count ?? 0}
       />
     );

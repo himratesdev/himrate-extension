@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
+import { useSparkline } from '../hooks/useSparkline';
 
 interface Signal {
   type: string;
@@ -37,6 +38,7 @@ interface Props {
   classification: string | null;
   percentile: number | null;
   isWatched: boolean;
+  channelId?: string | null;
   signals?: Signal[];
   reputation?: ReputationData | null;
   topCountries?: Country[] | null;
@@ -62,9 +64,10 @@ function flagEmoji(code: string): string {
 
 export function Frame14LivePremiumGreen({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, classification: _classification, percentile, isWatched,
-  signals = [], reputation = null, topCountries = null, onWatchlistToggle: _onWatchlistToggle, onNavigate,
+  channelId = null, signals = [], reputation = null, topCountries = null, onWatchlistToggle: _onWatchlistToggle, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
+  const chart = useSparkline(channelId, true, true); // Premium = full access
   const color = ervLabelColor || 'green';
   const stroke = ERV_STROKE[color];
   const pct = ervPercent ?? 91;
@@ -348,31 +351,44 @@ export function Frame14LivePremiumGreen({
           <span className="sp-sparkline-title">{t('sp.sparkline_title_live')}</span>
           <a className="sp-sparkline-more" href="#" onClick={(e) => { e.preventDefault(); onNavigate?.('trends'); }}>{t('sp.more')}</a>
         </div>
+        {/* Stats — real from chart hook OR wireframe defaults (7,500/7,800/+29%) */}
         <div className="sp-chart-stats">
-          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_real_short')}</div><div className="sp-chart-stat-value green">7,500</div></div>
-          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_online_short')}</div><div className="sp-chart-stat-value">7,800</div></div>
-          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div><div className="sp-chart-stat-value green">+29%</div></div>
+          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_real_short')}</div><div className="sp-chart-stat-value green">{chart?.stats.now != null ? formatNumber(chart.stats.now, i18n.language) : '7,500'}</div></div>
+          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_online_short')}</div><div className="sp-chart-stat-value">{chart?.stats.max != null ? formatNumber(chart.stats.max, i18n.language) : '7,800'}</div></div>
+          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div><div className="sp-chart-stat-value green">{chart?.stats.change != null ? `${chart.stats.change >= 0 ? '+' : ''}${chart.stats.change}%` : '+29%'}</div></div>
         </div>
         <svg className="sp-sparkline-chart" viewBox="0 0 340 160" preserveAspectRatio="none">
+          {/* Grid lines */}
           <line x1="34" y1="20" x2="330" y2="20" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
           <line x1="34" y1="55" x2="330" y2="55" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
           <line x1="34" y1="90" x2="330" y2="90" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
           <line x1="34" y1="125" x2="330" y2="125" stroke="#9CA3AF" strokeWidth="1" />
-          <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">10K</text>
-          <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">7K</text>
-          <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">4K</text>
-          <text x="30" y="129" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">0</text>
+          {/* Y labels — real OR wireframe defaults 10K/7K/4K/0 */}
+          {chart ? chart.yLabels.map((l) => (
+            <text key={l.y} x="30" y={l.y} textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">{l.label}</text>
+          )) : (<>
+            <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">10K</text>
+            <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">7K</text>
+            <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">4K</text>
+            <text x="30" y="129" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">0</text>
+          </>)}
+          {/* X labels (time-based, не зависят от data) */}
           <text x="34" y="145" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−30м</text>
           <text x="132" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−20м</text>
           <text x="230" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−10м</text>
           <text x="328" y="145" textAnchor="end" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">{t('sp.chart_now_label')}</text>
-          <path d="M34,85 L64,80 L94,72 L124,65 L154,58 L184,50 L214,45 L244,38 L274,32 L304,28 L330,22 L330,125 L34,125 Z" fill="#059669" fillOpacity="0.08" />
-          <polyline points="34,80 64,74 94,68 124,60 154,53 184,45 214,38 244,32 274,26 304,22 330,18" fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeDasharray="3,2" />
-          <polyline points="34,85 64,80 94,72 124,65 154,58 184,50 214,45 244,38 274,32 304,28 330,22" fill="none" stroke="#059669" strokeWidth="2" />
-          <circle cx="34" cy="85" r="2.5" fill="#059669" />
-          <circle cx="154" cy="58" r="2.5" fill="#059669" />
-          <circle cx="244" cy="38" r="2.5" fill="#059669" />
-          <circle cx="330" cy="22" r="4" fill="#059669" stroke="white" strokeWidth="2" />
+          {/* Path/polylines/markers — real chart OR wireframe defaults */}
+          <path d={chart?.ervAreaPath ?? "M34,85 L64,80 L94,72 L124,65 L154,58 L184,50 L214,45 L244,38 L274,32 L304,28 L330,22 L330,125 L34,125 Z"} fill="#059669" fillOpacity="0.08" />
+          <polyline points={chart?.ccvPolylinePoints ?? "34,80 64,74 94,68 124,60 154,53 184,45 214,38 244,32 274,26 304,22 330,18"} fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeDasharray="3,2" />
+          <polyline points={chart?.ervPolylinePoints ?? "34,85 64,80 94,72 124,65 154,58 184,50 214,45 244,38 274,32 304,28 330,22"} fill="none" stroke="#059669" strokeWidth="2" />
+          {chart ? chart.markers.map((m, i) => (
+            <circle key={i} cx={m.cx} cy={m.cy} r={m.r} fill="#059669" stroke={m.isLast ? 'white' : 'none'} strokeWidth={m.isLast ? 2 : 0} />
+          )) : (<>
+            <circle cx="34" cy="85" r="2.5" fill="#059669" />
+            <circle cx="154" cy="58" r="2.5" fill="#059669" />
+            <circle cx="244" cy="38" r="2.5" fill="#059669" />
+            <circle cx="330" cy="22" r="4" fill="#059669" stroke="white" strokeWidth="2" />
+          </>)}
         </svg>
         <div className="sp-sparkline-legend">
           <span className="sp-sparkline-legend-item"><span className="sp-sparkline-legend-line green"></span> {t('sp.legend_real_viewers_short')}</span>

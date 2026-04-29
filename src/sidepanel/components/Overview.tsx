@@ -105,6 +105,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         tiScore={trustCache.ti_score}
         classification={trustCache.classification}
         percentile={trustCache.percentile_in_category}
+        channelId={trustCache.channel_id}
         signals={trustCache.signal_breakdown ?? []}
         reputation={trustCache.streamer_reputation}
         topCountries={trustCache.top_countries}
@@ -126,6 +127,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         classification={trustCache.classification}
         percentile={trustCache.percentile_in_category}
         isWatched={trustCache.is_watched_by_user}
+        channelId={trustCache.channel_id}
         signals={trustCache.signal_breakdown ?? []}
         reputation={trustCache.streamer_reputation}
         topCountries={trustCache.top_countries}

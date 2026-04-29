@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
+import { useSparkline } from '../hooks/useSparkline';
 
 interface Signal {
   type: string;
@@ -35,6 +36,7 @@ interface Props {
   tiScore: number | null;
   classification: string | null;
   percentile: number | null;
+  channelId?: string | null;
   signals?: Signal[];
   reputation?: ReputationData | null;
   topCountries?: Country[] | null;
@@ -59,9 +61,10 @@ function flagEmoji(code: string): string {
 
 export function Frame11LiveFreeGreen({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, classification, percentile,
-  signals = [], reputation = null, topCountries = null, onNavigate,
+  channelId = null, signals = [], reputation = null, topCountries = null, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
+  const chart = useSparkline(channelId, true, false); // Free user — 30m only
 
   const color = ervLabelColor || 'green';
   const stroke = ERV_STROKE[color];
@@ -377,20 +380,18 @@ export function Frame11LiveFreeGreen({
         </div>
         {/* <div class="sp-chart-stats"> */}
         <div className="sp-chart-stats">
-          {/* <div class="sp-chart-stat"><div class="sp-chart-stat-label">Сейчас</div><div class="sp-chart-stat-value green">4,200</div></div> */}
+            {/* Stats — real chart hook OR wireframe defaults (4,200/4,500/+8%) */}
           <div className="sp-chart-stat">
             <div className="sp-chart-stat-label">{t('sp.chart_now')}</div>
-            <div className="sp-chart-stat-value green">4,200</div>
+            <div className="sp-chart-stat-value green">{chart?.stats.now != null ? formatNumber(chart.stats.now, i18n.language) : '4,200'}</div>
           </div>
-          {/* <div class="sp-chart-stat"><div class="sp-chart-stat-label">Макс</div><div class="sp-chart-stat-value">4,500</div></div> */}
           <div className="sp-chart-stat">
             <div className="sp-chart-stat-label">{t('sp.chart_max')}</div>
-            <div className="sp-chart-stat-value">4,500</div>
+            <div className="sp-chart-stat-value">{chart?.stats.max != null ? formatNumber(chart.stats.max, i18n.language) : '4,500'}</div>
           </div>
-          {/* <div class="sp-chart-stat"><div class="sp-chart-stat-label">Изм. 30м</div><div class="sp-chart-stat-value green">+8%</div></div> */}
           <div className="sp-chart-stat">
             <div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div>
-            <div className="sp-chart-stat-value green">+8%</div>
+            <div className="sp-chart-stat-value green">{chart?.stats.change != null ? `${chart.stats.change >= 0 ? '+' : ''}${chart.stats.change}%` : '+8%'}</div>
           </div>
         </div>
         {/* <svg class="sp-sparkline-chart" viewBox="0 0 340 160" preserveAspectRatio="none"> */}
@@ -404,45 +405,47 @@ export function Frame11LiveFreeGreen({
           <line x1="34" y1="90" x2="330" y2="90" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
           {/* <line x1="34" y1="125" x2="330" y2="125" stroke="#9CA3AF" stroke-width="1"/> */}
           <line x1="34" y1="125" x2="330" y2="125" stroke="#9CA3AF" strokeWidth="1" />
-          {/* <!-- Y labels --> */}
-          {/* <text x="30" y="24" text-anchor="end" font-size="9" fill="#9ca3af" font-family="JetBrains Mono,monospace">5K</text> */}
-          <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">5K</text>
-          <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">4K</text>
-          <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">3K</text>
-          <text x="30" y="129" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">0</text>
+          {/* Y labels — real chart hook OR wireframe defaults 5K/4K/3K/0 */}
+          {chart ? chart.yLabels.map((l) => (
+            <text key={l.y} x="30" y={l.y} textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">{l.label}</text>
+          )) : (<>
+            <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">5K</text>
+            <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">4K</text>
+            <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">3K</text>
+            <text x="30" y="129" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">0</text>
+          </>)}
           {/* <!-- X labels --> */}
           <text x="34" y="145" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−30м</text>
           <text x="132" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−20м</text>
           <text x="230" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−10м</text>
           <text x="328" y="145" textAnchor="end" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">{t('sp.chart_now_label')}</text>
-          {/* <!-- ERV area --> */}
-          {/* <path d="M34,90 L64,85 L94,80 L124,82 L154,75 L184,72 L214,68 L244,62 L274,55 L304,52 L330,48 L330,125 L34,125 Z" fill="#059669" fill-opacity="0.08"/> */}
+          {/* ERV area / polyline / markers — real chart hook OR wireframe defaults */}
           <path
-            d="M34,90 L64,85 L94,80 L124,82 L154,75 L184,72 L214,68 L244,62 L274,55 L304,52 L330,48 L330,125 L34,125 Z"
+            d={chart?.ervAreaPath ?? "M34,90 L64,85 L94,80 L124,82 L154,75 L184,72 L214,68 L244,62 L274,55 L304,52 L330,48 L330,125 L34,125 Z"}
             fill="#059669"
             fillOpacity="0.08"
           />
-          {/* <!-- Total online dashed grey --> */}
-          {/* <polyline points="34,75 64,70 94,65 124,63 154,58 184,55 214,50 244,44 274,38 304,32 330,28" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="3,2"/> */}
           <polyline
-            points="34,75 64,70 94,65 124,63 154,58 184,55 214,50 244,44 274,38 304,32 330,28"
+            points={chart?.ccvPolylinePoints ?? "34,75 64,70 94,65 124,63 154,58 184,55 214,50 244,44 274,38 304,32 330,28"}
             fill="none"
             stroke="#9CA3AF"
             strokeWidth="1.5"
             strokeDasharray="3,2"
           />
-          {/* <!-- ERV solid green --> */}
           <polyline
-            points="34,90 64,85 94,80 124,82 154,75 184,72 214,68 244,62 274,55 304,52 330,48"
+            points={chart?.ervPolylinePoints ?? "34,90 64,85 94,80 124,82 154,75 184,72 214,68 244,62 274,55 304,52 330,48"}
             fill="none"
             stroke="#059669"
             strokeWidth="2"
           />
-          {/* <!-- Markers --> */}
-          <circle cx="34" cy="90" r="2.5" fill="#059669" />
-          <circle cx="154" cy="75" r="2.5" fill="#059669" />
-          <circle cx="244" cy="62" r="2.5" fill="#059669" />
-          <circle cx="330" cy="48" r="4" fill="#059669" stroke="white" strokeWidth="2" />
+          {chart ? chart.markers.map((m, i) => (
+            <circle key={i} cx={m.cx} cy={m.cy} r={m.r} fill="#059669" stroke={m.isLast ? 'white' : 'none'} strokeWidth={m.isLast ? 2 : 0} />
+          )) : (<>
+            <circle cx="34" cy="90" r="2.5" fill="#059669" />
+            <circle cx="154" cy="75" r="2.5" fill="#059669" />
+            <circle cx="244" cy="62" r="2.5" fill="#059669" />
+            <circle cx="330" cy="48" r="4" fill="#059669" stroke="white" strokeWidth="2" />
+          </>)}
         </svg>
         {/* <div class="sp-sparkline-legend"> */}
         <div className="sp-sparkline-legend">

@@ -107,6 +107,9 @@ export function Frame11LiveFreeGreen({
   const [dismissed, setDismissed] = useState<Set<string>>(() => new Set());
   const dismiss = (key: string) => setDismissed(p => { const n = new Set(p); n.add(key); return n; });
 
+  // TI expand state — wireframe slim/11 percentile visible (chevron implicit open)
+  const [tiExpanded, setTiExpanded] = useState(true);
+
   // M3 paywall preview — 5 first signals
   const s1 = sig('auth_ratio', 82, '82%');
   const s2 = sig('chatter_to_ccv_ratio', 75, t('signal.value_norm'));
@@ -233,11 +236,14 @@ export function Frame11LiveFreeGreen({
               — {classification ? t(`classification.${classification}`) : t('classification.trusted')}
             </span>
           </div>
-          {/* <button class="sp-ti-expand" aria-label="...">▾</button> */}
-          <button className="sp-ti-expand" aria-label={t('aria.expand')}>▾</button>
+          <button
+            className={`sp-ti-expand${tiExpanded ? ' open' : ''}`}
+            aria-label={t('aria.expand')}
+            aria-expanded={tiExpanded}
+            onClick={() => setTiExpanded(v => !v)}
+          >▾</button>
         </div>
-        {/* <div style="margin-top:6px;"><span class="sp-percentile">Выше чем у 85% каналов в категории</span></div> */}
-        {percentile != null && (
+        {tiExpanded && percentile != null && (
           <div style={{ marginTop: '6px' }}>
             <span className="sp-percentile">
               {t('sp.percentile_above', { N: percentile })}

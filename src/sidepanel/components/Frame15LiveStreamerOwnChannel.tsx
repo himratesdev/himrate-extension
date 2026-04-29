@@ -101,6 +101,9 @@ export function Frame15LiveStreamerOwnChannel({
     return { pct: defaultPct, display: defaultDisplay, color: signalColor(defaultPct / 100) };
   }
 
+  // TI expand state — wireframe slim/15 chevron `open` by default → percentile visible
+  const [tiExpanded, setTiExpanded] = useState(true);
+
   // Per slim/15: первый signal row open, остальные closed
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['auth_ratio']));
   const toggle = (k: string) => setExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
@@ -170,9 +173,14 @@ export function Frame15LiveStreamerOwnChannel({
             <span className={`sp-ti-score ${color}`}>{tiScore ?? '—'}</span>
             <span className="sp-ti-classification">— {t('classification.fully_trusted')}</span>
           </div>
-          <button className="sp-ti-expand open" aria-label={t('aria.expand')}>▾</button>
+          <button
+            className={`sp-ti-expand${tiExpanded ? ' open' : ''}`}
+            aria-label={t('aria.expand')}
+            aria-expanded={tiExpanded}
+            onClick={() => setTiExpanded(v => !v)}
+          >▾</button>
         </div>
-        {percentile != null && (<div style={{ marginTop: '6px' }}><span className="sp-percentile">{t('sp.percentile_above', { N: percentile })}</span></div>)}
+        {tiExpanded && percentile != null && (<div style={{ marginTop: '6px' }}><span className="sp-percentile">{t('sp.percentile_above', { N: percentile })}</span></div>)}
       </div>
 
       {/* M3 Signals — first row open per slim/15, others click to expand */}

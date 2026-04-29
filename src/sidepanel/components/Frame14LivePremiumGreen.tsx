@@ -85,6 +85,9 @@ export function Frame14LivePremiumGreen({
     return { pct: defaultPct, display: defaultDisplay, color: signalColor(defaultPct / 100) };
   }
 
+  // TI expand state — wireframe slim/14 chevron `open` by default → percentile visible
+  const [tiExpanded, setTiExpanded] = useState(true);
+
   // Expand state — Premium: all 11 open by default per wireframe
   const allTypes = ['auth_ratio', 'chatter_to_ccv_ratio', 'ccv_step_function', 'ccv_tier_clustering',
     'per_user_chat_behavior', 'channel_protection_score', 'cross_channel_bot_presence',
@@ -140,9 +143,14 @@ export function Frame14LivePremiumGreen({
             <span className={`sp-ti-score ${color}`}>{tiScore ?? '—'}</span>
             <span className="sp-ti-classification">— {t('classification.fully_trusted')}</span>
           </div>
-          <button className="sp-ti-expand open" aria-label={t('aria.expand')}>▾</button>
+          <button
+            className={`sp-ti-expand${tiExpanded ? ' open' : ''}`}
+            aria-label={t('aria.expand')}
+            aria-expanded={tiExpanded}
+            onClick={() => setTiExpanded(v => !v)}
+          >▾</button>
         </div>
-        {percentile != null && (
+        {tiExpanded && percentile != null && (
           <div style={{ marginTop: '6px' }}><span className="sp-percentile">{t('sp.percentile_above', { N: percentile })}</span></div>
         )}
       </div>

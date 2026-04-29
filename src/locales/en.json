@@ -48,6 +48,7 @@
   "cold_start.provisional_streams": "Provisional · {{N}}/10 streams",
   "cold_start.collecting_min3": "⏳ Collecting data. Minimum 3\u00a0streams required to begin analysis.",
   "cold_start.collecting_provisional": "⏳ Provisional data. {{current}} of\u00a0{{required}} streams analyzed.",
+  "cold_start.deep_badge": "Deep analytics · {{N}} streams",
   "popup.erv_explanation": "{{N}}% real audience",
   "popup.current_stream_data": "Current stream data",
   "confidence.sufficient": "Sufficient data for analysis",

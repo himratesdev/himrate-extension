@@ -98,6 +98,16 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
       {/* Alert Counter — LIVE only */}
       {isLive && <AlertCounter trustCache={trustCache} />}
 
+      {/* Deep Analytics badge — frame 09 wireframe (cold_start_status === 'deep'),
+          gradient green→blue pill above ERV gauge with stream count. */}
+      {trustCache.cold_start_status === 'deep' && (trustCache.streamer_rating?.streams_count ?? 0) > 0 && (
+        <div className="sp-deep-analytics-badge-wrap">
+          <span className="sp-deep-analytics-badge">
+            {t('cold_start.deep_badge', { N: trustCache.streamer_rating?.streams_count ?? 0 })}
+          </span>
+        </div>
+      )}
+
       {/* M1: ERV Gauge */}
       <ERVGauge
         ervPercent={trustCache.erv_percent}

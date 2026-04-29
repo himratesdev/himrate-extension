@@ -1652,3 +1652,16 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     border-radius: var(--radius-button);
     border: 1.5px solid rgba(59,130,246,0.2);
 }
+
+/* Deep Analytics badge — frame 09 wireframe deep tier (30+ streams) */
+.sp-deep-analytics-badge-wrap {
+    display: flex; justify-content: center; margin-bottom: 8px;
+}
+.sp-deep-analytics-badge {
+    font-size: 10px; font-family: 'JetBrains Mono', monospace;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #059669, #3B82F6);
+    color: white; border-radius: 20px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    font-weight: 600;
+}

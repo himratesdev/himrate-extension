@@ -48,6 +48,7 @@
   "cold_start.provisional_streams": "Provisional · {{N}}/10 стримов",
   "cold_start.collecting_min3": "⏳ Данные собираются. Необходимо минимум 3\u00a0стрима для\u00a0начала анализа.",
   "cold_start.collecting_provisional": "⏳ Данные предварительные. {{current}} из\u00a0{{required}} стримов проанализировано.",
+  "cold_start.deep_badge": "Глубокая аналитика · {{N}} стрима",
   "popup.erv_explanation": "{{N}}% реального онлайна",
   "popup.current_stream_data": "Данные текущего стрима",
   "confidence.sufficient": "Данных достаточно для анализа",

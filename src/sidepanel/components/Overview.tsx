@@ -71,9 +71,16 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   const isGuest = !authState.loggedIn;
   // Offline + Free with expired post-stream window → drill-down behind paywall (Section 9 >18h)
   const isOfflineExpired = !isLive && !isPremium && !windowOpen && tier === 'free';
-  // Cold-start insufficient (frame 06 wireframe): hide M3/M4/M5/M6 + LiveTrendIndicator.
-  // Wireframe sublabel "ERV Gauge серый, M3/M4 скрыты" — only ERV + TI placeholder + collecting banner render.
+  // Cold-start tier gating per wireframe frames 06-09:
+  //   insufficient (<3) — frame 06: hide M3/M4/M5/M6/Trend (only ERV+TI+banner)
+  //   provisional_low (3-6) — frame 07: hide M3/M4/M5/M6/Trend (only ERV+TI+badge+banner)
+  //   provisional (7-9) — frame 08: hide M3/M5/M6/Trend, show M4 placeholder
+  //   full (10-29) / deep (30+) — frames 11+: full module rendering
   const isInsufficient = trustCache.cold_start_status === 'insufficient';
+  const isProvisionalLow = trustCache.cold_start_status === 'provisional_low';
+  const isProvisional = trustCache.cold_start_status === 'provisional';
+  const hideAllModules = isInsufficient || isProvisionalLow;
+  const hideMostModules = hideAllModules || isProvisional;
 
   return (
     <div className="sp-overview">
@@ -105,8 +112,8 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
       />
 
       {/* Live Trend Indicator (Section 6 wireframe — sp-trend).
-          Hidden during cold-start insufficient — frame 06 sublabel "M3/M4 скрыты". */}
-      {isLive && !isInsufficient && <LiveTrendIndicator channelId={trustCache.channel_id} />}
+          Hidden during all cold-start tiers (insufficient/provisional_low/provisional). */}
+      {isLive && !hideMostModules && <LiveTrendIndicator channelId={trustCache.channel_id} />}
 
       {/* M2: TI + Classification + Percentile (cold-start gated per frames 06-09;
           percentile hidden for Guest per frame 10 — premium-derived data).
@@ -169,13 +176,16 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
       )}
 
       {/* M3: Signal Breakdown — drill-down access (Premium / Free Live / Free <18h).
-          Hidden during cold-start insufficient (frame 06 wireframe). */}
-      {showDrillDown && !isInsufficient && (
+          Hidden during all cold-start tiers (frames 06/07/08 don't render M3). */}
+      {showDrillDown && !hideMostModules && (
         <SignalBreakdown signals={trustCache.signal_breakdown || []} expandable={isPremium} />
       )}
 
-      {/* M4: Reputation — drill-down access. Hidden during insufficient. */}
-      {showDrillDown && !isInsufficient && (
+      {/* M4: Reputation — drill-down access.
+          - insufficient/provisional_low (06/07): fully hidden
+          - provisional (08): rendered with placeholder via ReputationCard's empty-state
+          - full/deep (11+): rendered with real data */}
+      {showDrillDown && !hideAllModules && (
         <ReputationCard
           reputation={trustCache.streamer_reputation}
           isLive={isLive}
@@ -313,8 +323,8 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         </>
       )}
 
-      {/* M5: Mini Sparkline. Hidden during insufficient cold-start. */}
-      {!isOfflineExpired && !isInsufficient && (
+      {/* M5: Mini Sparkline. Hidden during all cold-start tiers. */}
+      {!isOfflineExpired && !hideMostModules && (
         <MiniSparkline
           channelId={trustCache.channel_id}
           isLive={isLive}
@@ -323,17 +333,16 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         />
       )}
 
-      {/* M6: Audience Preview — renders placeholder rows when API empty.
-          Hidden during insufficient cold-start. */}
-      {!isOfflineExpired && !isInsufficient && (showDrillDown || isFreeWithAccess) && (
+      {/* M6: Audience Preview. Hidden during all cold-start tiers. */}
+      {!isOfflineExpired && !hideMostModules && (showDrillDown || isFreeWithAccess) && (
         <AudiencePreview
           countries={trustCache.top_countries}
           onNavigate={onNavigate}
         />
       )}
 
-      {/* Watchlist Button + Dropdown (frame 27). Hidden during insufficient cold-start. */}
-      {authState.loggedIn && !isInsufficient && (
+      {/* Watchlist Button + Dropdown (frame 27). Hidden during cold-start tiers. */}
+      {authState.loggedIn && !hideMostModules && (
         <WatchlistButton
           channelId={trustCache.channel_id}
           isWatched={trustCache.is_watched_by_user}

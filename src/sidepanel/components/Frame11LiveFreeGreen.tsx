@@ -35,6 +35,32 @@ export function Frame11LiveFreeGreen({
   return (
     // <div class="sp-content">
     <div className="sp-content" role="tabpanel">
+      {/* <!-- Alert Counter — frame 12 wireframe (yellow ERV) + frame 13 (red ERV).
+            Frame 11 (green) не показывает alerts. --> */}
+      {color === 'yellow' && (
+        <div className="sp-alert-stack">
+          <div className="sp-alert yellow" role="alert" aria-live="polite">
+            <span className="sp-alert-dot"></span>
+            <span>{t('sp.alert_yellow_surge', { count: '2,400', minutes: 5 })}</span>
+            <button className="sp-alert-dismiss" aria-label={t('aria.close')}>×</button>
+          </div>
+        </div>
+      )}
+      {color === 'red' && (
+        <div className="sp-alert-stack">
+          <div className="sp-alert red" role="alert">
+            <span className="sp-alert-dot"></span>
+            <span>{t('sp.alert_red_surge', { count: '5,000', minutes: 2 })}</span>
+            <button className="sp-alert-dismiss" aria-label={t('aria.close')}>×</button>
+          </div>
+          <div className="sp-alert red" role="alert">
+            <span className="sp-alert-dot"></span>
+            <span>{t('sp.alert_red_unauthorized', { pct: 80 })}</span>
+            <button className="sp-alert-dismiss" aria-label={t('aria.close')}>×</button>
+          </div>
+        </div>
+      )}
+
       {/* <!-- M1: ERV Gauge --> */}
       {/* <div class="sp-gauge-section" role="img" aria-label="ERV 85%"> */}
       <div className="sp-gauge-section" role="img" aria-label={`ERV ${pct}%`}>
@@ -91,9 +117,13 @@ export function Frame11LiveFreeGreen({
         </span>
       </div>
 
-      {/* <!-- Confidence --> */}
-      {/* <div class="sp-confidence high">Данных достаточно для анализа.</div> */}
-      <div className="sp-confidence high">{t('confidence.sufficient')}</div>
+      {/* <!-- Confidence — per ervLabelColor: green/red → high "Данных достаточно для анализа",
+          yellow → medium "Данных достаточно, точность средняя." (per slim/11/12/13). --> */}
+      {color === 'yellow' ? (
+        <div className="sp-confidence medium">{t('confidence.moderate')}</div>
+      ) : (
+        <div className="sp-confidence high">{t('confidence.sufficient')}</div>
+      )}
 
       {/* <!-- Trend Indicator --> */}
       {/* <div class="sp-trend up">↑ Реальных зрителей стало больше: +5% за 30мин</div> */}

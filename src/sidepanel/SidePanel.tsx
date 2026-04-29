@@ -191,14 +191,8 @@ export function SidePanel() {
         }
         variant="link_twitch"
       />
-      <InfoBanner
-        show={
-          !authState.loggedIn &&
-          Boolean(trustCache?.is_tracked) &&
-          Boolean(trustCache?.is_live)
-        }
-        variant="guest_signin"
-      />
+      {/* SidePanel-level guest_signin banner DISABLED — Frame10 (LiveGuest) renders
+          its own banner inside sp-content per wireframe slim/10. Avoids duplication. */}
 
       {/* Tab Bar */}
       <TabBar

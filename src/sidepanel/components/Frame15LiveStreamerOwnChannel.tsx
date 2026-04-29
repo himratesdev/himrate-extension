@@ -59,7 +59,7 @@ export function Frame15LiveStreamerOwnChannel({
       </div>
       <div className="sp-confidence high">{t('confidence.sufficient')}</div>
       {/* <div class="sp-trend stable">→ Количество реальных зрителей стабильно</div> */}
-      <div className="sp-trend stable">→ {t('sp.trend_real_stable') || 'Количество реальных зрителей стабильно'}</div>
+      <div className="sp-trend stable">→ {t('sp.trend_real_stable_static')}</div>
 
       {/* <!-- TI --> */}
       <div className="sp-ti-section">

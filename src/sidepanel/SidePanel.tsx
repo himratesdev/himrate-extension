@@ -202,33 +202,33 @@ export function SidePanel() {
         anomalyTabs={getAnomalyTabs(trustCache, lockedTabs)}
       />
 
-      {/* Content — canonical sp-content */}
-      <div className="sp-content" role="tabpanel">
-        {currentTab === 'overview' ? (
-          <Overview
-            trustCache={trustCache}
-            loading={loading}
-            currentChannel={currentChannel}
-            tier={tier}
-            isOwnChannel={isOwnChannel}
-            authState={authState}
-            onNavigate={(tab) => setCurrentTab(tab as SidePanelTab)}
-          />
-        ) : currentTab === 'watchlists' ? (
-          <Watchlists tier={tier} authState={authState} />
-        ) : currentTab === 'trends' ? (
-          <TrendsTab
-            channelId={trustCache?.channel_id ?? null}
-            accessLevel={resolveAccessLevel(tier, isOwnChannel)}
-            onRequestSignIn={handleRequestSignIn}
-            onRequestUpgrade={handleRequestUpgrade}
-            onReconnectTwitch={handleReconnectTwitch}
-            oauthRevoked={authState.loggedIn && !authState.twitchLinked}
-          />
-        ) : (
-          <PlaceholderTab tabId={currentTab} />
-        )}
-      </div>
+      {/* Content — каждый tab/state owns свой sp-content (literal port wireframe).
+          sp-content inline styles варьируются per-frame (e.g. justify-content:center
+          для NotTwitch/NotTracked); поэтому wrapper в каждом компоненте, не здесь. */}
+      {currentTab === 'overview' ? (
+        <Overview
+          trustCache={trustCache}
+          loading={loading}
+          currentChannel={currentChannel}
+          tier={tier}
+          isOwnChannel={isOwnChannel}
+          authState={authState}
+          onNavigate={(tab) => setCurrentTab(tab as SidePanelTab)}
+        />
+      ) : currentTab === 'watchlists' ? (
+        <Watchlists tier={tier} authState={authState} />
+      ) : currentTab === 'trends' ? (
+        <TrendsTab
+          channelId={trustCache?.channel_id ?? null}
+          accessLevel={resolveAccessLevel(tier, isOwnChannel)}
+          onRequestSignIn={handleRequestSignIn}
+          onRequestUpgrade={handleRequestUpgrade}
+          onReconnectTwitch={handleReconnectTwitch}
+          oauthRevoked={authState.loggedIn && !authState.twitchLinked}
+        />
+      ) : (
+        <PlaceholderTab tabId={currentTab} />
+      )}
 
       {/* Channel Switch Notification */}
       {pendingChannel && (

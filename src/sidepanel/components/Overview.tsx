@@ -19,6 +19,7 @@ import { SkeletonOverview } from './SkeletonOverview';
 import { ErrorOverview } from './ErrorOverview';
 import { NotTrackedOverview } from './NotTrackedOverview';
 import { NotTwitchOverview } from './NotTwitchOverview';
+import { Frame06ColdStartInsufficient } from './Frame06ColdStartInsufficient';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -63,6 +64,12 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
     );
   }
 
+  // Frame 06 — Cold Start <3 streams (insufficient): full literal port from
+  // wireframe slim/06. Replaces abstract ERVGauge/TIBadge composition.
+  if (trustCache.cold_start_status === 'insufficient') {
+    return <Frame06ColdStartInsufficient streamsCount={trustCache.streamer_rating?.streams_count ?? 0} />;
+  }
+
   const isLive = trustCache.is_live;
   const isPremium = tier === 'premium' || tier === 'business' || tier === 'streamer' || isOwnChannel;
   const windowOpen = isPostStreamWindowOpen(trustCache);
@@ -83,7 +90,8 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   const hideMostModules = hideAllModules || isProvisional;
 
   return (
-    <div className="sp-overview">
+    // <div class="sp-content"> — wireframe slim/11/14/15 wraps live overview in default sp-content
+    <div className="sp-content" role="tabpanel">
       {/* Streamer disclaimer — own channel only (Section 8 wireframe) */}
       {isOwnChannel && (
         <div className="sp-streamer-disclaimer">{t('sp.streamer_disclaimer')}</div>

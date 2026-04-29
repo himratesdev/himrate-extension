@@ -1,0 +1,408 @@
+// LITERAL PORT — JSX 1:1 от wireframe-screens/slim/11_live-free-green-85.html.
+// Каждый <div>, <svg>, <circle>, <line>, <text>, <path>, <polyline>, <span>, <a>, <button>
+// + class + inline style скопирован вербатим из wireframe.
+
+import { useTranslation } from 'react-i18next';
+import { formatNumber } from '../../shared/format';
+
+interface Props {
+  ervPercent: number | null;
+  ervCount: number | null;
+  ccv: number | null;
+  ervLabelColor: 'green' | 'yellow' | 'red' | null;
+  tiScore: number | null;
+  classification: string | null;
+  percentile: number | null;
+}
+
+const CIRCUMFERENCE = 326.7;
+const ERV_STROKE: Record<string, string> = { green: '#059669', yellow: '#D97706', red: '#DC2626' };
+
+export function Frame11LiveFreeGreen({
+  ervPercent, ervCount, ccv, ervLabelColor, tiScore, classification, percentile,
+}: Props) {
+  const { t, i18n } = useTranslation();
+
+  const color = ervLabelColor || 'green';
+  const stroke = ERV_STROKE[color];
+  const pct = ervPercent ?? 85;
+  const offset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
+
+  const handleUpgrade = () => {
+    chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=premium' });
+  };
+
+  return (
+    // <div class="sp-content">
+    <div className="sp-content" role="tabpanel">
+      {/* <!-- M1: ERV Gauge --> */}
+      {/* <div class="sp-gauge-section" role="img" aria-label="ERV 85%"> */}
+      <div className="sp-gauge-section" role="img" aria-label={`ERV ${pct}%`}>
+        {/* <div class="sp-gauge-wrap"> */}
+        <div className="sp-gauge-wrap">
+          {/* <svg class="sp-gauge-ring" width="120" height="120" viewBox="0 0 120 120"> */}
+          <svg className="sp-gauge-ring" width="120" height="120" viewBox="0 0 120 120">
+            {/* <circle cx="60" cy="60" r="52" fill="none" stroke="#E5E7EB" stroke-width="8"/> */}
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#E5E7EB" strokeWidth="8" />
+            {/* <circle ... stroke="#059669" stroke-dashoffset="49" ... style="transition: stroke-dashoffset 600ms ease-out;"/> */}
+            <circle
+              cx="60"
+              cy="60"
+              r="52"
+              fill="none"
+              stroke={stroke}
+              strokeWidth="8"
+              strokeDasharray="326.7"
+              strokeDashoffset={offset}
+              strokeLinecap="round"
+              transform="rotate(-90 60 60)"
+              style={{ transition: 'stroke-dashoffset 600ms ease-out' }}
+            />
+          </svg>
+          {/* <div class="sp-gauge-center"> */}
+          <div className="sp-gauge-center">
+            {/* <span class="sp-gauge-percent green">85%</span> */}
+            <span className={`sp-gauge-percent ${color}`}>{pct}%</span>
+            {/* <span class="sp-gauge-sub" title="...">Реальные зрители</span> */}
+            <span className="sp-gauge-sub" title={t('erv.tooltip')}>
+              {t('erv.real_viewers_label')}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* <!-- ERV Hero --> */}
+      {/* <div class="sp-erv-hero green">~4,200 реальных зрителей</div> */}
+      <div className={`sp-erv-hero ${color}`}>
+        {ervCount != null
+          ? t('erv.real_viewers_count', { N: formatNumber(ervCount, i18n.language) })
+          : '—'}
+      </div>
+      {/* <div class="sp-erv-ccv">Twitch онлайн: 5,000</div> */}
+      <div className="sp-erv-ccv">
+        {ccv != null ? t('popup.twitch_online', { N: formatNumber(ccv, i18n.language) }) : ''}
+      </div>
+
+      {/* <!-- ERV Label Badge --> */}
+      {/* <div style="text-align:center;"><span class="sp-erv-label green">...</span></div> */}
+      <div style={{ textAlign: 'center' }}>
+        <span className={`sp-erv-label ${color}`}>
+          <span className="erv-dot"></span> {t(`erv_label.${color}`)} · {pct}%
+        </span>
+      </div>
+
+      {/* <!-- Confidence --> */}
+      {/* <div class="sp-confidence high">Данных достаточно для анализа.</div> */}
+      <div className="sp-confidence high">{t('confidence.sufficient')}</div>
+
+      {/* <!-- Trend Indicator --> */}
+      {/* <div class="sp-trend up">↑ Реальных зрителей стало больше: +5% за 30мин</div> */}
+      <div className="sp-trend up">↑ {t('sp.trend_real_up', { sign: '+', pct: 5 })}</div>
+
+      {/* <!-- M2: TI Badge (with percentile inside) --> */}
+      {/* <div class="sp-ti-section"> */}
+      <div className="sp-ti-section">
+        {/* <div class="sp-ti-header"> */}
+        <div className="sp-ti-header">
+          {/* <div class="sp-ti-left"> */}
+          <div className="sp-ti-left">
+            {/* <span class="sp-ti-label" title="...">Рейтинг доверия</span> */}
+            <span className="sp-ti-label" title={t('sp.ti_tooltip')}>
+              {t('sp.trust_rating')}
+            </span>
+            {/* <span class="sp-ti-score green">85</span> */}
+            <span className={`sp-ti-score ${color}`}>{tiScore ?? '—'}</span>
+            {/* <span class="sp-ti-classification">— Порядочный</span> */}
+            <span className="sp-ti-classification">
+              — {classification ? t(`classification.${classification}`) : t('classification.trusted')}
+            </span>
+          </div>
+          {/* <button class="sp-ti-expand" aria-label="...">▾</button> */}
+          <button className="sp-ti-expand" aria-label={t('aria.expand')}>▾</button>
+        </div>
+        {/* <div style="margin-top:6px;"><span class="sp-percentile">Выше чем у 85% каналов в категории</span></div> */}
+        {percentile != null && (
+          <div style={{ marginTop: '6px' }}>
+            <span className="sp-percentile">
+              {t('sp.percentile_above', { N: percentile })}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* <!-- M3: Signal Breakdown (paywall for Free) --> */}
+      {/* <div class="sp-paywall"> */}
+      <div className="sp-paywall">
+        {/* <div class="sp-paywall-blurred"> */}
+        <div className="sp-paywall-blurred">
+          {/* <div class="sp-signals"> */}
+          <div className="sp-signals">
+            {/* <div class="sp-signals-title">Сигналы (11)</div> */}
+            <div className="sp-signals-title">{t('sp.signals_title', { count: 11 })}</div>
+            {/* <div class="sp-signal-row"><span>Авторизация</span>...<span class="sp-signal-val green">82%</span></div> */}
+            <div className="sp-signal-row">
+              <span className="sp-signal-name">{t('signal.auth_ratio')}</span>
+              <div className="sp-signal-bar-bg">
+                <div className="sp-signal-bar-fill green" style={{ width: '82%' }}></div>
+              </div>
+              <span className="sp-signal-val green">82%</span>
+            </div>
+            {/* <div class="sp-signal-row"><span>Чат/зрители</span>...<span class="sp-signal-val green">норма</span></div> */}
+            <div className="sp-signal-row">
+              <span className="sp-signal-name">{t('signal.chatter_ccv')}</span>
+              <div className="sp-signal-bar-bg">
+                <div className="sp-signal-bar-fill green" style={{ width: '75%' }}></div>
+              </div>
+              <span className="sp-signal-val green">{t('signal.value_norm')}</span>
+            </div>
+            {/* <div class="sp-signal-row"><span>Рост зрителей</span>...<span class="sp-signal-val green">норма</span></div> */}
+            <div className="sp-signal-row">
+              <span className="sp-signal-name">{t('signal.ccv_step')}</span>
+              <div className="sp-signal-bar-bg">
+                <div className="sp-signal-bar-fill green" style={{ width: '95%' }}></div>
+              </div>
+              <span className="sp-signal-val green">{t('signal.value_norm')}</span>
+            </div>
+            {/* <div class="sp-signal-row"><span>Подписки</span>...<span class="sp-signal-val green">88%</span></div> */}
+            <div className="sp-signal-row">
+              <span className="sp-signal-name">{t('signal.ccv_tier')}</span>
+              <div className="sp-signal-bar-bg">
+                <div className="sp-signal-bar-fill green" style={{ width: '88%' }}></div>
+              </div>
+              <span className="sp-signal-val green">88%</span>
+            </div>
+            {/* <div class="sp-signal-row"><span>Скорость чата</span>...<span class="sp-signal-val green">70%</span></div> */}
+            <div className="sp-signal-row">
+              <span className="sp-signal-name">{t('signal.chat_behavior')}</span>
+              <div className="sp-signal-bar-bg">
+                <div className="sp-signal-bar-fill green" style={{ width: '70%' }}></div>
+              </div>
+              <span className="sp-signal-val green">70%</span>
+            </div>
+          </div>
+        </div>
+        {/* <div class="sp-paywall-overlay"> */}
+        <div className="sp-paywall-overlay">
+          {/* <span class="sp-paywall-text">Полный анализ сигналов</span> */}
+          <span className="sp-paywall-text">{t('paywall.signals_full_analysis')}</span>
+          {/* <button class="sp-paywall-cta">Обновить до Premium</button> */}
+          <button className="sp-paywall-cta" onClick={handleUpgrade}>
+            {t('paywall.upgrade_premium_cta')}
+          </button>
+        </div>
+      </div>
+
+      {/* <!-- M4: Reputation (paywall for Free) --> */}
+      <div className="sp-paywall">
+        <div className="sp-paywall-blurred">
+          {/* <div class="sp-reputation" style="border:2.5px solid #8B5CF6;border-radius:12px;padding:10px 12px;background:linear-gradient(180deg, rgba(139,92,246,0.05) 0%, transparent 100%);"> */}
+          <div
+            className="sp-reputation"
+            style={{
+              border: '2.5px solid #8B5CF6',
+              borderRadius: '12px',
+              padding: '10px 12px',
+              background: 'linear-gradient(180deg, rgba(139,92,246,0.05) 0%, transparent 100%)',
+            }}
+          >
+            {/* <div class="sp-reputation-title" style="color:#7C3AED;"><svg ...></svg> Репутация стримера <span style="font-size:10px;font-weight:400;color:var(--ink-30);">— история канала</span></div> */}
+            <div className="sp-reputation-title" style={{ color: '#7C3AED' }}>
+              <svg
+                className="ico"
+                viewBox="0 0 24 24"
+                style={{ width: '13px', height: '13px', stroke: '#7C3AED', verticalAlign: '-0.1em' }}
+              >
+                <rect x="18" y="3" width="4" height="18" rx="1" fill="rgba(139,92,246,0.3)" stroke="#7C3AED" />
+                <rect x="10" y="8" width="4" height="13" rx="1" fill="rgba(139,92,246,0.2)" stroke="#7C3AED" />
+                <rect x="2" y="13" width="4" height="8" rx="1" fill="rgba(139,92,246,0.15)" stroke="#7C3AED" />
+              </svg>{' '}
+              {t('sp.rep_title')}{' '}
+              <span style={{ fontSize: '10px', fontWeight: 400, color: 'var(--ink-30)' }}>
+                — {t('sp.rep_subtitle')}
+              </span>
+            </div>
+            {/* <div class="sp-rep-row"><span>Естественность роста</span>...<span class="sp-rep-val" style="color:#7C3AED;">72</span></div> */}
+            <div className="sp-rep-row">
+              <span className="sp-rep-name">{t('sp.rep_growth')}</span>
+              <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
+                <div className="sp-rep-bar-fill" style={{ width: '72%', background: '#8B5CF6' }}></div>
+              </div>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>72</span>
+            </div>
+            <div className="sp-rep-row">
+              <span className="sp-rep-name">{t('sp.rep_quality')}</span>
+              <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
+                <div className="sp-rep-bar-fill" style={{ width: '88%', background: '#8B5CF6' }}></div>
+              </div>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>88</span>
+            </div>
+            <div className="sp-rep-row">
+              <span className="sp-rep-name">{t('sp.rep_loyalty')}</span>
+              <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
+                <div className="sp-rep-bar-fill" style={{ width: '91%', background: '#8B5CF6' }}></div>
+              </div>
+              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>91</span>
+            </div>
+          </div>
+        </div>
+        <div className="sp-paywall-overlay">
+          {/* <span class="sp-paywall-text"><svg ...></svg> Репутация стримера</span> */}
+          <span className="sp-paywall-text">
+            <svg
+              className="ico"
+              viewBox="0 0 24 24"
+              style={{ width: '13px', height: '13px', stroke: '#7C3AED', verticalAlign: '-0.1em' }}
+            >
+              <rect x="18" y="3" width="4" height="18" rx="1" fill="rgba(139,92,246,0.3)" stroke="#7C3AED" />
+              <rect x="10" y="8" width="4" height="13" rx="1" fill="rgba(139,92,246,0.2)" stroke="#7C3AED" />
+              <rect x="2" y="13" width="4" height="8" rx="1" fill="rgba(139,92,246,0.15)" stroke="#7C3AED" />
+            </svg>{' '}
+            {t('sp.rep_title')}
+          </span>
+          <button className="sp-paywall-cta" onClick={handleUpgrade}>
+            {t('paywall.upgrade_premium_cta')}
+          </button>
+        </div>
+      </div>
+
+      {/* <!-- M5: Mini Sparkline --> */}
+      {/* <div class="sp-sparkline"> */}
+      <div className="sp-sparkline">
+        {/* <div class="sp-sparkline-header"> */}
+        <div className="sp-sparkline-header">
+          {/* <span class="sp-sparkline-title">Зрители за 30 минут</span> */}
+          <span className="sp-sparkline-title">{t('sp.sparkline_title_live')}</span>
+          {/* <a class="sp-sparkline-more" href="#">Подробнее →</a> */}
+          <a className="sp-sparkline-more" href="#" onClick={(e) => e.preventDefault()}>
+            {t('sp.more')}
+          </a>
+        </div>
+        {/* <div class="sp-chart-stats"> */}
+        <div className="sp-chart-stats">
+          {/* <div class="sp-chart-stat"><div class="sp-chart-stat-label">Сейчас</div><div class="sp-chart-stat-value green">4,200</div></div> */}
+          <div className="sp-chart-stat">
+            <div className="sp-chart-stat-label">{t('sp.chart_now')}</div>
+            <div className="sp-chart-stat-value green">4,200</div>
+          </div>
+          {/* <div class="sp-chart-stat"><div class="sp-chart-stat-label">Макс</div><div class="sp-chart-stat-value">4,500</div></div> */}
+          <div className="sp-chart-stat">
+            <div className="sp-chart-stat-label">{t('sp.chart_max')}</div>
+            <div className="sp-chart-stat-value">4,500</div>
+          </div>
+          {/* <div class="sp-chart-stat"><div class="sp-chart-stat-label">Изм. 30м</div><div class="sp-chart-stat-value green">+8%</div></div> */}
+          <div className="sp-chart-stat">
+            <div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div>
+            <div className="sp-chart-stat-value green">+8%</div>
+          </div>
+        </div>
+        {/* <svg class="sp-sparkline-chart" viewBox="0 0 340 160" preserveAspectRatio="none"> */}
+        <svg className="sp-sparkline-chart" viewBox="0 0 340 160" preserveAspectRatio="none">
+          {/* <!-- Horizontal grid dashed --> */}
+          {/* <line x1="34" y1="20" x2="330" y2="20" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="2,3"/> */}
+          <line x1="34" y1="20" x2="330" y2="20" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
+          {/* <line x1="34" y1="55" x2="330" y2="55" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="2,3"/> */}
+          <line x1="34" y1="55" x2="330" y2="55" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
+          {/* <line x1="34" y1="90" x2="330" y2="90" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="2,3"/> */}
+          <line x1="34" y1="90" x2="330" y2="90" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
+          {/* <line x1="34" y1="125" x2="330" y2="125" stroke="#9CA3AF" stroke-width="1"/> */}
+          <line x1="34" y1="125" x2="330" y2="125" stroke="#9CA3AF" strokeWidth="1" />
+          {/* <!-- Y labels --> */}
+          {/* <text x="30" y="24" text-anchor="end" font-size="9" fill="#9ca3af" font-family="JetBrains Mono,monospace">5K</text> */}
+          <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">5K</text>
+          <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">4K</text>
+          <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">3K</text>
+          <text x="30" y="129" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">0</text>
+          {/* <!-- X labels --> */}
+          <text x="34" y="145" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−30м</text>
+          <text x="132" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−20м</text>
+          <text x="230" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−10м</text>
+          <text x="328" y="145" textAnchor="end" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">{t('sp.chart_now_label')}</text>
+          {/* <!-- ERV area --> */}
+          {/* <path d="M34,90 L64,85 L94,80 L124,82 L154,75 L184,72 L214,68 L244,62 L274,55 L304,52 L330,48 L330,125 L34,125 Z" fill="#059669" fill-opacity="0.08"/> */}
+          <path
+            d="M34,90 L64,85 L94,80 L124,82 L154,75 L184,72 L214,68 L244,62 L274,55 L304,52 L330,48 L330,125 L34,125 Z"
+            fill="#059669"
+            fillOpacity="0.08"
+          />
+          {/* <!-- Total online dashed grey --> */}
+          {/* <polyline points="34,75 64,70 94,65 124,63 154,58 184,55 214,50 244,44 274,38 304,32 330,28" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="3,2"/> */}
+          <polyline
+            points="34,75 64,70 94,65 124,63 154,58 184,55 214,50 244,44 274,38 304,32 330,28"
+            fill="none"
+            stroke="#9CA3AF"
+            strokeWidth="1.5"
+            strokeDasharray="3,2"
+          />
+          {/* <!-- ERV solid green --> */}
+          <polyline
+            points="34,90 64,85 94,80 124,82 154,75 184,72 214,68 244,62 274,55 304,52 330,48"
+            fill="none"
+            stroke="#059669"
+            strokeWidth="2"
+          />
+          {/* <!-- Markers --> */}
+          <circle cx="34" cy="90" r="2.5" fill="#059669" />
+          <circle cx="154" cy="75" r="2.5" fill="#059669" />
+          <circle cx="244" cy="62" r="2.5" fill="#059669" />
+          <circle cx="330" cy="48" r="4" fill="#059669" stroke="white" strokeWidth="2" />
+        </svg>
+        {/* <div class="sp-sparkline-legend"> */}
+        <div className="sp-sparkline-legend">
+          {/* <span class="sp-sparkline-legend-item"><span class="sp-sparkline-legend-line green"></span> Реальные (ERV)</span> */}
+          <span className="sp-sparkline-legend-item">
+            <span className="sp-sparkline-legend-line green"></span> {t('sp.legend_real_viewers')}
+          </span>
+          {/* <span class="sp-sparkline-legend-item"><span class="sp-sparkline-legend-line grey"></span> Всего онлайн</span> */}
+          <span className="sp-sparkline-legend-item">
+            <span className="sp-sparkline-legend-line grey"></span> {t('sp.legend_total_online')}
+          </span>
+        </div>
+      </div>
+
+      {/* <!-- M6: Audience Preview --> */}
+      {/* <div class="sp-audience"> */}
+      <div className="sp-audience">
+        {/* <div class="sp-audience-header"> */}
+        <div className="sp-audience-header">
+          {/* <span class="sp-audience-title">Аудитория</span> */}
+          <span className="sp-audience-title">{t('sp.audience_preview')}</span>
+          {/* <a class="sp-audience-more" href="#">Подробнее →</a> */}
+          <a className="sp-audience-more" href="#" onClick={(e) => e.preventDefault()}>
+            {t('sp.more')}
+          </a>
+        </div>
+        {/* <div class="sp-audience-row"><span class="sp-audience-flag">🇷🇺</span><span class="sp-audience-country">Россия</span><span class="sp-audience-pct">45%</span></div> */}
+        <div className="sp-audience-row">
+          <span className="sp-audience-flag">🇷🇺</span>
+          <span className="sp-audience-country">Россия</span>
+          <span className="sp-audience-pct">45%</span>
+        </div>
+        <div className="sp-audience-row">
+          <span className="sp-audience-flag">🇺🇦</span>
+          <span className="sp-audience-country">Украина</span>
+          <span className="sp-audience-pct">20%</span>
+        </div>
+        <div className="sp-audience-row">
+          <span className="sp-audience-flag">🇰🇿</span>
+          <span className="sp-audience-country">Казахстан</span>
+          <span className="sp-audience-pct">10%</span>
+        </div>
+      </div>
+
+      {/* <!-- Watchlist Button --> */}
+      {/* <button class="sp-watchlist-btn">
+            <svg class="ico ico-sm" viewBox="0 0 24 24" style="vertical-align:-0.2em;stroke-width:1.5;"><polygon ...></polygon></svg> В список
+          </button> */}
+      <button className="sp-watchlist-btn">
+        <svg
+          className="ico ico-sm"
+          viewBox="0 0 24 24"
+          style={{ verticalAlign: '-0.2em', strokeWidth: 1.5 }}
+        >
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>{' '}
+        {t('sp.watchlist_add')}
+      </button>
+    </div>
+  );
+}

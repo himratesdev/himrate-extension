@@ -24,6 +24,7 @@ import { Frame07ColdStartProvisionalLow } from './Frame07ColdStartProvisionalLow
 import { Frame08ColdStartProvisional } from './Frame08ColdStartProvisional';
 import { Frame09ColdStartDeepStreamer } from './Frame09ColdStartDeepStreamer';
 import { Frame10LiveGuestGreen } from './Frame10LiveGuestGreen';
+import { Frame11LiveFreeGreen } from './Frame11LiveFreeGreen';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -84,6 +85,22 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         ccv={trustCache.ccv}
         ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
         tiScore={trustCache.ti_score}
+      />
+    );
+  }
+
+  // Frames 11/12/13 — Live Free with M3/M4 paywall (color variants green/yellow/red).
+  // Literal port from slim/11. Free user (logged in, not Premium) sees blurred preview.
+  if (trustCache.is_live && tier === 'free' && !isOwnChannel) {
+    return (
+      <Frame11LiveFreeGreen
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+        classification={trustCache.classification}
+        percentile={trustCache.percentile_in_category}
       />
     );
   }

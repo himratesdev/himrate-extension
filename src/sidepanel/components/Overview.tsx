@@ -26,6 +26,7 @@ import { Frame09ColdStartDeepStreamer } from './Frame09ColdStartDeepStreamer';
 import { Frame10LiveGuestGreen } from './Frame10LiveGuestGreen';
 import { Frame11LiveFreeGreen } from './Frame11LiveFreeGreen';
 import { Frame14LivePremiumGreen } from './Frame14LivePremiumGreen';
+import { Frame15LiveStreamerOwnChannel } from './Frame15LiveStreamerOwnChannel';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
 import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
@@ -119,6 +120,22 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         classification={trustCache.classification}
         percentile={trustCache.percentile_in_category}
         isWatched={trustCache.is_watched_by_user}
+      />
+    );
+  }
+
+  // Frame 15 — Live Streamer Own Channel: literal port from slim/15. Own channel +
+  // streamer disclaimer + ERV gauge 160px + signals + reputation + Health Score.
+  if (trustCache.is_live && isOwnChannel) {
+    return (
+      <Frame15LiveStreamerOwnChannel
+        ervPercent={trustCache.erv_percent}
+        ervCount={trustCache.erv_count}
+        ccv={trustCache.ccv}
+        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+        tiScore={trustCache.ti_score}
+        percentile={trustCache.percentile_in_category}
+        streamsCount={trustCache.streamer_rating?.streams_count ?? 342}
       />
     );
   }

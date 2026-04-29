@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
+import { useSparkline } from '../hooks/useSparkline';
 
 interface Signal {
   type: string;
@@ -49,11 +50,17 @@ interface Props {
   tiScore: number | null;
   percentile: number | null;
   streamsCount: number;
+  channelId?: string | null;
   signals?: Signal[];
   reputation?: ReputationData | null;
   healthScore?: HealthScoreData | null;
   topCountries?: Country[] | null;
+  /** Verification requests used this month (out of 5). */
+  verificationRequestsUsed?: number;
   onNavigate?: (tab: string) => void;
+  onOpenBadgeModal?: () => void;
+  onOpenChannelCardModal?: () => void;
+  onOpenVerificationModal?: () => void;
 }
 
 const CIRCUMFERENCE_160 = 427.3;
@@ -81,9 +88,16 @@ function flagEmoji(code: string): string {
 
 export function Frame15LiveStreamerOwnChannel({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, percentile, streamsCount,
-  signals = [], reputation = null, healthScore = null, topCountries = null, onNavigate,
+  channelId = null, signals = [], reputation = null, healthScore = null, topCountries = null,
+  verificationRequestsUsed = 0, onNavigate,
+  onOpenBadgeModal, onOpenChannelCardModal, onOpenVerificationModal,
 }: Props) {
   const { t, i18n } = useTranslation();
+  const chart = useSparkline(channelId, true, true); // Streamer = full access
+
+  // Streamer Tools accordion state — Bейдж first row open per slim/15
+  const [toolsExpanded, setToolsExpanded] = useState<Set<string>>(() => new Set(['badge']));
+  const toggleTool = (k: string) => setToolsExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
   const color = ervLabelColor || 'green';
   const stroke = ERV_STROKE[color];
   const pct = ervPercent ?? 88;
@@ -434,6 +448,148 @@ export function Frame15LiveStreamerOwnChannel({
           </div>
           {open && (<div className="sp-signal-detail"><div className="sp-signal-detail-title">{t('sp.hs_consistency')}: {Math.round(hsConsistency)} / 100</div>{t('sp.hs_consistency_desc')}<div style={{ textAlign: 'right', marginTop: '4px' }}><a style={{ fontSize: '10px', color: 'var(--color-primary)', cursor: 'pointer', fontWeight: 600 }} onClick={() => onNavigate?.('trends')}>{t('sp.rep_history_link')}</a></div></div>)}
         </>); })()}
+      </div>
+
+      {/* Streamer Tools accordion — slim/15: Bейдж / Карточка / Запрос на проверку */}
+      <div className="sp-signals" style={{ gap: 0 }}>
+        <div className="sp-signals-title">{t('sp.streamer_tools_title')}</div>
+
+        {/* Trust Badge */}
+        <div
+          className="sp-signal-row sp-signal-expandable"
+          style={{ padding: '8px 0' }}
+          onClick={() => toggleTool('badge')}
+          role="button"
+          aria-expanded={toolsExpanded.has('badge')}
+        >
+          <span style={{ fontSize: '11px', fontWeight: 600 }}>
+            <svg className="ico ico-xs" viewBox="0 0 24 24" style={{ width: '12px', height: '12px', verticalAlign: '-0.1em' }}>
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+              <line x1="7" y1="7" x2="7.01" y2="7" />
+            </svg>{' '}
+            {t('sp.tools_badge_name')}
+          </span>
+          <span className={`sp-signal-expand-icon${toolsExpanded.has('badge') ? ' open' : ''}`}>▾</span>
+        </div>
+        {toolsExpanded.has('badge') && (
+          <div className="sp-signal-detail">
+            <div className="sp-signal-detail-title">{t('sp.tools_badge_subtitle')}</div>
+            {t('sp.tools_badge_desc')}
+            <button
+              className="sp-streamer-btn primary"
+              style={{ marginTop: '6px', width: '100%' }}
+              onClick={() => onOpenBadgeModal?.()}
+            >{t('sp.tools_badge_cta')}</button>
+          </div>
+        )}
+
+        {/* Channel Card */}
+        <div
+          className="sp-signal-row sp-signal-expandable"
+          style={{ padding: '8px 0' }}
+          onClick={() => toggleTool('card')}
+          role="button"
+          aria-expanded={toolsExpanded.has('card')}
+        >
+          <span style={{ fontSize: '11px', fontWeight: 600 }}>
+            <svg className="ico" viewBox="0 0 24 24" style={{ width: '12px', height: '12px', verticalAlign: '-0.1em' }}>
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+            </svg>{' '}
+            {t('sp.tools_card_name')}
+          </span>
+          <span className={`sp-signal-expand-icon${toolsExpanded.has('card') ? ' open' : ''}`}>▾</span>
+        </div>
+        {toolsExpanded.has('card') && (
+          <div className="sp-signal-detail">
+            <div className="sp-signal-detail-title">{t('sp.tools_card_subtitle')}</div>
+            {t('sp.tools_card_desc')}
+            <button
+              className="sp-streamer-btn secondary"
+              style={{ marginTop: '6px', width: '100%' }}
+              onClick={() => onOpenChannelCardModal?.()}
+            >{t('sp.tools_card_cta')}</button>
+          </div>
+        )}
+
+        {/* Verification Request */}
+        <div
+          className="sp-signal-row sp-signal-expandable"
+          style={{ padding: '8px 0' }}
+          onClick={() => toggleTool('verification')}
+          role="button"
+          aria-expanded={toolsExpanded.has('verification')}
+        >
+          <span style={{ fontSize: '11px', fontWeight: 600 }}>
+            <svg className="ico" viewBox="0 0 24 24" style={{ width: '13px', height: '13px', verticalAlign: '-0.1em' }}>
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <polyline points="22,4 12,13 2,4" />
+            </svg>{' '}
+            {t('sp.tools_verification_name')}
+          </span>
+          <span className={`sp-signal-expand-icon${toolsExpanded.has('verification') ? ' open' : ''}`}>▾</span>
+        </div>
+        {toolsExpanded.has('verification') && (
+          <div className="sp-signal-detail">
+            <div className="sp-signal-detail-title">{t('sp.tools_verification_subtitle')}</div>
+            {t('sp.tools_verification_desc')}
+            <div style={{ fontSize: '10px', color: 'var(--ink-30)', marginTop: '4px' }}>
+              {t('sp.tools_verification_used', { used: verificationRequestsUsed })}
+            </div>
+            <button
+              className="sp-streamer-btn secondary"
+              style={{ marginTop: '6px', width: '100%' }}
+              onClick={() => onOpenVerificationModal?.()}
+              disabled={verificationRequestsUsed >= 5}
+            >{t('sp.tools_verification_cta')}</button>
+          </div>
+        )}
+      </div>
+
+      {/* M5 Sparkline — Streamer (channelId from props, useSparkline) */}
+      <div className="sp-sparkline">
+        <div className="sp-sparkline-header">
+          <span className="sp-sparkline-title">{t('sp.sparkline_title_live')}</span>
+          <a className="sp-sparkline-more" href="#" onClick={(e) => { e.preventDefault(); onNavigate?.('trends'); }}>{t('sp.more')}</a>
+        </div>
+        <div className="sp-chart-stats">
+          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_real_short')}</div><div className="sp-chart-stat-value green">{chart?.stats.now != null ? formatNumber(chart.stats.now, i18n.language) : '2,800'}</div></div>
+          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_online_short')}</div><div className="sp-chart-stat-value">{chart?.stats.max != null ? formatNumber(chart.stats.max, i18n.language) : '2,900'}</div></div>
+          <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div><div className="sp-chart-stat-value green">{chart?.stats.change != null ? `${chart.stats.change >= 0 ? '+' : ''}${chart.stats.change}%` : '+87%'}</div></div>
+        </div>
+        <svg className="sp-sparkline-chart" viewBox="0 0 340 160" preserveAspectRatio="none">
+          <line x1="34" y1="20" x2="330" y2="20" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
+          <line x1="34" y1="55" x2="330" y2="55" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
+          <line x1="34" y1="90" x2="330" y2="90" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
+          <line x1="34" y1="125" x2="330" y2="125" stroke="#9CA3AF" strokeWidth="1" />
+          {chart ? chart.yLabels.map((l) => (
+            <text key={l.y} x="30" y={l.y} textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">{l.label}</text>
+          )) : (<>
+            <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">4K</text>
+            <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">3K</text>
+            <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">1.5K</text>
+            <text x="30" y="129" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">0</text>
+          </>)}
+          <text x="34" y="145" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−30м</text>
+          <text x="132" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−20м</text>
+          <text x="230" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−10м</text>
+          <text x="328" y="145" textAnchor="end" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">{t('sp.chart_now_label')}</text>
+          <path d={chart?.ervAreaPath ?? "M34,95 L64,85 L94,75 L124,65 L154,55 L184,48 L214,40 L244,32 L274,25 L304,20 L330,18 L330,125 L34,125 Z"} fill="#059669" fillOpacity="0.08" />
+          <polyline points={chart?.ccvPolylinePoints ?? "34,92 64,82 94,72 124,62 154,52 184,45 214,38 244,30 274,22 304,17 330,15"} fill="none" stroke="#9CA3AF" strokeWidth="1.5" strokeDasharray="3,2" />
+          <polyline points={chart?.ervPolylinePoints ?? "34,95 64,85 94,75 124,65 154,55 184,48 214,40 244,32 274,25 304,20 330,18"} fill="none" stroke="#059669" strokeWidth="2" />
+          {chart ? chart.markers.map((m, i) => (
+            <circle key={i} cx={m.cx} cy={m.cy} r={m.r} fill="#059669" stroke={m.isLast ? 'white' : 'none'} strokeWidth={m.isLast ? 2 : 0} />
+          )) : (<>
+            <circle cx="34" cy="95" r="2.5" fill="#059669" />
+            <circle cx="154" cy="55" r="2.5" fill="#059669" />
+            <circle cx="244" cy="32" r="2.5" fill="#059669" />
+            <circle cx="330" cy="18" r="4" fill="#059669" stroke="white" strokeWidth="2" />
+          </>)}
+        </svg>
+        <div className="sp-sparkline-legend">
+          <span className="sp-sparkline-legend-item"><span className="sp-sparkline-legend-line green"></span> {t('sp.legend_real_viewers_short')}</span>
+          <span className="sp-sparkline-legend-item"><span className="sp-sparkline-legend-line grey"></span> {t('sp.legend_total_online_short')}</span>
+        </div>
       </div>
 
       {/* Audience countries (real data fallback to wireframe defaults) */}

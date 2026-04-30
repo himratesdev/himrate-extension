@@ -103,7 +103,6 @@ export function TrendsTab({
         // the canonical visual structure. Real data wiring needs API endpoints (TBD).
         <Frame28TrendsOverview initialPeriod={period === '365d' ? '90d' : period as '7d' | '30d' | '60d' | '90d'} isPremium={true} />
       )}
-      <span className="sr-only">{t('trends.period.aria')}</span>
     </div>
   );
 }

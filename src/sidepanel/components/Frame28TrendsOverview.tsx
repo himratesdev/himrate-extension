@@ -1,10 +1,12 @@
 // LITERAL PORT — wireframe slim/28_screen-1-trends-overview-premium.html.
-// Period toggle (7d/30d/60d/90d/365d_locked) + 3 insights + 2x grid 9 module cards.
+// 3 insights + 2x grid 9 module cards.
+// NOTE: wireframe slim/28 contained period toggle as a standalone screen header.
+// Integrated в TrendsTab — period toggle owned by parent (PeriodToggle.tsx) → не дубликат
+// (B11 fix). Также убран <div class="sp-content"> wrapper — parent .trends-tab делает flex
+// layout, nested .sp-content конфликтовал и обрезал bottom 5 cards (B12 fix).
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-type Period = '7d' | '30d' | '60d' | '90d' | '365d';
 
 interface Insight {
   severity: 'red' | 'yellow' | 'green';
@@ -14,17 +16,12 @@ interface Insight {
 }
 
 interface Props {
-  /** Active period (default 30d). */
-  initialPeriod?: Period;
-  /** Free/Premium tier — for 365d lock indicator. */
-  isPremium?: boolean;
   /** Click handlers per module (open drill-down view). */
   onOpenModule?: (key: string) => void;
 }
 
-export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true, onOpenModule }: Props) {
+export function Frame28TrendsOverview({ onOpenModule }: Props) {
   const { t } = useTranslation();
-  const [period, setPeriod] = useState<Period>(initialPeriod);
   const [dismissedInsights, setDismissedInsights] = useState<Set<number>>(() => new Set());
 
   // Wireframe defaults — will be replaced with API data when endpoints ready
@@ -41,29 +38,7 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
   };
 
   return (
-    <div className="sp-content" role="tabpanel">
-      {/* Period toggle */}
-      <div className="sp-period-toggle">
-        {(['7d', '30d', '60d', '90d'] as Period[]).map((p) => (
-          <button
-            key={p}
-            className={`sp-period-pill${period === p ? ' active' : ''}`}
-            onClick={() => setPeriod(p)}
-          >{p}</button>
-        ))}
-        <button
-          className={`sp-period-pill${isPremium ? '' : ' locked'}`}
-          onClick={() => isPremium && setPeriod('365d')}
-        >
-          {!isPremium && (
-            <svg width="8" height="8" viewBox="0 0 8 8" style={{ display: 'inline', marginRight: 2 }}>
-              <rect x="2" y="4" width="4" height="3" fill="none" stroke="currentColor" strokeWidth="0.6" rx="0.4" />
-              <path d="M3 4V2.5a1 1 0 0 1 2 0V4" stroke="currentColor" strokeWidth="0.6" fill="none" />
-            </svg>
-          )}365d
-        </button>
-      </div>
-
+    <>
       {/* Insights cards */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 8 }}>
         {insights.map((ins, i) => {
@@ -94,7 +69,7 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
                   <span
                     onClick={() => onOpenModule?.(`insight_${i}`)}
                     style={{ fontSize: 10, color: c.titleColor, fontWeight: 600, cursor: 'pointer' }}
-                  >Подробнее →</span>
+                  >{t('sp.more')}</span>
                 )}
               </div>
               <div style={{ fontSize: 10, color: c.detailColor, lineHeight: 1.4 }}>
@@ -239,7 +214,7 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -24,7 +24,10 @@ export function PeriodToggle({ currentPeriod, onChange, accessLevel, onRequestUp
   const { t } = useTranslation();
 
   return (
-    <div className="trends-period-toggle" role="tablist" aria-label={t('trends.period.aria')}>
+    // Uses canonical .sp-period-toggle / .sp-period-pill classes (canonical.css:1039-1051) —
+    // matches Frame34/35/etc literal-port styling. Earlier .trends-period-* classes had
+    // no CSS rules → buttons rendered как unstyled (B11a). Fixed by adopting canonical naming.
+    <div className="sp-period-toggle" role="tablist" aria-label={t('trends.period.aria')}>
       {ALL_PERIODS.map((p) => {
         const isBusinessGated = p === '365d' && accessLevel !== 'business';
         const isActive = p === currentPeriod;
@@ -43,12 +46,12 @@ export function PeriodToggle({ currentPeriod, onChange, accessLevel, onRequestUp
             role="tab"
             aria-selected={isActive}
             aria-disabled={isBusinessGated}
-            className={`trends-period-btn${isActive ? ' active' : ''}${isBusinessGated ? ' gated' : ''}`}
+            className={`sp-period-pill${isActive ? ' active' : ''}${isBusinessGated ? ' locked' : ''}`}
             title={isBusinessGated ? t('trends.period.business_required') : undefined}
             onClick={handleClick}
           >
             {t(`trends.period.${p}`)}
-            {isBusinessGated && <span className="trends-period-lock" aria-hidden="true"> 🔒</span>}
+            {isBusinessGated && <span aria-hidden="true" style={{ marginLeft: 2 }}>🔒</span>}
           </button>
         );
       })}

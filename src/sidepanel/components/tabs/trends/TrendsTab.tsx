@@ -98,10 +98,14 @@ export function TrendsTab({
         <Paywall variant="business" onUpgrade={() => onRequestUpgrade?.('business')} />
       ) : (
         // Frame 28 LITERAL PORT — replaces previous TrendsOverview (own architecture).
-        // Wireframe slim/28: 9 module cards + 3 insights + period toggle.
-        // Old TrendsOverview (kept for now) handles real API integration; Frame28 is
-        // the canonical visual structure. Real data wiring needs API endpoints (TBD).
-        <Frame28TrendsOverview initialPeriod={period === '365d' ? '90d' : period as '7d' | '30d' | '60d' | '90d'} isPremium={true} />
+        // Wireframe slim/28: 9 module cards + 3 insights. Period toggle owned by parent
+        // PeriodToggle.tsx (B11 fix — duplicate removed). Business gating handled by
+        // showBusinessPaywall above (line 78) — no need для isPremium prop в Frame28.
+        // onOpenModule wired как fail-loud guard (B6) — full drill-down routing deferred к
+        // TASK-084 Phase G2; для сейчас console.warn чтобы deferred state виден в DevTools.
+        <Frame28TrendsOverview
+          onOpenModule={(key) => console.warn('[TASK-084 Phase G2 deferred] Frame28 onOpenModule:', key)}
+        />
       )}
     </div>
   );

@@ -1,11 +1,14 @@
 // LITERAL PORT — wireframe slim/47_screen-18-dostup-otozvan.html.
 // Red OAuth revoked banner + Reconnect Twitch CTA + heavily dimmed module preview.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   onReconnect?: () => void;
 }
 
 export function Frame47TrendsOauthRevoked({ onReconnect }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       <div style={{ border: '2px solid #EF4444', borderRadius: 8, padding: 12, background: '#FEF2F2' }}>
@@ -15,7 +18,7 @@ export function Frame47TrendsOauthRevoked({ onReconnect }: Props) {
             <path d="M8 7v2.5M8 11.5v.5" stroke="#EF4444" strokeWidth="1.3" strokeLinecap="round" />
           </svg>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#DC2626' }}>Доступ к данным отозван</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#DC2626' }}>{t('trends.oauth_revoked.title')}</div>
             <div style={{ fontSize: 10, color: '#991B1B', marginTop: 2 }}>Данные могут быть устаревшими. Переподключите Twitch для\u00a0обновления.</div>
           </div>
         </div>
@@ -31,11 +34,11 @@ export function Frame47TrendsOauthRevoked({ onReconnect }: Props) {
       </div>
       <div style={{ opacity: 0.2, pointerEvents: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: 10, background: 'white' }}>
-          <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase' }}>Реальные зрители</div>
+          <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase' }}>{t('erv.real_viewers_label')}</div>
           <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>83%</div>
         </div>
         <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: 10, background: 'white' }}>
-          <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase' }}>Рейтинг доверия</div>
+          <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase' }}>{t('sp.trust_rating')}</div>
           <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>77</div>
         </div>
       </div>

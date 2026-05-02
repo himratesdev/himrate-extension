@@ -1,5 +1,7 @@
 // LITERAL PORT — wireframe slim/42_screen-14-po-kategoriyam-premium.html.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props { onBack?: () => void; }
 
 interface CategoryStats {
@@ -24,6 +26,7 @@ const CATEGORIES: CategoryStats[] = [
 ];
 
 export function Frame42TrendsCategories({ onBack }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       <div style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer', marginBottom: 6 }} onClick={() => onBack?.()} role="button">← Все модули</div>
@@ -41,7 +44,7 @@ export function Frame42TrendsCategories({ onBack }: Props) {
           }}
         >
           {cat.best && (
-            <div style={{ position: 'absolute', top: -8, right: 12, fontSize: 8, padding: '2px 8px', background: '#22C55E', color: 'white', borderRadius: 10, fontWeight: 700, textTransform: 'uppercase' }}>Лучшая</div>
+            <div style={{ position: 'absolute', top: -8, right: 12, fontSize: 8, padding: '2px 8px', background: '#22C55E', color: 'white', borderRadius: 10, fontWeight: 700, textTransform: 'uppercase' }}>{t('trends.common.best_female')}</div>
           )}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>{cat.name}</span>

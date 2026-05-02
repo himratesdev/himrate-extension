@@ -1,5 +1,7 @@
 // LITERAL PORT — wireframe slim/39_screen-12-komponenty-reytinga-premium.html.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   onBack?: () => void;
 }
@@ -13,6 +15,7 @@ const COMPONENTS = [
 ];
 
 export function Frame39TrendsComponents({ onBack }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       <div style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer', marginBottom: 6 }} onClick={() => onBack?.()} role="button">← Все модули</div>
@@ -20,8 +23,8 @@ export function Frame39TrendsComponents({ onBack }: Props) {
       {/* Stacked chart */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: '10px 12px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <span style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>Вклад компонентов</span>
-          <span style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace" }}>Итого: 77 баллов</span>
+          <span style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t('trends.components.title')}</span>
+          <span style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace" }}>{t('trends.components.total')}</span>
         </div>
         <div style={{ display: 'flex', height: 28, borderRadius: 4, overflow: 'hidden', marginBottom: 6 }}>
           {COMPONENTS.map((c) => (
@@ -44,7 +47,7 @@ export function Frame39TrendsComponents({ onBack }: Props) {
 
       {/* Component changes 30d */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)', padding: '8px 10px' }}>
-        <div style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>Изменения за 30 дней</div>
+        <div style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>{t('trends.components.delta_30d')}</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 8px' }}>
           {COMPONENTS.map((c) => (
             <div key={c.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '3px 6px', background: c.bg, borderRadius: 4 }}>

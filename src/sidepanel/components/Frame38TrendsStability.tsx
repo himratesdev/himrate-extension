@@ -1,10 +1,13 @@
 // LITERAL PORT — wireframe slim/38_screen-11-stabilnost-kanala-premium.html.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   onBack?: () => void;
 }
 
 export function Frame38TrendsStability({ onBack }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       <div style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer', marginBottom: 6 }} onClick={() => onBack?.()} role="button">← Все модули</div>
@@ -16,15 +19,15 @@ export function Frame38TrendsStability({ onBack }: Props) {
           <div style={{ fontSize: 10, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace", textAlign: 'center' }}>/ 100</div>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>Стабильность канала</div>
-          <div style={{ fontSize: 11, color: 'var(--ink-70)', marginBottom: 2 }}>Стабильный канал</div>
-          <div style={{ fontSize: 9, color: 'var(--ink-30)' }}>Среднее в категории: 78</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>{t('trends.stability.title')}</div>
+          <div style={{ fontSize: 11, color: 'var(--ink-70)', marginBottom: 2 }}>{t('trends.stability.subtitle_stable')}</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-30)' }}>{t('trends.stability.category_avg')}</div>
         </div>
       </div>
 
       {/* Weekly history */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: '10px 12px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>Недельная история</div>
+        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>{t('trends.stability.weekly_history')}</div>
         <div style={{ display: 'flex', gap: 6, marginBottom: 2 }}>
           {[{ v: '82', c: 'var(--ink-50)' }, { v: '84', c: 'var(--ink-50)' }, { v: '86', c: 'var(--ink-50)' }, { v: '88', c: '#22C55E' }].map((b, i) => (
             <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: 8, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: b.c }}>{b.v}</div>

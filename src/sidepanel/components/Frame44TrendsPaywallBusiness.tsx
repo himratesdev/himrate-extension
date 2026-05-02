@@ -1,6 +1,8 @@
 // LITERAL PORT — wireframe slim/44_screen-16-paywall-business-365d.html.
 // Premium → Business paywall: hook + social proof + 6 feature cards + dark pricing block.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   channelLogin?: string;
   onUpgrade?: () => void;
@@ -20,6 +22,7 @@ const cardTitleStyle: React.CSSProperties = { fontSize: 10, fontWeight: 700, col
 const cardSubStyle: React.CSSProperties = { fontSize: 9, color: 'var(--ink-50)', lineHeight: 1.3, marginTop: 1 };
 
 export function Frame44TrendsPaywallBusiness({ channelLogin = 'shroud', onUpgrade }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel" style={{ gap: 10 }}>
       <div style={{ textAlign: 'center', padding: '0 6px' }}>
@@ -74,7 +77,7 @@ export function Frame44TrendsPaywallBusiness({ channelLogin = 'shroud', onUpgrad
           <button
             onClick={() => (onUpgrade ? onUpgrade() : chrome.tabs.create({ url: 'https://himrate.com/pricing?plan=business' }))}
             style={{ width: '100%', padding: 12, background: 'white', color: '#1e1b4b', border: 'none', borderRadius: 8, fontFamily: "'Space Grotesk', sans-serif", fontSize: 14, fontWeight: 700, cursor: 'pointer', marginTop: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
-          >Открыть полный доступ</button>
+          >{t('trends.paywall.business.cta')}</button>
         </div>
       </div>
     </div>

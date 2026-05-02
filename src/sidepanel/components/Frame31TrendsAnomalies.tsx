@@ -2,12 +2,15 @@
 // Anomalies drill-down: yellow summary + DoW distribution + 3 type counts + event list.
 // LEGAL: wireframe contains "Бот-рейд" — replaced с "Аномальный рейд" per CLAUDE.md ERV labels v3.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   onBack?: () => void;
   onOpenEvent?: (id: string) => void;
 }
 
 export function Frame31TrendsAnomalies({ onBack, onOpenEvent }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       <div style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer', marginBottom: 6 }} onClick={() => onBack?.()} role="button">← Все модули</div>
@@ -32,7 +35,7 @@ export function Frame31TrendsAnomalies({ onBack, onOpenEvent }: Props) {
 
       {/* DoW distribution */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: '10px 12px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>Когда происходят аномалии</div>
+        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>{t('trends.anomalies.when_label')}</div>
         <div style={{ display: 'flex', gap: 4, marginBottom: 2 }}>
           {[
             { value: '2', color: '#3B82F6' },
@@ -80,7 +83,7 @@ export function Frame31TrendsAnomalies({ onBack, onOpenEvent }: Props) {
 
       {/* Event list */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)', overflow: 'hidden' }}>
-        <div style={{ padding: '8px 12px', fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, borderBottom: '1px solid var(--ink-10)' }}>События</div>
+        <div style={{ padding: '8px 12px', fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, borderBottom: '1px solid var(--ink-10)' }}>{t('trends.anomalies.events')}</div>
         {[
           { id: 'e1', date: '12 мар, 18:22', type: 'Аномальный рейд', typeColor: '#DC2626', typeBg: '#FEF2F2', dot: '#EF4444', detail: 'Зрители: +450% · Рейтинг доверия: 78 → 41' },
           { id: 'e2', date: '19 фев, 20:34', type: 'Неизвестно', typeColor: '#EA580C', typeBg: 'rgba(249,115,22,0.1)', dot: '#F97316', detail: 'Зрители: +280% · Причина не определена' },

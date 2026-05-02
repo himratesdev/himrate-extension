@@ -2,6 +2,8 @@
 // Free → Premium paywall: hook + social proof + 6 blurred feature cards + pricing CTA.
 // LEGAL NOTE: wireframe contains "накрутки" — replaced с legal-safe "аномалии" per CLAUDE.md.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   channelLogin?: string;
   anomalyCount?: number;
@@ -31,6 +33,7 @@ const cardTitleStyle: React.CSSProperties = { fontSize: 10, fontWeight: 700, col
 const cardSubStyle: React.CSSProperties = { fontSize: 9, color: 'var(--ink-50)', lineHeight: 1.3, marginTop: 1 };
 
 export function Frame32TrendsPaywallFree({ channelLogin = 'shroud', anomalyCount = 2, onUpgrade }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel" style={{ justifyContent: 'center', gap: 12 }}>
       {/* Hook */}
@@ -59,7 +62,7 @@ export function Frame32TrendsPaywallFree({ channelLogin = 'shroud', anomalyCount
               <polyline points="0,30 20,24 40,26 60,20 80,22 100,16 120,14 140,10" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinejoin="round" />
             </svg>
           </div>
-          <div style={cardTitleStyle}>Реальные зрители</div>
+          <div style={cardTitleStyle}>{t('trends.paywall_free.feat_real_viewers')}</div>
           <div style={cardSubStyle}>Живые люди, история 90\u00a0дней</div>
         </div>
         {/* 2. Детектор аномалий */}
@@ -72,8 +75,8 @@ export function Frame32TrendsPaywallFree({ channelLogin = 'shroud', anomalyCount
               <circle cx="60" cy="4" r="3" fill="#EF4444" opacity="0.3" />
             </svg>
           </div>
-          <div style={cardTitleStyle}>Детектор аномалий</div>
-          <div style={cardSubStyle}>Рейды, аномалии — первым</div>
+          <div style={cardTitleStyle}>{t('trends.paywall_free.feat_anomaly_detector')}</div>
+          <div style={cardSubStyle}>{t('trends.paywall_free.feat_anomaly_detector_desc')}</div>
         </div>
         {/* 3. Прогнозы рейтинга */}
         <div style={cardStyle}>
@@ -85,8 +88,8 @@ export function Frame32TrendsPaywallFree({ channelLogin = 'shroud', anomalyCount
               <rect x="90" y="0" width="50" height="38" fill="#3B82F6" opacity="0.04" />
             </svg>
           </div>
-          <div style={cardTitleStyle}>Прогнозы рейтинга</div>
-          <div style={cardSubStyle}>Рост, стагнация или падение</div>
+          <div style={cardTitleStyle}>{t('trends.paywall_free.feat_forecast')}</div>
+          <div style={cardSubStyle}>{t('trends.paywall_free.feat_forecast_desc')}</div>
         </div>
         {/* 4. Восстановление */}
         <div style={cardStyle}>
@@ -99,7 +102,7 @@ export function Frame32TrendsPaywallFree({ channelLogin = 'shroud', anomalyCount
               <rect x="0" y="22" width="50" height="10" rx="4" fill="#EAB308" opacity="0.5" />
             </svg>
           </div>
-          <div style={cardTitleStyle}>Восстановление рейтинга</div>
+          <div style={cardTitleStyle}>{t('trends.paywall_free.feat_recovery')}</div>
           <div style={cardSubStyle}>15 чистых стримов до восстановления</div>
         </div>
         {/* 5. История 90 дней */}
@@ -112,7 +115,7 @@ export function Frame32TrendsPaywallFree({ channelLogin = 'shroud', anomalyCount
             </svg>
           </div>
           <div style={cardTitleStyle}>90 дней истории</div>
-          <div style={cardSubStyle}>Долгосрочная аналитика</div>
+          <div style={cardSubStyle}>{t('trends.paywall_free.feat_long_term')}</div>
         </div>
         {/* 6. По дням недели */}
         <div style={cardStyle}>
@@ -128,8 +131,8 @@ export function Frame32TrendsPaywallFree({ channelLogin = 'shroud', anomalyCount
               <rect x="122" y="22" width="16" height="14" rx="2" fill="#10B981" opacity="0.3" />
             </svg>
           </div>
-          <div style={cardTitleStyle}>По дням недели</div>
-          <div style={cardSubStyle}>Когда канал на пике</div>
+          <div style={cardTitleStyle}>{t('trends.paywall_free.feat_weekday')}</div>
+          <div style={cardSubStyle}>{t('trends.paywall_free.feat_weekday_desc')}</div>
         </div>
       </div>
       {/* Pricing — dark electric block */}

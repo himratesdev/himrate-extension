@@ -1,5 +1,7 @@
 // LITERAL PORT — wireframe slim/41_screen-13-sravnenie-s-kollegami-business.html.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props { onBack?: () => void; }
 
 const RANK_HISTORY = [
@@ -10,6 +12,7 @@ const RANK_HISTORY = [
 ];
 
 export function Frame41TrendsComparison({ onBack }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       <div style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 600, cursor: 'pointer', marginBottom: 6 }} onClick={() => onBack?.()} role="button">← Все модули</div>
@@ -17,11 +20,11 @@ export function Frame41TrendsComparison({ onBack }: Props) {
       {/* Hero */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 10, padding: '12px 14px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: 14 }}>
         <div style={{ flexShrink: 0 }}>
-          <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: '#3B82F6', lineHeight: 1 }}>Топ</div>
+          <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: '#3B82F6', lineHeight: 1 }}>{t('trends.comparison.top_label')}</div>
           <div style={{ fontSize: 24, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: '#3B82F6', lineHeight: 1 }}>12%</div>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>Категория</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>{t('trends.comparison.category_label')}</div>
           <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", marginBottom: 2 }}>Just Chatting</div>
           <div style={{ fontSize: 9, color: 'var(--ink-30)' }}>Лучше 88% из 2,340 каналов</div>
         </div>
@@ -29,7 +32,7 @@ export function Frame41TrendsComparison({ onBack }: Props) {
 
       {/* Comparison bars */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: '10px 12px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-        <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>Ваши показатели vs категория</div>
+        <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>{t('trends.comparison.you_vs_category')}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[
             { name: 'Рейтинг доверия', value: 77, median: 71, color: '#3B82F6', valSuffix: '' },
@@ -53,7 +56,7 @@ export function Frame41TrendsComparison({ onBack }: Props) {
 
       {/* Rank history */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: '10px 12px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>Динамика позиции</div>
+        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>{t('trends.comparison.position_dynamics')}</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4 }}>
           {RANK_HISTORY.map((r) => (
             <div

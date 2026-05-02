@@ -1,6 +1,8 @@
 // LITERAL PORT — wireframe slim/54_watchlists-search-no-results.html.
 // Client-side search filter returned no matches.
 
+import { useTranslation } from 'react-i18next';
+
 interface ListTab { name: string; count: number }
 interface Props {
   lists?: ListTab[];
@@ -28,6 +30,7 @@ export function Frame54WatchlistsSearchNoResults({
   onClearSearch,
   onSelectList,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       {/* M1 */}
@@ -62,7 +65,7 @@ export function Frame54WatchlistsSearchNoResults({
       </div>
       {/* No results */}
       <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-        <div style={{ fontSize: 12, color: 'var(--ink-30)' }}>Не найдено</div>
+        <div style={{ fontSize: 12, color: 'var(--ink-30)' }}>{t('watchlists.search.no_results')}</div>
       </div>
     </div>
   );

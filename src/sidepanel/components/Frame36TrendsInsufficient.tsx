@@ -1,11 +1,14 @@
 // LITERAL PORT — wireframe slim/36_screen-9-nedostatochno-dannyh.html.
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   streamsAnalyzed?: number;
   streamsRequired?: number;
 }
 
 export function Frame36TrendsInsufficient({ streamsAnalyzed = 2, streamsRequired = 5 }: Props) {
+  const { t } = useTranslation();
   const pct = Math.round((streamsAnalyzed / streamsRequired) * 100);
   return (
     <div className="sp-content" role="tabpanel" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: 12 }}>
@@ -13,7 +16,7 @@ export function Frame36TrendsInsufficient({ streamsAnalyzed = 2, streamsRequired
         <path d="M3 3v18h18" />
         <path d="M7 16l4-4 4 4 4-4" strokeDasharray="2,2" />
       </svg>
-      <div style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>Пока недостаточно данных</div>
+      <div style={{ fontSize: 15, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif" }}>{t('trends.insufficient.title')}</div>
       <div style={{ fontSize: 12, color: 'var(--ink-50)', maxWidth: 240 }}>
         Для расчёта трендов нужно минимум {streamsRequired} стримов. Проанализировано {streamsAnalyzed} из\u00a0{streamsRequired}.
       </div>

@@ -1,6 +1,8 @@
 // LITERAL PORT — wireframe slim/53_watchlists-error.html.
 // Error loading. M1 tabs remain for switching.
 
+import { useTranslation } from 'react-i18next';
+
 interface ListTab { name: string; count: number }
 interface Props {
   lists?: ListTab[];
@@ -15,6 +17,7 @@ const DEFAULT_LISTS: ListTab[] = [
 ];
 
 export function Frame53WatchlistsError({ lists = DEFAULT_LISTS, activeListIndex = 0, onRetry, onSelectList }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel">
       {/* M1: tabs still visible */}
@@ -37,9 +40,9 @@ export function Frame53WatchlistsError({ lists = DEFAULT_LISTS, activeListIndex 
           <line x1="12" y1="9" x2="12" y2="13" />
           <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
-        <div style={{ fontSize: 13, fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink-70)', marginBottom: 4 }}>Не удалось загрузить</div>
+        <div style={{ fontSize: 13, fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink-70)', marginBottom: 4 }}>{t('watchlists.error.title')}</div>
         <div style={{ fontSize: 11, color: 'var(--ink-30)', marginBottom: 12 }}>Проверьте соединение и&nbsp;попробуйте снова</div>
-        <button onClick={() => onRetry?.()} style={{ padding: '8px 20px', fontSize: 11, fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '2.5px solid var(--border-dark)', borderRadius: 8, background: 'white', color: 'var(--ink-70)', cursor: 'pointer', boxShadow: '2px 2px 0 rgba(0,0,0,0.06)' }}>Повторить</button>
+        <button onClick={() => onRetry?.()} style={{ padding: '8px 20px', fontSize: 11, fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '2.5px solid var(--border-dark)', borderRadius: 8, background: 'white', color: 'var(--ink-70)', cursor: 'pointer', boxShadow: '2px 2px 0 rgba(0,0,0,0.06)' }}>{t('popup.retry')}</button>
       </div>
     </div>
   );

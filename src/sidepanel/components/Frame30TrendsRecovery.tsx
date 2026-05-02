@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function Frame30TrendsRecovery({ onBack }: Props) {
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div className="sp-content" role="tabpanel">
@@ -16,7 +16,7 @@ export function Frame30TrendsRecovery({ onBack }: Props) {
 
       {/* Progress section — 15 bar segments */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 10, padding: 16, background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-        <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>Прогресс восстановления</div>
+        <div style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>{t('trends.recovery.progress_title')}</div>
         <div style={{ display: 'flex', gap: 3, marginBottom: 12 }}>
           {[0,1,2,3,4,5,6,7].map(i => (<div key={i} style={{ flex: 1, height: 8, background: '#22C55E', borderRadius: 2 }}></div>))}
           <div style={{ flex: 1, height: 8, background: '#EF4444', borderRadius: 2 }}></div>
@@ -35,7 +35,7 @@ export function Frame30TrendsRecovery({ onBack }: Props) {
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 10, padding: '14px 16px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', marginBottom: 2 }}>Сейчас</div>
+            <div style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', marginBottom: 2 }}>{t('trends.recovery.now')}</div>
             <div style={{ fontSize: 28, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: '#EAB308' }}>66</div>
           </div>
           <svg width="160" height="48" viewBox="0 0 160 48" style={{ flexShrink: 0 }}>
@@ -57,7 +57,7 @@ export function Frame30TrendsRecovery({ onBack }: Props) {
             <circle cx="152" cy="5" r="4.5" fill="#22C55E" stroke="white" strokeWidth="1.5" />
           </svg>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', marginBottom: 2 }}>Прогноз</div>
+            <div style={{ fontSize: 9, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', marginBottom: 2 }}>{t('trends.recovery.forecast')}</div>
             <div style={{ fontSize: 28, fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: '#22C55E' }}>80</div>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function Frame30TrendsRecovery({ onBack }: Props) {
       {/* Bonus block (purple) */}
       <div style={{ border: '2.5px solid #8B5CF6', borderRadius: 8, padding: 12, background: 'rgba(139,92,246,0.04)', boxShadow: '2px 2px 0 rgba(139,92,246,0.15)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <span style={{ fontSize: 10, color: '#7C3AED', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', fontWeight: 600 }}>Бонус за хорошие показатели</span>
+          <span style={{ fontSize: 10, color: '#7C3AED', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', fontWeight: 600 }}>{t('trends.recovery.bonus_title')}</span>
           <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: '#7C3AED' }}>+8 pts</span>
         </div>
         <div style={{ height: 4, background: 'rgba(139,92,246,0.15)', borderRadius: 2, marginBottom: 6 }}>
@@ -77,14 +77,14 @@ export function Frame30TrendsRecovery({ onBack }: Props) {
         </div>
         <div style={{ fontSize: 10, color: 'var(--ink-50)' }}>Максимум: +15 баллов. Начисляется за качество чата и вовлечённость зрителей.</div>
         <div style={{ border: '1.5px solid #8B5CF6', borderRadius: 8, padding: 10, background: 'rgba(139,92,246,0.06)', marginTop: 8 }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: '#7C3AED', fontFamily: "'Space Grotesk', sans-serif", marginBottom: 6 }}>За что начислен бонус</div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#7C3AED', fontFamily: "'Space Grotesk', sans-serif", marginBottom: 6 }}>{t('trends.recovery.bonus_reasons')}</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <svg width="10" height="10" viewBox="0 0 10 10">
                 <circle cx="5" cy="5" r="4" fill="#8B5CF6" opacity="0.15" stroke="#8B5CF6" strokeWidth="1.5" />
                 <path d="M3.5 5l1.2 1.2L6.5 4" stroke="#8B5CF6" strokeWidth="1.2" fill="none" strokeLinecap="round" />
               </svg>
-              <span style={{ fontSize: 10, color: 'var(--ink-70)' }}>Качество чата:</span>
+              <span style={{ fontSize: 10, color: 'var(--ink-70)' }}>{t('trends.recovery.bonus_chat_quality')}</span>
               <span style={{ fontSize: 10, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: '#7C3AED' }}>85 / 100</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -102,7 +102,7 @@ export function Frame30TrendsRecovery({ onBack }: Props) {
 
       {/* Stream history */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: '10px 12px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>Последние стримы</div>
+        <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600, marginBottom: 8 }}>{t('trends.recovery.last_streams')}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {[
             { date: '15 апр', clean: true, score: 72 },

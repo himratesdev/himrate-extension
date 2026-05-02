@@ -2,6 +2,7 @@
 // Premium with active Filters/Sort, 2 selected → M3 Bulk Bar (Compare, Export PDF, Deselect).
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ListTab { name: string; count: number }
 interface ChannelCard {
@@ -80,6 +81,7 @@ export function Frame55WatchlistsPremiumBulk({
   onListMenu,
   onChannelMenu,
 }: Props) {
+  const { t } = useTranslation();
   const [activeList, setActiveList] = useState(activeListIndex);
   const [selected, setSelected] = useState<Set<string>>(new Set(selectedLogins));
 
@@ -119,11 +121,11 @@ export function Frame55WatchlistsPremiumBulk({
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, padding: '0 0 10px 0', borderBottom: '1px solid var(--border-light)', marginBottom: 8 }}>
           <div style={{ background: 'rgba(34,197,94,0.06)', borderRadius: 6, padding: '6px 8px', textAlign: 'center' }}>
-            <div title="Средний ERV по списку" style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>Средний ERV</div>
+            <div title="Средний ERV по списку" style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>{t('watchlists.list.avg_erv')}</div>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-erv-green)', fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>{avgErv}%</div>
           </div>
           <div style={{ background: 'rgba(34,197,94,0.06)', borderRadius: 6, padding: '6px 8px', textAlign: 'center' }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>Онлайн</div>
+            <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>{t('watchlists.list.online')}</div>
             <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-erv-green)', fontFamily: "'JetBrains Mono', monospace", lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
               <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: 'var(--color-erv-green)' }}></span>{liveCount}
             </div>
@@ -218,9 +220,9 @@ export function Frame55WatchlistsPremiumBulk({
         <div style={{ padding: '10px 14px', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 11, color: '#ffffff', fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", flexShrink: 0 }}>{selected.size} выбрано</span>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <button onClick={() => onCompare?.()} style={{ padding: '5px 10px', fontSize: 10, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid #ffffff', borderRadius: 6, background: '#ffffff', color: '#1a1a1a', cursor: 'pointer' }}>Сравнить</button>
-            <button onClick={() => onExportPdf?.()} style={{ padding: '5px 10px', fontSize: 10, fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid rgba(255,255,255,0.5)', borderRadius: 6, background: 'transparent', color: '#ffffff', cursor: 'pointer' }}>Экспорт PDF</button>
-            <button onClick={handleDeselect} style={{ padding: '5px 8px', fontSize: 10, fontWeight: 500, fontFamily: "'Inter', sans-serif", border: 'none', background: 'transparent', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', textDecoration: 'underline' }}>Снять</button>
+            <button onClick={() => onCompare?.()} style={{ padding: '5px 10px', fontSize: 10, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid #ffffff', borderRadius: 6, background: '#ffffff', color: '#1a1a1a', cursor: 'pointer' }}>{t('watchlists.bulk.compare')}</button>
+            <button onClick={() => onExportPdf?.()} style={{ padding: '5px 10px', fontSize: 10, fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", border: '1.5px solid rgba(255,255,255,0.5)', borderRadius: 6, background: 'transparent', color: '#ffffff', cursor: 'pointer' }}>{t('watchlists.bulk.export_pdf')}</button>
+            <button onClick={handleDeselect} style={{ padding: '5px 8px', fontSize: 10, fontWeight: 500, fontFamily: "'Inter', sans-serif", border: 'none', background: 'transparent', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', textDecoration: 'underline' }}>{t('watchlists.bulk.unselect')}</button>
           </div>
         </div>
       )}

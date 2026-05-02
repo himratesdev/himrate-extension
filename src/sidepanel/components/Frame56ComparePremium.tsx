@@ -2,6 +2,7 @@
 // Premium 2-channel compare: Period selector + Channel pickers + 12-metric table + Legend + Business banner.
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Period = '7d' | '30d' | '90d';
 
@@ -30,21 +31,6 @@ interface Props {
 const DEFAULT_LEFT: ChannelInfo = { name: 'shroud', ervPct: 85, ervColor: 'green' };
 const DEFAULT_RIGHT: ChannelInfo = { name: 'xQc', ervPct: 62, ervColor: 'yellow' };
 
-const DEFAULT_METRICS: MetricRow[] = [
-  { leftValue: '85%', rightValue: '62%', leftWins: true, leftColor: 'green', rightColor: 'yellow', metricLabel: <>Реальные<br />зрители<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
-  { leftValue: '4,420', rightValue: '26,040', leftWins: false, leftColor: 'green', rightColor: 'yellow', metricLabel: <>Реальные<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
-  { leftValue: '5,200', rightValue: '42,000', leftWins: false, metricLabel: <>Средн. онлайн<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
-  { leftValue: '7,800', rightValue: '156,000', leftWins: false, metricLabel: <>Пик онлайна<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
-  { leftValue: '88', rightValue: '62', leftWins: true, leftColor: 'green', rightColor: 'yellow', metricLabel: <>Рейтинг<br />доверия<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
-  { leftValue: '92%', rightValue: '55%', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>Авторизация<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
-  { leftValue: '8.2%', rightValue: '5.1%', leftWins: true, leftColor: 'green', rightColor: 'yellow', metricLabel: <>Чат/зрители<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
-  { leftValue: '34%', rightValue: '12%', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>Подписчики<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
-  { leftValue: '78%', rightValue: '88%', leftWins: true, leftColor: null, rightColor: 'red', metricLabel: <>Молчуны<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
-  { leftValue: '5ч 20м', rightValue: '8ч 45м', leftWins: false, metricLabel: <>Средн. длит.<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
-  { leftValue: '85', rightValue: '45', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>Репутация<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
-  { leftValue: '+12%', rightValue: '-8%', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>Тренд репут.<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate 30д</span></> },
-];
-
 const colorFor = (c?: 'green' | 'yellow' | 'red' | null): string | undefined => {
   if (c === 'green') return 'var(--color-erv-green)';
   if (c === 'yellow') return 'var(--color-erv-yellow)';
@@ -55,14 +41,31 @@ const colorFor = (c?: 'green' | 'yellow' | 'red' | null): string | undefined => 
 export function Frame56ComparePremium({
   channelLeft = DEFAULT_LEFT,
   channelRight = DEFAULT_RIGHT,
-  metrics = DEFAULT_METRICS,
+  metrics: metricsProp,
   onAddThirdChannel,
   onPickChannelLeft,
   onPickChannelRight,
   onUpgradeBusiness,
   onMetricClick,
 }: Props) {
+  const { t } = useTranslation();
   const [period, setPeriod] = useState<Period>('7d');
+
+  // Build metric labels through i18n (defaults — wireframe verbatim)
+  const metrics: MetricRow[] = metricsProp ?? [
+    { leftValue: '85%', rightValue: '62%', leftWins: true, leftColor: 'green', rightColor: 'yellow', metricLabel: <>{t('compare.row.real_line1')}<br />{t('compare.row.real_line2')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
+    { leftValue: '4,420', rightValue: '26,040', leftWins: false, leftColor: 'green', rightColor: 'yellow', metricLabel: <>{t('compare.row.real')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
+    { leftValue: '5,200', rightValue: '42,000', leftWins: false, metricLabel: <>{t('compare.row.avg_online')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
+    { leftValue: '7,800', rightValue: '156,000', leftWins: false, metricLabel: <>{t('compare.row.peak_online')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
+    { leftValue: '88', rightValue: '62', leftWins: true, leftColor: 'green', rightColor: 'yellow', metricLabel: <>{t('compare.row.trust_line1')}<br />{t('compare.row.trust_line2')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
+    { leftValue: '92%', rightValue: '55%', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>{t('compare.row.auth_ratio')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
+    { leftValue: '8.2%', rightValue: '5.1%', leftWins: true, leftColor: 'green', rightColor: 'yellow', metricLabel: <>{t('signal.chatter_ccv')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
+    { leftValue: '34%', rightValue: '12%', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>{t('compare.row.subscribers')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
+    { leftValue: '78%', rightValue: '88%', leftWins: true, leftColor: null, rightColor: 'red', metricLabel: <>{t('compare.row.silent')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
+    { leftValue: '5ч 20м', rightValue: '8ч 45м', leftWins: false, metricLabel: <>{t('compare.row.avg_duration')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>Twitch</span></> },
+    { leftValue: '85', rightValue: '45', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>{t('compare.row.reputation')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate</span></> },
+    { leftValue: '+12%', rightValue: '-8%', leftWins: true, leftColor: 'green', rightColor: 'red', metricLabel: <>{t('compare.row.reputation_trend')}<br /><span style={{ fontSize: 7, color: 'var(--ink-30)' }}>HimRate 30д</span></> },
+  ];
 
   return (
     <div className="sp-content" role="tabpanel">
@@ -79,13 +82,13 @@ export function Frame56ComparePremium({
       {/* Channel selectors */}
       <div style={{ display: 'flex', gap: 6, marginBottom: 10, alignItems: 'stretch' }}>
         <div className="sp-signals" style={{ flex: 1, padding: 8, textAlign: 'center', cursor: 'pointer' }} onClick={() => onPickChannelLeft?.()} role="button">
-          <div style={{ fontSize: 9, color: 'var(--ink-30)', marginBottom: 2 }}>Канал 1</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-30)', marginBottom: 2 }}>{t('compare.legend.channel_1')}</div>
           <div style={{ fontSize: 12, fontWeight: 700, color: colorFor(channelLeft.ervColor) }}>{channelLeft.name}</div>
           <div style={{ fontSize: 9, color: 'var(--ink-30)' }}>Зрит. {channelLeft.ervPct}%</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', fontSize: 10, color: 'var(--ink-30)', fontWeight: 700 }}>vs</div>
         <div className="sp-signals" style={{ flex: 1, padding: 8, textAlign: 'center', cursor: 'pointer' }} onClick={() => onPickChannelRight?.()} role="button">
-          <div style={{ fontSize: 9, color: 'var(--ink-30)', marginBottom: 2 }}>Канал 2</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-30)', marginBottom: 2 }}>{t('compare.legend.channel_2')}</div>
           <div style={{ fontSize: 12, fontWeight: 700, color: colorFor(channelRight.ervColor) }}>{channelRight.name}</div>
           <div style={{ fontSize: 9, color: 'var(--ink-30)' }}>Зрит. {channelRight.ervPct}%</div>
         </div>
@@ -98,7 +101,7 @@ export function Frame56ComparePremium({
       <div className="sp-signals" style={{ gap: 0 }}>
         <div style={{ display: 'flex', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", padding: '4px 0', borderBottom: '2px solid var(--border-dark)', color: 'var(--ink-30)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           <span style={{ flex: 1, textAlign: 'center', color: colorFor(channelLeft.ervColor) }}>{channelLeft.name}</span>
-          <span style={{ width: 90, textAlign: 'center' }}>Метрика</span>
+          <span style={{ width: 90, textAlign: 'center' }}>{t('compare.metric_header')}</span>
           <span style={{ flex: 1, textAlign: 'center', color: colorFor(channelRight.ervColor) }}>{channelRight.name}</span>
           <span style={{ width: 14 }}></span>
         </div>
@@ -123,10 +126,10 @@ export function Frame56ComparePremium({
 
       {/* Legend */}
       <div style={{ marginTop: 10, padding: '10px 12px', background: 'rgba(0,0,0,0.03)', borderRadius: 6, fontSize: 10, color: 'var(--ink-70)' }}>
-        <div style={{ fontSize: 9, color: 'var(--ink-30)', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: "'JetBrains Mono', monospace", marginBottom: 6 }}>Источник данных</div>
+        <div style={{ fontSize: 9, color: 'var(--ink-30)', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: "'JetBrains Mono', monospace", marginBottom: 6 }}>{t('compare.legend.data_source')}</div>
         <div style={{ marginBottom: 4 }}><span style={{ display: 'inline-block', width: 10, height: 10, background: 'var(--color-primary)', borderRadius: 2, verticalAlign: 'middle', marginRight: 6 }}></span>HimRate&nbsp;— наши расчёты</div>
         <div style={{ marginBottom: 10 }}><span style={{ display: 'inline-block', width: 10, height: 10, background: 'var(--ink-50)', borderRadius: 2, verticalAlign: 'middle', marginRight: 6 }}></span>Twitch&nbsp;— официальные данные</div>
-        <div style={{ fontSize: 9, color: 'var(--ink-30)', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: "'JetBrains Mono', monospace", marginBottom: 6, paddingTop: 8, borderTop: '1px dashed rgba(0,0,0,0.08)' }}>Цвет строки</div>
+        <div style={{ fontSize: 9, color: 'var(--ink-30)', textTransform: 'uppercase', letterSpacing: '0.04em', fontFamily: "'JetBrains Mono', monospace", marginBottom: 6, paddingTop: 8, borderTop: '1px dashed rgba(0,0,0,0.08)' }}>{t('compare.legend.row_color')}</div>
         <div style={{ marginBottom: 4 }}><span style={{ display: 'inline-block', width: 3, height: 12, background: '#22c55e', verticalAlign: 'middle', marginRight: 8 }}></span>Лучше у&nbsp;канала</div>
         <div><span style={{ display: 'inline-block', width: 3, height: 12, background: '#ef4444', verticalAlign: 'middle', marginRight: 8 }}></span>Хуже у&nbsp;канала</div>
       </div>

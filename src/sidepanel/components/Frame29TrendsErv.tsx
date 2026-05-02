@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
   const [chartMode, setChartMode] = useState<'pct' | 'count'>('pct');
 
   return (
@@ -29,7 +29,7 @@ export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
         </div>
         <div style={{ width: 1, height: 40, background: 'rgba(0,0,0,0.08)', flexShrink: 0 }}></div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>Реальные зрители</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t('erv.real_viewers_label')}</div>
           <div style={{ fontSize: 11, color: 'var(--ink-70)', marginTop: 4 }}>~4,200 из\u00a05,000 настоящие</div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', background: '#ECFDF5', borderRadius: 12, marginTop: 4 }}>
             <svg width="5" height="5" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="#22C55E" /></svg>
@@ -41,7 +41,7 @@ export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
       {/* Chart card */}
       <div style={{ border: '2.5px solid var(--border-dark)', borderRadius: 8, padding: '10px 12px', background: 'white', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <span style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>Реальные зрители · 30д</span>
+          <span style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{t('erv.real_viewers_label')} · 30д</span>
           <div style={{ display: 'flex', gap: 0, border: '1.5px solid var(--border-dark)', borderRadius: 4, overflow: 'hidden' }}>
             <button
               onClick={() => setChartMode('pct')}
@@ -50,7 +50,7 @@ export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
             <button
               onClick={() => setChartMode('count')}
               style={{ padding: '3px 10px', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", fontWeight: chartMode === 'count' ? 600 : 500, border: 'none', borderLeft: '1.5px solid var(--border-dark)', background: chartMode === 'count' ? 'var(--ink)' : 'white', color: chartMode === 'count' ? 'white' : 'var(--ink-50)', cursor: 'pointer' }}
-            >Число</button>
+            >{t('trends.erv.chart_mode_count')}</button>
           </div>
         </div>
         <svg width="100%" height="120" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet">
@@ -83,15 +83,15 @@ export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
         <div style={{ display: 'flex', gap: 12, fontSize: 8, fontFamily: "'JetBrains Mono', monospace", marginTop: 4 }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <span style={{ width: 10, height: 2, background: '#22C55E', borderRadius: 1, display: 'inline-block' }}></span>
-            <span style={{ color: 'var(--ink-30)' }}>Реальные зрители</span>
+            <span style={{ color: 'var(--ink-30)' }}>{t('erv.real_viewers_label')}</span>
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="#F97316" /></svg>
-            <span style={{ color: 'var(--ink-30)' }}>Неизвестно</span>
+            <span style={{ color: 'var(--ink-30)' }}>{t('trends.erv.cause_unknown')}</span>
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
             <svg width="6" height="6" viewBox="0 0 6 6"><circle cx="3" cy="3" r="3" fill="#EF4444" /></svg>
-            <span style={{ color: 'var(--ink-30)' }}>Рейд</span>
+            <span style={{ color: 'var(--ink-30)' }}>{t('trends.erv.cause_raid')}</span>
           </span>
         </div>
       </div>
@@ -99,17 +99,17 @@ export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
       {/* Trend + Forecast 3-col grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
         <div style={statCardStyle}>
-          <div style={statLabelStyle}>Тренд</div>
+          <div style={statLabelStyle}>{t('trends.trend_label')}</div>
           <div style={{ ...statValueStyle, color: '#22C55E' }}>+4.2%</div>
-          <div style={statSubStyle}>за 30 дней</div>
+          <div style={statSubStyle}>{t('trends.delta_period_30d_full')}</div>
         </div>
         <div style={statCardStyle}>
-          <div style={statLabelStyle}>Прогноз 7д</div>
+          <div style={statLabelStyle}>{t('trends.forecast.short_7d')}</div>
           <div style={{ ...statValueStyle, color: '#22C55E' }}>84%</div>
           <div style={statSubStyle}>разброс 81–87%</div>
         </div>
         <div style={statCardStyle}>
-          <div style={statLabelStyle}>Прогноз 30д</div>
+          <div style={statLabelStyle}>{t('trends.forecast.short_30d')}</div>
           <div style={{ ...statValueStyle, color: '#22C55E' }}>87%</div>
           <div style={statSubStyle}>разброс 80–94%</div>
         </div>
@@ -129,7 +129,7 @@ export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
           style={{ ...bestWorstCardStyle, borderLeft: '4px solid #22C55E' }}
           role="button"
         >
-          <div style={statLabelStyle}>Лучший</div>
+          <div style={statLabelStyle}>{t('trends.common.best')}</div>
           <div style={{ ...statValueStyle, color: '#22C55E' }}>91%</div>
           <div style={statSubStyle}>14 апр · Just Chatting</div>
         </div>
@@ -138,7 +138,7 @@ export function Frame29TrendsErv({ onBack, onOpenStream }: Props) {
           style={{ ...bestWorstCardStyle, borderLeft: '4px solid #EF4444' }}
           role="button"
         >
-          <div style={statLabelStyle}>Худший</div>
+          <div style={statLabelStyle}>{t('trends.common.worst')}</div>
           <div style={{ ...statValueStyle, color: '#EF4444' }}>62%</div>
           <div style={statSubStyle}>2 апр · Just Chatting</div>
         </div>

@@ -1,12 +1,15 @@
 // LITERAL PORT — wireframe slim/50_watchlists-guest.html.
 // Guest state: blurred decorative cards behind + overlay CTA (Sign Up + Sign In).
 
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   onSignUp?: () => void;
   onSignIn?: () => void;
 }
 
 export function Frame50WatchlistsGuest({ onSignUp, onSignIn }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="sp-content" role="tabpanel" style={{ position: 'relative', padding: 0, gap: 0 }}>
       {/* Blurred decorative cards behind */}
@@ -45,10 +48,10 @@ export function Frame50WatchlistsGuest({ onSignUp, onSignIn }: Props) {
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
-        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink-90)', marginBottom: 6, maxWidth: 260, lineHeight: 1.3 }}>Войдите, чтобы сохранять стримеров</div>
+        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink-90)', marginBottom: 6, maxWidth: 260, lineHeight: 1.3 }}>{t('watchlists.guest.title')}</div>
         <div style={{ fontSize: 11, color: 'var(--ink-50)', marginBottom: 16, maxWidth: 240, lineHeight: 1.4 }}>Добавляйте каналы в&nbsp;списки, отслеживайте реальных зрителей и&nbsp;получайте alerts бесплатно.</div>
-        <button onClick={() => onSignUp?.()} style={{ padding: '11px 28px', fontSize: 12, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2.5px solid var(--ink-90)', borderRadius: 10, background: 'var(--ink-90)', color: 'white', cursor: 'pointer', boxShadow: '3px 3px 0 rgba(0,0,0,0.15)', marginBottom: 8 }}>Создать аккаунт — бесплатно</button>
-        <button onClick={() => onSignIn?.()} style={{ padding: '6px 12px', fontSize: 11, fontWeight: 500, fontFamily: "'Inter', sans-serif", border: 'none', background: 'transparent', color: 'var(--ink-50)', cursor: 'pointer', textDecoration: 'underline' }}>Уже есть аккаунт? Войти</button>
+        <button onClick={() => onSignUp?.()} style={{ padding: '11px 28px', fontSize: 12, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2.5px solid var(--ink-90)', borderRadius: 10, background: 'var(--ink-90)', color: 'white', cursor: 'pointer', boxShadow: '3px 3px 0 rgba(0,0,0,0.15)', marginBottom: 8 }}>{t('watchlists.guest.cta_signup')}</button>
+        <button onClick={() => onSignIn?.()} style={{ padding: '6px 12px', fontSize: 11, fontWeight: 500, fontFamily: "'Inter', sans-serif", border: 'none', background: 'transparent', color: 'var(--ink-50)', cursor: 'pointer', textDecoration: 'underline' }}>{t('watchlists.guest.cta_signin')}</button>
       </div>
     </div>
   );

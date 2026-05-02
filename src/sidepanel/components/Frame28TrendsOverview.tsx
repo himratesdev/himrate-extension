@@ -23,7 +23,7 @@ interface Props {
 }
 
 export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true, onOpenModule }: Props) {
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
   const [period, setPeriod] = useState<Period>(initialPeriod);
   const [dismissedInsights, setDismissedInsights] = useState<Set<number>>(() => new Set());
 
@@ -109,42 +109,42 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         {/* ERV Timeline */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('erv')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>Реальные зрители</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('erv.real_viewers_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ ...moduleValueStyle, color: '#22C55E' }}>83%</div>
-          <div style={moduleSubtitleStyle}>Чистый канал</div>
+          <div style={moduleSubtitleStyle}>{t('trends.overview.module.erv_subtitle_clean')}</div>
           <svg viewBox="0 0 120 28" style={{ width: '100%', height: 24, marginTop: 8 }} preserveAspectRatio="none">
             <path d="M0,22 L20,16 L40,12 L60,18 L80,8 L100,10 L120,4" stroke="#22C55E" strokeWidth="1.5" fill="none" />
           </svg>
           <div style={moduleTrendStyle}>
             <svg width="7" height="7" viewBox="0 0 8 8"><polygon points="4,1 7,6 1,6" fill="#22C55E" /></svg>
             <span style={{ fontSize: 9, fontWeight: 700, color: '#22C55E' }}>+4.2%</span>
-            <span style={{ fontSize: 8, color: 'var(--ink-30)' }}>за 30д</span>
+            <span style={{ fontSize: 8, color: 'var(--ink-30)' }}>{t('trends.overview.module.delta_period_30d_short')}</span>
           </div>
         </div>
 
         {/* TI Timeline */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('ti')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>Рейтинг доверия</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('sp.trust_rating')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ ...moduleValueStyle, color: '#3B82F6' }}>77</div>
-          <div style={moduleSubtitleStyle}>Требует внимания</div>
+          <div style={moduleSubtitleStyle}>{t('trends.overview.module.ti_subtitle_attention')}</div>
           <svg viewBox="0 0 120 28" style={{ width: '100%', height: 24, marginTop: 8 }} preserveAspectRatio="none">
             <path d="M0,4 L20,8 L40,12 L60,14 L80,16 L100,18 L120,22" stroke="#3B82F6" strokeWidth="1.5" fill="none" />
           </svg>
           <div style={moduleTrendStyle}>
             <svg width="7" height="7" viewBox="0 0 8 8"><polygon points="4,7 7,2 1,2" fill="#EF4444" /></svg>
             <span style={{ fontSize: 9, fontWeight: 700, color: '#EF4444' }}>-12 pts</span>
-            <span style={{ fontSize: 8, color: 'var(--ink-30)' }}>за 30д</span>
+            <span style={{ fontSize: 8, color: 'var(--ink-30)' }}>{t('trends.overview.module.delta_period_30d_short')}</span>
           </div>
         </div>
 
         {/* Stability */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('stability')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>Стабильность</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('trends.overview.module.stability_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
             <span style={{ ...moduleValueStyle, color: '#22C55E' }}>88</span>
             <span style={{ fontSize: 10, color: 'var(--ink-30)', fontFamily: "'JetBrains Mono', monospace" }}>/ 100</span>
           </div>
-          <div style={moduleSubtitleStyle}>Стабильный канал</div>
+          <div style={moduleSubtitleStyle}>{t('trends.overview.module.stability_subtitle_stable')}</div>
           <div style={{ height: 4, background: '#E5E7EB', borderRadius: 2, marginTop: 8 }}>
             <div style={{ height: '100%', width: '88%', background: '#22C55E', borderRadius: 2 }}></div>
           </div>
@@ -153,7 +153,7 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
 
         {/* Anomaly Events */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('anomalies')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>Аномалии</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('trends.overview.module.anomalies_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ ...moduleValueStyle, color: '#EAB308' }}>5</div>
           <div style={moduleSubtitleStyle}>событий за\u00a030 дней</div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 8 }}>
@@ -164,7 +164,7 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
 
         {/* Components */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('components')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>Компоненты</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('trends.overview.module.components_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ minHeight: 22, display: 'flex', alignItems: 'flex-end' }}>
             <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink)', lineHeight: 1.2 }}>Что влияет на\u00a0рейтинг</span>
           </div>
@@ -179,7 +179,7 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
 
         {/* Rehabilitation */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('rehab')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>Восстановление</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('trends.overview.module.recovery_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
             <span style={{ ...moduleValueStyle, color: '#22C55E' }}>8</span>
             <span style={{ fontSize: 10, color: 'var(--ink-30)' }}>/ 15 чистых</span>
@@ -197,19 +197,19 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
 
         {/* Peer Comparison */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('peer')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>Среди коллег</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('trends.overview.module.peer_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ ...moduleValueStyle, color: '#3B82F6' }}>Топ 12%</div>
           <div style={moduleSubtitleStyle}>Just Chatting</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
             <svg width="7" height="7" viewBox="0 0 8 8"><polygon points="4,1 7,6 1,6" fill="#22C55E" /></svg>
             <span style={{ fontSize: 9, fontWeight: 700, color: '#22C55E' }}>+8 мест</span>
-            <span style={{ fontSize: 8, color: 'var(--ink-30)' }}>за 30д</span>
+            <span style={{ fontSize: 8, color: 'var(--ink-30)' }}>{t('trends.overview.module.delta_period_30d_short')}</span>
           </div>
         </div>
 
         {/* Category Pattern */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('category')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>По категориям</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('trends.overview.module.category_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ minHeight: 22, display: 'flex', alignItems: 'flex-end' }}>
             <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink)', lineHeight: 1.2 }}>Лучшие в\u00a0Fortnite</span>
           </div>
@@ -223,9 +223,9 @@ export function Frame28TrendsOverview({ initialPeriod = '30d', isPremium = true,
 
         {/* DoW Pattern */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('weekday')} style={moduleCardStyle}>
-          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>По дням недели</span><span style={moduleArrowStyle}>→</span></div>
+          <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('trends.overview.module.weekday_label')}</span><span style={moduleArrowStyle}>→</span></div>
           <div style={{ minHeight: 22, display: 'flex', alignItems: 'flex-end' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink)', lineHeight: 1 }}>Пятница</span>
+            <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: 'var(--ink)', lineHeight: 1 }}>{t('trends.weekday.friday')}</span>
           </div>
           <div style={moduleSubtitleStyle}>лучший день · Дов. 81</div>
           <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', height: 24, marginTop: 8 }}>

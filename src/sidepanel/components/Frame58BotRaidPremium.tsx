@@ -3,6 +3,7 @@
 // NOTE: Per CLAUDE.md ERV labels v3 — wireframe «бот»/«накрутка» wording replaced with legal-safe «аномалия» equivalents.
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface FlowItem { icon: string; label: string; count: string; pct: string }
 
@@ -112,6 +113,7 @@ export function Frame58BotRaidPremium({
   incidents = DEFAULT_INCIDENTS,
   totals = { incidents: 3, redCount: 1, yellowCount: 1, greenCount: 1 },
 }: Props) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['i1', 'i2', 'i3']));
   const toggle = (id: string) => {
     const next = new Set(expanded);
@@ -124,13 +126,13 @@ export function Frame58BotRaidPremium({
       {/* Current stream summary */}
       <div className="sp-signals" style={{ padding: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <span style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.05em' }}>Текущий стрим</span>
-          <span className="sp-erv-label green" style={{ fontSize: 9, padding: '2px 6px' }}>Чисто</span>
+          <span style={{ fontSize: 10, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('botraid.current_stream')}</span>
+          <span className="sp-erv-label green" style={{ fontSize: 9, padding: '2px 6px' }}>{t('botraid.status_clean')}</span>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <div style={{ flex: 1, textAlign: 'center', padding: 6, background: 'var(--color-skeleton-from)', borderRadius: 6 }}>
             <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{checkedViewers.toLocaleString()}</div>
-            <div style={{ fontSize: 9, color: 'var(--ink-50)' }}>Проверено</div>
+            <div style={{ fontSize: 9, color: 'var(--ink-50)' }}>{t('botraid.checked_label')}</div>
           </div>
           <div style={{ flex: 1, textAlign: 'center', padding: 6, background: 'var(--color-skeleton-from)', borderRadius: 6 }}>
             <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: 'var(--color-erv-green)' }}>{suspiciousViewers}</div>
@@ -138,7 +140,7 @@ export function Frame58BotRaidPremium({
           </div>
           <div style={{ flex: 1, textAlign: 'center', padding: 6, background: 'var(--color-skeleton-from)', borderRadius: 6 }}>
             <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{raidsNow}</div>
-            <div style={{ fontSize: 9, color: 'var(--ink-50)' }}>Рейдов сейчас</div>
+            <div style={{ fontSize: 9, color: 'var(--ink-50)' }}>{t('botraid.raids_now')}</div>
           </div>
         </div>
       </div>
@@ -146,8 +148,8 @@ export function Frame58BotRaidPremium({
       {/* History */}
       <div className="sp-signals" style={{ gap: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-          <span className="sp-signals-title" style={{ margin: 0 }}>История инцидентов</span>
-          <span style={{ fontSize: 9, color: 'var(--ink-30)' }}>Последние 30 дней</span>
+          <span className="sp-signals-title" style={{ margin: 0 }}>{t('botraid.history_title')}</span>
+          <span style={{ fontSize: 9, color: 'var(--ink-30)' }}>{t('botraid.history_subtitle_30d')}</span>
         </div>
         {incidents.map((inc, i) => {
           const isLast = i === incidents.length - 1;
@@ -167,14 +169,14 @@ export function Frame58BotRaidPremium({
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
                     <span style={{ fontSize: 12, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: ervColor(inc.severity) }}>{inc.delta}</span>
-                    {inc.severity === 'red' && (<span style={{ fontSize: 8, color: 'var(--ink-30)' }}>зрителей</span>)}
+                    {inc.severity === 'red' && (<span style={{ fontSize: 8, color: 'var(--ink-30)' }}>{t('botraid.viewers_word')}</span>)}
                   </div>
                   <span className="sp-signal-expand-icon" style={{ marginTop: inc.severity === 'red' ? 2 : 0, transform: isExpanded ? 'rotate(180deg)' : undefined }}>▾</span>
                 </div>
               </div>
               {isExpanded && inc.detail && (
                 <div className="sp-signal-detail">
-                  <div style={{ fontSize: 10, color: 'var(--ink-50)', marginBottom: 6, fontWeight: 600 }}>Поток зрителей</div>
+                  <div style={{ fontSize: 10, color: 'var(--ink-50)', marginBottom: 6, fontWeight: 600 }}>{t('botraid.viewer_flow')}</div>
                   <FlowList title="Откуда пришли" items={inc.detail.cameFrom} />
                   <FlowList title="Куда ушли после" items={inc.detail.wentTo} />
                   {inc.detail.impact && (
@@ -195,7 +197,7 @@ export function Frame58BotRaidPremium({
                       </div>
                       <div style={{ paddingTop: 8, borderTop: '1px solid rgba(239,68,68,0.15)' }}>
                         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 2 }}>
-                          <span style={{ color: 'var(--ink-70)', fontWeight: 600 }}>Восстановление: </span>
+                          <span style={{ color: 'var(--ink-70)', fontWeight: 600 }}>{t('botraid.recovery_label')} </span>
                           <span style={{ color: 'var(--color-erv-green)', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{inc.detail.impact.recoveryTime}</span>
                         </div>
                         <div style={{ fontSize: 9, color: 'var(--ink-50)', lineHeight: 1.4 }}>{inc.detail.impact.recoveryNote}</div>

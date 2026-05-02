@@ -2,6 +2,7 @@
 // TI drill-down: hero + chart с tier zones + trend/forecast + explanation + best/worst.
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   onBack?: () => void;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function Frame37TrendsTi({ onBack, onOpenStream }: Props) {
+  const { t } = useTranslation();
   const [chartMode, setChartMode] = useState<'score' | 'tier'>('score');
 
   return (
@@ -21,8 +23,8 @@ export function Frame37TrendsTi({ onBack, onOpenStream }: Props) {
           <div style={{ fontSize: 32, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", color: '#3B82F6', lineHeight: 1 }}>77</div>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>Рейтинг доверия</div>
-          <div style={{ fontSize: 11, color: 'var(--ink-70)', marginBottom: 4 }}>Требует внимания</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>{t('sp.trust_rating')}</div>
+          <div style={{ fontSize: 11, color: 'var(--ink-70)', marginBottom: 4 }}>{t('trends.overview.module.ti_subtitle_attention')}</div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 9, padding: '2px 6px', background: 'rgba(59,130,246,0.08)', color: '#3B82F6', borderRadius: 4, fontWeight: 600 }}>3 смены</span>
             <span style={{ fontSize: 9, padding: '2px 6px', background: '#FEF2F2', color: '#DC2626', borderRadius: 4, fontWeight: 600 }}>2 аномалии</span>
@@ -35,8 +37,8 @@ export function Frame37TrendsTi({ onBack, onOpenStream }: Props) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <span style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>Рейтинг доверия · 30д</span>
           <div style={{ display: 'flex', gap: 0, border: '1.5px solid var(--border-dark)', borderRadius: 4, overflow: 'hidden' }}>
-            <button onClick={() => setChartMode('score')} style={{ padding: '3px 10px', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", fontWeight: chartMode === 'score' ? 600 : 500, border: 'none', background: chartMode === 'score' ? 'var(--ink)' : 'white', color: chartMode === 'score' ? 'white' : 'var(--ink-50)', cursor: 'pointer' }}>Балл</button>
-            <button onClick={() => setChartMode('tier')} style={{ padding: '3px 10px', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", fontWeight: chartMode === 'tier' ? 600 : 500, border: 'none', borderLeft: '1.5px solid var(--border-dark)', background: chartMode === 'tier' ? 'var(--ink)' : 'white', color: chartMode === 'tier' ? 'white' : 'var(--ink-50)', cursor: 'pointer' }}>Уровень</button>
+            <button onClick={() => setChartMode('score')} style={{ padding: '3px 10px', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", fontWeight: chartMode === 'score' ? 600 : 500, border: 'none', background: chartMode === 'score' ? 'var(--ink)' : 'white', color: chartMode === 'score' ? 'white' : 'var(--ink-50)', cursor: 'pointer' }}>{t('trends.ti.chart_mode_score')}</button>
+            <button onClick={() => setChartMode('tier')} style={{ padding: '3px 10px', fontSize: 9, fontFamily: "'JetBrains Mono', monospace", fontWeight: chartMode === 'tier' ? 600 : 500, border: 'none', borderLeft: '1.5px solid var(--border-dark)', background: chartMode === 'tier' ? 'var(--ink)' : 'white', color: chartMode === 'tier' ? 'white' : 'var(--ink-50)', cursor: 'pointer' }}>{t('trends.ti.chart_mode_tier')}</button>
           </div>
         </div>
         <svg width="100%" height="120" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet">
@@ -67,9 +69,9 @@ export function Frame37TrendsTi({ onBack, onOpenStream }: Props) {
 
       {/* 3-col Trend/Forecast */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
-        <div style={statCardStyle}><div style={statLabelStyle}>Тренд</div><div style={{ ...statValueStyle, color: '#EF4444' }}>−12</div><div style={statSubStyle}>за 30 дней</div></div>
-        <div style={statCardStyle}><div style={statLabelStyle}>Прогноз 7д</div><div style={{ ...statValueStyle, color: '#EAB308' }}>74</div><div style={statSubStyle}>разброс 70–78</div></div>
-        <div style={statCardStyle}><div style={statLabelStyle}>Прогноз 30д</div><div style={{ ...statValueStyle, color: '#EAB308' }}>71</div><div style={statSubStyle}>разброс 64–78</div></div>
+        <div style={statCardStyle}><div style={statLabelStyle}>{t('trends.trend_label')}</div><div style={{ ...statValueStyle, color: '#EF4444' }}>−12</div><div style={statSubStyle}>{t('trends.delta_period_30d_full')}</div></div>
+        <div style={statCardStyle}><div style={statLabelStyle}>{t('trends.forecast.short_7d')}</div><div style={{ ...statValueStyle, color: '#EAB308' }}>74</div><div style={statSubStyle}>разброс 70–78</div></div>
+        <div style={statCardStyle}><div style={statLabelStyle}>{t('trends.forecast.short_30d')}</div><div style={{ ...statValueStyle, color: '#EAB308' }}>71</div><div style={statSubStyle}>разброс 64–78</div></div>
       </div>
 
       {/* Explanation */}
@@ -80,12 +82,12 @@ export function Frame37TrendsTi({ onBack, onOpenStream }: Props) {
       {/* Best/Worst */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
         <div onClick={() => onOpenStream?.('10 мар')} style={{ ...statCardStyle, borderLeft: '4px solid #22C55E', cursor: 'pointer' }} role="button">
-          <div style={statLabelStyle}>Лучший</div>
+          <div style={statLabelStyle}>{t('trends.common.best')}</div>
           <div style={{ ...statValueStyle, color: '#22C55E' }}>84</div>
           <div style={statSubStyle}>10 мар · Just Chatting</div>
         </div>
         <div onClick={() => onOpenStream?.('19 фев')} style={{ ...statCardStyle, borderLeft: '4px solid #EF4444', cursor: 'pointer' }} role="button">
-          <div style={statLabelStyle}>Худший</div>
+          <div style={statLabelStyle}>{t('trends.common.worst')}</div>
           <div style={{ ...statValueStyle, color: '#EF4444' }}>58</div>
           <div style={statSubStyle}>19 фев · Just Chatting</div>
         </div>

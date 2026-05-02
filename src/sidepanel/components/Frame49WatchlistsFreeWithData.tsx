@@ -2,6 +2,7 @@
 // M1 Selector + Stats + Search + Filters/Sort (locked) + Cards (5) + Add + Conversion Banner.
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ListTab { name: string; count: number }
 interface ChannelCard {
@@ -73,6 +74,7 @@ export function Frame49WatchlistsFreeWithData({
   onListMenu,
   onChannelMenu,
 }: Props) {
+  const { t } = useTranslation();
   const [bannerHidden, setBannerHidden] = useState(false);
   const [activeList, setActiveList] = useState(activeListIndex);
 
@@ -104,11 +106,11 @@ export function Frame49WatchlistsFreeWithData({
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, padding: '0 0 10px 0', borderBottom: '1px solid var(--border-light)', marginBottom: 8 }}>
         <div style={{ background: 'rgba(34,197,94,0.06)', borderRadius: 6, padding: '6px 8px', textAlign: 'center' }}>
-          <div title="Средний ERV по списку" style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>Средний ERV</div>
+          <div title="Средний ERV по списку" style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>{t('watchlists.list.avg_erv')}</div>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-erv-green)', fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>{avgErv}%</div>
         </div>
         <div style={{ background: 'rgba(34,197,94,0.06)', borderRadius: 6, padding: '6px 8px', textAlign: 'center' }}>
-          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>Онлайн</div>
+          <div style={{ fontSize: 9, color: 'var(--ink-50)', fontFamily: "'JetBrains Mono', monospace", textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 1 }}>{t('watchlists.list.online')}</div>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-erv-green)', fontFamily: "'JetBrains Mono', monospace", lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
             <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: 'var(--color-erv-green)' }}></span>
             {liveCount}
@@ -166,7 +168,7 @@ export function Frame49WatchlistsFreeWithData({
               </div>
             )}
             {c.isInactive && (
-              <span style={{ fontSize: 8, padding: '2px 6px', background: 'rgba(0,0,0,0.06)', color: 'var(--ink-30)', borderRadius: 4, fontWeight: 500 }}>Неактивен</span>
+              <span style={{ fontSize: 8, padding: '2px 6px', background: 'rgba(0,0,0,0.06)', color: 'var(--ink-30)', borderRadius: 4, fontWeight: 500 }}>{t('watchlists.channel.inactive')}</span>
             )}
             <button onClick={(e) => { e.stopPropagation(); onChannelMenu?.(c.login); }} title="Действия с каналом" style={{ position: 'absolute', top: 6, right: 6, background: 'none', border: 'none', color: 'var(--ink-30)', fontSize: 14, cursor: 'pointer', padding: '2px 4px', lineHeight: 1 }}>⋮</button>
           </div>
@@ -197,7 +199,7 @@ export function Frame49WatchlistsFreeWithData({
           <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: 'white', marginBottom: 4, lineHeight: 1.3 }}>5 каналов в&nbsp;watchlist — пора перейти на&nbsp;Business</div>
           <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5, marginBottom: 10 }}>Мониторьте до&nbsp;50 каналов одновременно, сравнивайте до&nbsp;5 в&nbsp;одном отчёте, экспортируйте PDF клиентам, получайте API-доступ для&nbsp;своих дашбордов.</div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <button onClick={() => onUpgradeBusiness?.()} style={{ flex: 1, padding: '8px 14px', fontSize: 11, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2px solid white', borderRadius: 8, background: 'white', color: '#1a1a1a', cursor: 'pointer' }}>Попробовать Business</button>
+            <button onClick={() => onUpgradeBusiness?.()} style={{ flex: 1, padding: '8px 14px', fontSize: 11, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", border: '2px solid white', borderRadius: 8, background: 'white', color: '#1a1a1a', cursor: 'pointer' }}>{t('watchlists.cta_business')}</button>
             <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: '#a5b4fc', fontWeight: 700, whiteSpace: 'nowrap' }}>$99/мес</span>
           </div>
           <button title="Скрыть на 1 день" onClick={() => { setBannerHidden(true); onDismissBanner?.(); }} style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 16, cursor: 'pointer', lineHeight: 1, padding: 2 }}>×</button>

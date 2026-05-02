@@ -2,6 +2,7 @@
 // Audience Premium tab: Geography (5 countries grid) + Language (3 langs) + New vs Returning (numbers + stacked bar + expanded 7d trend chart).
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CountryRow { flag: string; name: string; pct: number }
 interface LangRow { name: string; pct: number }
@@ -45,13 +46,14 @@ export function Frame48AudiencePremium({
   newDelta7d = '+6пп',
   insight = 'Доля новых снижается (38% → 32%). Аудитория становится лояльнее.',
 }: Props) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="sp-content" role="tabpanel">
       {/* Geography */}
       <div className="sp-signals" style={{ gap: 6 }}>
-        <div className="sp-signals-title">География зрителей</div>
+        <div className="sp-signals-title">{t('audience.geography')}</div>
         {countries.map((c) => (
           <div key={c.name} style={{ display: 'grid', gridTemplateColumns: '20px 1fr 110px 32px', alignItems: 'center', gap: 8, padding: '3px 0' }}>
             <span style={{ fontSize: 16 }}>{c.flag}</span>
@@ -69,7 +71,7 @@ export function Frame48AudiencePremium({
 
       {/* Language */}
       <div className="sp-signals" style={{ gap: 6 }}>
-        <div className="sp-signals-title">Язык зрителей</div>
+        <div className="sp-signals-title">{t('audience.language')}</div>
         {languages.map((l) => (
           <div key={l.name} className="sp-signal-row">
             <span className="sp-signal-name">{l.name}</span>
@@ -82,7 +84,7 @@ export function Frame48AudiencePremium({
       {/* New vs Returning */}
       <div className="sp-signals sp-signal-expandable" style={{ gap: 6, cursor: 'pointer' }} onClick={() => setExpanded(v => !v)} role="button" aria-expanded={expanded}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span className="sp-signals-title">Новые vs повторные зрители</span>
+          <span className="sp-signals-title">{t('audience.new_vs_returning')}</span>
           <span className="sp-signal-expand-icon" style={{ transform: expanded ? 'rotate(180deg)' : undefined }}>▾</span>
         </div>
         <div style={{ display: 'flex', gap: 8, padding: '8px 0' }}>
@@ -110,9 +112,9 @@ export function Frame48AudiencePremium({
         <div className="sp-signal-detail">
           <div style={{ fontSize: 10, color: 'var(--ink-50)', fontWeight: 600, marginBottom: 8 }}>Тренд за&nbsp;7 дней</div>
           <div className="sp-chart-stats">
-            <div className="sp-chart-stat"><div className="sp-chart-stat-label">Новые</div><div className="sp-chart-stat-value" style={{ color: 'var(--color-primary)' }}>{newPct}%</div></div>
-            <div className="sp-chart-stat"><div className="sp-chart-stat-label">Повторные</div><div className="sp-chart-stat-value green">{returningPct}%</div></div>
-            <div className="sp-chart-stat"><div className="sp-chart-stat-label">Изм. 7д</div><div className="sp-chart-stat-value green">{newDelta7d}</div></div>
+            <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('audience.new')}</div><div className="sp-chart-stat-value" style={{ color: 'var(--color-primary)' }}>{newPct}%</div></div>
+            <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('audience.returning')}</div><div className="sp-chart-stat-value green">{returningPct}%</div></div>
+            <div className="sp-chart-stat"><div className="sp-chart-stat-label">{t('audience.delta_7d')}</div><div className="sp-chart-stat-value green">{newDelta7d}</div></div>
           </div>
           <svg className="sp-sparkline-chart" viewBox="0 0 340 160" preserveAspectRatio="none">
             <line x1="34" y1="20" x2="330" y2="20" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />

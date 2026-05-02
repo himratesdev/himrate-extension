@@ -2,6 +2,7 @@
 // Premium audience overlap: Channel selector + Period + 5 expandable rows + chart on first.
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Period = '7d' | '30d' | '90d';
 
@@ -39,6 +40,7 @@ export function Frame57OverlapPremium({
   moreCount = 12,
   onChangeChannel,
 }: Props) {
+  const { t } = useTranslation();
   const [period, setPeriod] = useState<Period>('7d');
   const [expanded, setExpanded] = useState<Set<string>>(new Set(['Tarik', 'Stewie2K']));
 
@@ -79,7 +81,7 @@ export function Frame57OverlapPremium({
 
       {/* List */}
       <div className="sp-signals" style={{ gap: 0 }}>
-        <div className="sp-signals-title">Пересечение аудитории</div>
+        <div className="sp-signals-title">{t('overlap.audience_intersection')}</div>
         {rows.map((r, idx) => {
           const isLast = idx === rows.length - 1;
           const isExpanded = expanded.has(r.login);
@@ -104,7 +106,7 @@ export function Frame57OverlapPremium({
               </div>
               {isExpanded && r.pattern && (
                 <div className="sp-signal-detail">
-                  <div style={{ fontSize: 10, color: 'var(--ink-50)', fontWeight: 600, marginBottom: 6 }}>Исторический паттерн</div>
+                  <div style={{ fontSize: 10, color: 'var(--ink-50)', fontWeight: 600, marginBottom: 6 }}>{t('overlap.historical_pattern')}</div>
                   <div style={{ display: 'flex', gap: 8, marginBottom: r.pattern.hasChart ? 8 : 4 }}>
                     {[
                       { value: r.pattern.perWeek, label: 'Раз в\u00a0неделю' },

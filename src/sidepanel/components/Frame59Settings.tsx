@@ -3,6 +3,7 @@
 // NOTE: «Бот-атаки» toggle replaced with «Аномалии трафика» per CLAUDE.md ERV labels v3.
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   userName?: string;
@@ -43,6 +44,7 @@ export function Frame59Settings({
   onToggleNotification,
   onToggleAutoRefresh,
 }: Props) {
+  const { t } = useTranslation();
   const [language, setLanguage] = useState<'ru' | 'en'>(initialLanguage);
   const [anomalies, setAnomalies] = useState(initialAnomalies);
   const [raids, setRaids] = useState(initialRaids);
@@ -63,7 +65,7 @@ export function Frame59Settings({
     <div className="sp-content" role="tabpanel">
       {/* Account */}
       <div className="sp-signals" style={{ gap: 8 }}>
-        <div className="sp-signals-title">Аккаунт</div>
+        <div className="sp-signals-title">{t('settings.account')}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 0' }}>
           <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-avatar-fallback)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 14, fontWeight: 700 }}>{userName.charAt(0).toUpperCase()}</div>
           <div>
@@ -83,7 +85,7 @@ export function Frame59Settings({
 
         {/* Upgrade Business */}
         <div style={{ border: '2.5px solid #1a1a1a', borderRadius: 10, padding: '10px 12px', background: 'linear-gradient(135deg, #1a1a1a 0%, #2d1e5e 100%)', color: 'white', position: 'relative', boxShadow: '2px 2px 0 rgba(0,0,0,0.15)' }}>
-          <div style={{ background: '#22c55e', color: 'white', fontSize: 8, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", padding: '3px 7px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'inline-block', marginBottom: 6 }}>Рекомендуем</div>
+          <div style={{ background: '#22c55e', color: 'white', fontSize: 8, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", padding: '3px 7px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'inline-block', marginBottom: 6 }}>{t('settings.recommended')}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 12, fontWeight: 700, fontFamily: "'Space Grotesk', sans-serif", color: '#a5b4fc' }}>Business · до&nbsp;50 каналов</div>
@@ -100,7 +102,7 @@ export function Frame59Settings({
 
       {/* Notifications */}
       <div className="sp-signals" style={{ gap: 6 }}>
-        <div className="sp-signals-title">Уведомления</div>
+        <div className="sp-signals-title">{t('settings.notifications')}</div>
         {renderToggle('Аномалии зрителей', anomalies, () => { setAnomalies(!anomalies); onToggleNotification?.('anomalies', !anomalies); })}
         {renderToggle('Аномалии трафика', raids, () => { setRaids(!raids); onToggleNotification?.('raids', !raids); })}
         {renderToggle('Стрим в\u00a0watchlist начался', watchlistLive, () => { setWatchlistLive(!watchlistLive); onToggleNotification?.('watchlist_live', !watchlistLive); }, true)}
@@ -108,7 +110,7 @@ export function Frame59Settings({
 
       {/* Language */}
       <div className="sp-signals" style={{ gap: 6 }}>
-        <div className="sp-signals-title">Язык интерфейса</div>
+        <div className="sp-signals-title">{t('settings.language_interface')}</div>
         <div style={{ display: 'flex', gap: 6 }}>
           {(['ru', 'en'] as const).map((l) => (
             <button key={l} onClick={() => setLang(l)}
@@ -121,14 +123,14 @@ export function Frame59Settings({
 
       {/* Data */}
       <div className="sp-signals" style={{ gap: 6 }}>
-        <div className="sp-signals-title">Данные</div>
+        <div className="sp-signals-title">{t('settings.data')}</div>
         {renderToggle('Автообновление (30с)', autoRefresh, () => { setAutoRefresh(!autoRefresh); onToggleAutoRefresh?.(!autoRefresh); }, true)}
       </div>
 
       {/* Links */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-        <a href="#" onClick={(e) => { e.preventDefault(); onOpenPrivacy?.(); }} style={{ fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none' }}>Политика конфиденциальности</a>
-        <a href="#" onClick={(e) => { e.preventDefault(); onOpenTerms?.(); }} style={{ fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none' }}>Условия использования</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); onOpenPrivacy?.(); }} style={{ fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none' }}>{t('settings.privacy_policy')}</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); onOpenTerms?.(); }} style={{ fontSize: 11, color: 'var(--color-primary)', textDecoration: 'none' }}>{t('settings.terms')}</a>
         <div style={{ fontSize: 9, color: 'var(--ink-30)', marginTop: 4 }}>HimRate Extension {version} · © 2026</div>
       </div>
     </div>

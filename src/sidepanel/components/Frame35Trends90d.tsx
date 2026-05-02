@@ -2,9 +2,10 @@
 
 interface Props {
   onPeriodChange?: (period: '7d' | '30d' | '60d' | '90d' | '365d') => void;
+  onUpgradeBusiness?: () => void;
 }
 
-export function Frame35Trends90d({ onPeriodChange }: Props) {
+export function Frame35Trends90d({ onPeriodChange, onUpgradeBusiness }: Props) {
   return (
     <div className="sp-content" role="tabpanel">
       <div className="sp-period-toggle">
@@ -12,7 +13,12 @@ export function Frame35Trends90d({ onPeriodChange }: Props) {
         <button className="sp-period-pill" onClick={() => onPeriodChange?.('30d')}>30d</button>
         <button className="sp-period-pill" onClick={() => onPeriodChange?.('60d')}>60d</button>
         <button className="sp-period-pill active" onClick={() => onPeriodChange?.('90d')}>90d</button>
-        <button className="sp-period-pill locked">
+        <button
+          className="sp-period-pill locked"
+          onClick={() => onUpgradeBusiness?.()}
+          aria-disabled={true}
+          title="365d требует Business"
+        >
           <svg width="8" height="8" viewBox="0 0 8 8" style={{ display: 'inline', marginRight: 2 }}>
             <rect x="2" y="4" width="4" height="3" fill="none" stroke="currentColor" strokeWidth="0.6" rx="0.4" />
             <path d="M3 4V2.5a1 1 0 0 1 2 0V4" stroke="currentColor" strokeWidth="0.6" fill="none" />

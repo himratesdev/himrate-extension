@@ -35,6 +35,8 @@ interface Props {
   onDismissBanner?: () => void;
   onOpenChannel?: (login: string) => void;
   onFollow?: (login: string) => void;
+  onListMenu?: () => void;
+  onChannelMenu?: (login: string) => void;
 }
 
 const DEFAULT_LISTS: ListTab[] = [
@@ -68,6 +70,8 @@ export function Frame49WatchlistsFreeWithData({
   onDismissBanner,
   onOpenChannel,
   onFollow,
+  onListMenu,
+  onChannelMenu,
 }: Props) {
   const [bannerHidden, setBannerHidden] = useState(false);
   const [activeList, setActiveList] = useState(activeListIndex);
@@ -93,7 +97,7 @@ export function Frame49WatchlistsFreeWithData({
             onClick={() => onCreateList?.()}
             style={{ padding: '6px 12px', fontSize: 11, fontWeight: 500, fontFamily: "'Space Grotesk', sans-serif", border: '2px solid rgba(99,102,241,0.3)', borderRadius: 20, background: 'rgba(99,102,241,0.05)', color: '#6366f1', whiteSpace: 'nowrap', cursor: 'pointer', flexShrink: 0, lineHeight: 1.2 }}
           >+ Создать</button>
-          <button title="Переименовать / Удалить" style={{ padding: '4px 6px', fontSize: 14, color: 'var(--ink-30)', cursor: 'pointer', background: 'none', border: 'none', lineHeight: 1, flexShrink: 0 }}>⋮</button>
+          <button title="Переименовать / Удалить" onClick={() => onListMenu?.()} style={{ padding: '4px 6px', fontSize: 14, color: 'var(--ink-30)', cursor: 'pointer', background: 'none', border: 'none', lineHeight: 1, flexShrink: 0 }}>⋮</button>
         </div>
       </div>
 
@@ -164,7 +168,7 @@ export function Frame49WatchlistsFreeWithData({
             {c.isInactive && (
               <span style={{ fontSize: 8, padding: '2px 6px', background: 'rgba(0,0,0,0.06)', color: 'var(--ink-30)', borderRadius: 4, fontWeight: 500 }}>Неактивен</span>
             )}
-            <button onClick={(e) => { e.stopPropagation(); }} style={{ position: 'absolute', top: 6, right: 6, background: 'none', border: 'none', color: 'var(--ink-30)', fontSize: 14, cursor: 'pointer', padding: '2px 4px', lineHeight: 1 }}>⋮</button>
+            <button onClick={(e) => { e.stopPropagation(); onChannelMenu?.(c.login); }} title="Действия с каналом" style={{ position: 'absolute', top: 6, right: 6, background: 'none', border: 'none', color: 'var(--ink-30)', fontSize: 14, cursor: 'pointer', padding: '2px 4px', lineHeight: 1 }}>⋮</button>
           </div>
           {c.tags && c.tags.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 5, paddingTop: 5, borderTop: '1px solid var(--border-light)' }}>

@@ -25,6 +25,7 @@ const ERV_STROKE: Record<string, string> = { green: '#059669', yellow: '#D97706'
 export function Frame10LiveGuestGreen({ ervPercent, ervCount, ccv, ervLabelColor, tiScore }: Props) {
   const { t, i18n } = useTranslation();
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [tiExpanded, setTiExpanded] = useState(true);
 
   const color = ervLabelColor || 'green';
   const stroke = ERV_STROKE[color];
@@ -137,7 +138,12 @@ export function Frame10LiveGuestGreen({ ervPercent, ervCount, ccv, ervLabelColor
             <span className="sp-ti-classification">— {t('classification.trusted')}</span>
           </div>
           {/* <button class="sp-ti-expand">▾</button> */}
-          <button className="sp-ti-expand" aria-label="Expand">▾</button>
+          <button
+            className={`sp-ti-expand${tiExpanded ? ' open' : ''}`}
+            aria-label={t('aria.expand') || 'Expand'}
+            aria-expanded={tiExpanded}
+            onClick={() => setTiExpanded((v) => !v)}
+          >▾</button>
         </div>
       </div>
 

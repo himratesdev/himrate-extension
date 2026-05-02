@@ -37,6 +37,7 @@ export function Frame09ColdStartDeepStreamer({
   hsTi, hsStability, hsEngagement, hsGrowth, hsConsistency, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
+  const [tiExpanded, setTiExpanded] = useState(true);
   // First row (TI) open by default per wireframe slim/09. Click toggle each row.
   const [hsExpanded, setHsExpanded] = useState<Set<string>>(() => new Set(['ti']));
   const toggleHs = (k: string) => setHsExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
@@ -153,7 +154,12 @@ export function Frame09ColdStartDeepStreamer({
             )}
           </div>
           {/* <button class="sp-ti-expand">▾</button> */}
-          <button className="sp-ti-expand" aria-label="Expand">▾</button>
+          <button
+            className={`sp-ti-expand${tiExpanded ? ' open' : ''}`}
+            aria-label={t('aria.expand') || 'Expand'}
+            aria-expanded={tiExpanded}
+            onClick={() => setTiExpanded((v) => !v)}
+          >▾</button>
         </div>
       </div>
 

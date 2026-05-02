@@ -40,6 +40,7 @@
 //     </div>
 // </div>
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 
@@ -60,6 +61,7 @@ export function Frame08ColdStartProvisional({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, classification, streamsCount,
 }: Props) {
   const { t, i18n } = useTranslation();
+  const [tiExpanded, setTiExpanded] = useState(true);
 
   const color = ervLabelColor || 'green';
   const stroke = ERV_STROKE[color];
@@ -140,7 +142,12 @@ export function Frame08ColdStartProvisional({
             </span>
           </div>
           {/* <button class="sp-ti-expand">▾</button> */}
-          <button className="sp-ti-expand" aria-label={t('aria.expand') || 'Expand'}>▾</button>
+          <button
+            className={`sp-ti-expand${tiExpanded ? ' open' : ''}`}
+            aria-label={t('aria.expand') || 'Expand'}
+            aria-expanded={tiExpanded}
+            onClick={() => setTiExpanded((v) => !v)}
+          >▾</button>
         </div>
       </div>
 

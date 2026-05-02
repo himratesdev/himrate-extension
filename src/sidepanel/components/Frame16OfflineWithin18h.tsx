@@ -88,6 +88,7 @@ export function Frame16OfflineWithin18h({
     return { pct: defaultPct, display: defaultDisplay, color: signalColor(defaultPct / 100) };
   }
 
+  const [tiExpanded, setTiExpanded] = useState(true);
   // Expand state — Frame16 (slim/16) shows all signals collapsible, all closed by default
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const toggle = (k: string) => setExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
@@ -158,9 +159,14 @@ export function Frame16OfflineWithin18h({
             <span className={`sp-ti-score ${color}`}>{tiScore ?? '—'}</span>
             <span className="sp-ti-classification">— {t('classification.trusted')}</span>
           </div>
-          <button className="sp-ti-expand" aria-label={t('aria.expand')}>▾</button>
+          <button
+            className={`sp-ti-expand${tiExpanded ? ' open' : ''}`}
+            aria-label={t('aria.expand')}
+            aria-expanded={tiExpanded}
+            onClick={() => setTiExpanded((v) => !v)}
+          >▾</button>
         </div>
-        {percentile != null && (
+        {tiExpanded && percentile != null && (
           <div style={{ marginTop: '6px' }}>
             <span className="sp-percentile">{t('sp.percentile_above', { N: percentile })}</span>
           </div>

@@ -1,5 +1,5 @@
-// LITERAL PORT + DATA WIRING — wireframe slim/11_live-free-green-85.html ONLY.
-// Green-only literal port (yellow=Frame12, red=Frame13). No color parametrization.
+// LITERAL PORT + DATA WIRING — wireframe slim/12_live-free-yellow-62.html.
+// Yellow ERV color variant (50-79%). Anomaly detected. Standalone (NOT parametrized).
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,14 +56,14 @@ function flagEmoji(code: string): string {
   return String.fromCodePoint(A + upper.charCodeAt(0) - 'A'.charCodeAt(0), A + upper.charCodeAt(1) - 'A'.charCodeAt(0));
 }
 
-export function Frame11LiveFreeGreen({
+export function Frame12LiveFreeYellow({
   ervPercent, ervCount, ccv, tiScore, classification, percentile,
   channelId = null, signals = [], reputation = null, topCountries = null, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
   const chart = useSparkline(channelId, true, false); // Free user — 30m only
 
-  const pct = ervPercent ?? 85;
+  const pct = ervPercent ?? 62;
   const offset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
 
   const handleUpgrade = () => {
@@ -82,37 +82,47 @@ export function Frame11LiveFreeGreen({
     return { pct: defaultPct, display: defaultDisplay, color: signalColor(defaultPct / 100) };
   }
 
-  // Reputation values — wireframe slim/11 defaults
-  const repGrowth = reputation?.growth_pattern_score ?? 72;
-  const repQuality = reputation?.follower_quality_score ?? 88;
-  const repLoyalty = reputation?.engagement_consistency_score ?? 91;
+  // Reputation values — wireframe slim/12 defaults (lower than green)
+  const repGrowth = reputation?.growth_pattern_score ?? 45;
+  const repQuality = reputation?.follower_quality_score ?? 52;
 
-  // Countries — wireframe slim/11 defaults RU/UA/KZ
+  // Countries — wireframe slim/12 defaults US/UK/DE
   const countries = (topCountries && topCountries.length > 0) ? topCountries.slice(0, 3) : [
-    { country_code: 'RU', percentage: 45, viewer_count: 0 },
-    { country_code: 'UA', percentage: 20, viewer_count: 0 },
-    { country_code: 'KZ', percentage: 10, viewer_count: 0 },
+    { country_code: 'US', percentage: 38, viewer_count: 0 },
+    { country_code: 'GB', percentage: 15, viewer_count: 0 },
+    { country_code: 'DE', percentage: 8, viewer_count: 0 },
   ];
   const countryName = (code: string): string => {
     try { return new Intl.DisplayNames([i18n.language || 'en'], { type: 'region' }).of(code) || code; }
     catch { return code; }
   };
 
-  // TI expand state — wireframe slim/11 percentile visible (chevron implicit open)
+  // TI expand state — wireframe slim/12 percentile visible
   const [tiExpanded, setTiExpanded] = useState(true);
 
-  // M3 paywall preview — 5 first signals (wireframe slim/11 defaults)
-  const s1 = sig('auth_ratio', 82, '82%');
-  const s2 = sig('chatter_to_ccv_ratio', 75, t('signal.value_norm'));
-  const s3 = sig('ccv_step_function', 95, t('signal.value_norm'));
-  const s4 = sig('ccv_tier_clustering', 88, '88%');
-  const s5 = sig('per_user_chat_behavior', 70, '70%');
+  // Yellow alert dismiss (wireframe slim/12 — single yellow alert, dismissable)
+  const [alertDismissed, setAlertDismissed] = useState(false);
+
+  // M3 paywall preview — 3 first signals (wireframe slim/12 narrower preview)
+  const s1 = sig('auth_ratio', 55, '55%');
+  const s2 = sig('chatter_to_ccv_ratio', 30, t('signal.value_low'));
+  const s3 = sig('ccv_step_function', 60, t('signal.value_surge'));
+  // Note: wireframe slim/12 shows 3 rows (Авторизация / Чат / Рост зрителей)
 
   return (
-    // <div class="sp-content">
     <div className="sp-content" role="tabpanel">
-      {/* <!-- M1: ERV Gauge --> */}
-      {/* <div class="sp-gauge-section" role="img" aria-label="ERV 85%"> */}
+      {/* Alert Counter — wireframe slim/12: single yellow alert "Скачок зрителей" */}
+      {!alertDismissed && (
+        <div className="sp-alert-stack">
+          <div className="sp-alert yellow" role="alert" aria-live="polite">
+            <span className="sp-alert-dot"></span>
+            <span>{t('sp.alert_yellow_surge', { count: '2,400', minutes: 5 })}</span>
+            <button className="sp-alert-dismiss" aria-label={t('aria.close')} onClick={() => setAlertDismissed(true)}>×</button>
+          </div>
+        </div>
+      )}
+
+      {/* M1: ERV Gauge — yellow */}
       <div className="sp-gauge-section" role="img" aria-label={`ERV ${pct}%`}>
         <div className="sp-gauge-wrap">
           <svg className="sp-gauge-ring" width="120" height="120" viewBox="0 0 120 120">
@@ -122,7 +132,7 @@ export function Frame11LiveFreeGreen({
               cy="60"
               r="52"
               fill="none"
-              stroke="#059669"
+              stroke="#D97706"
               strokeWidth="8"
               strokeDasharray="326.7"
               strokeDashoffset={offset}
@@ -132,7 +142,7 @@ export function Frame11LiveFreeGreen({
             />
           </svg>
           <div className="sp-gauge-center">
-            <span className="sp-gauge-percent green">{pct}%</span>
+            <span className="sp-gauge-percent yellow">{pct}%</span>
             <span className="sp-gauge-sub" title={t('erv.tooltip')}>
               {t('erv.real_viewers_label')}
             </span>
@@ -140,42 +150,39 @@ export function Frame11LiveFreeGreen({
         </div>
       </div>
 
-      {/* <!-- ERV Hero --> */}
-      {/* <div class="sp-erv-hero green">~4,200 реальных зрителей</div> */}
-      <div className="sp-erv-hero green">
+      {/* ERV Hero — yellow */}
+      <div className="sp-erv-hero yellow">
         {ervCount != null
           ? t('erv.real_viewers_count', { N: formatNumber(ervCount, i18n.language) })
           : '—'}
       </div>
-      {/* <div class="sp-erv-ccv">Twitch онлайн: 5,000</div> */}
       <div className="sp-erv-ccv">
         {ccv != null ? t('popup.twitch_online', { N: formatNumber(ccv, i18n.language) }) : ''}
       </div>
 
-      {/* <!-- ERV Label Badge --> */}
-      {/* <div style="text-align:center;"><span class="sp-erv-label green">...</span></div> */}
+      {/* ERV Label Badge — yellow */}
       <div style={{ textAlign: 'center' }}>
-        <span className="sp-erv-label green">
-          <span className="erv-dot"></span> {t('erv_label.green')} · {pct}%
+        <span className="sp-erv-label yellow">
+          <span className="erv-dot"></span> {t('erv_label.yellow')} · {pct}%
         </span>
       </div>
 
-      {/* <!-- Confidence — wireframe slim/11: high "Данных достаточно для анализа" --> */}
-      <div className="sp-confidence high">{t('confidence.sufficient')}</div>
+      {/* Confidence — wireframe slim/12: medium "точность средняя" */}
+      <div className="sp-confidence medium">{t('confidence.moderate')}</div>
 
-      {/* <!-- Trend Indicator — wireframe slim/11: ↑ up +5% --> */}
-      <div className="sp-trend up">↑ {t('sp.trend_real_up', { sign: '+', pct: 5 })}</div>
+      {/* Trend Indicator — wireframe slim/12: ↓ down −8% */}
+      <div className="sp-trend down">↓ {t('sp.trend_real_down', { sign: '−', pct: 8 })}</div>
 
-      {/* <!-- M2: TI Badge (with percentile inside) --> */}
+      {/* M2: TI Badge — yellow score 62 */}
       <div className="sp-ti-section">
         <div className="sp-ti-header">
           <div className="sp-ti-left">
             <span className="sp-ti-label" title={t('sp.ti_tooltip')}>
               {t('sp.trust_rating')}
             </span>
-            <span className="sp-ti-score green">{tiScore ?? '—'}</span>
+            <span className="sp-ti-score yellow">{tiScore ?? '—'}</span>
             <span className="sp-ti-classification">
-              — {classification ? t(`classification.${classification}`) : t('classification.trusted')}
+              — {classification ? t(`classification.${classification}`) : t('classification.needs_review')}
             </span>
           </div>
           <button
@@ -185,20 +192,19 @@ export function Frame11LiveFreeGreen({
             onClick={() => setTiExpanded(v => !v)}
           >▾</button>
         </div>
-        {tiExpanded && percentile != null && (
+        {tiExpanded && (
           <div style={{ marginTop: '6px' }}>
             <span className="sp-percentile">
-              {t('sp.percentile_above', { N: percentile })}
+              {t('sp.percentile_above', { N: percentile ?? 42 })}
             </span>
           </div>
         )}
       </div>
 
-      {/* <!-- M3: Signal Breakdown (paywall for Free) --> */}
+      {/* M3: Signal Breakdown (paywall blurred) — wireframe slim/12: 3 rows */}
       <div className="sp-paywall">
         <div className="sp-paywall-blurred">
-          <div className="sp-signals">
-            <div className="sp-signals-title">{t('sp.signals_title', { count: 11 })}</div>
+          <div className="sp-signals" style={{ padding: '8px' }}>
             <div className="sp-signal-row">
               <span className="sp-signal-name">{t('signal.auth_ratio')}</span>
               <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s1.color}`} style={{ width: `${s1.pct}%` }}></div></div>
@@ -214,16 +220,6 @@ export function Frame11LiveFreeGreen({
               <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s3.color}`} style={{ width: `${s3.pct}%` }}></div></div>
               <span className={`sp-signal-val ${s3.color}`}>{s3.display}</span>
             </div>
-            <div className="sp-signal-row">
-              <span className="sp-signal-name">{t('signal.ccv_tier')}</span>
-              <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s4.color}`} style={{ width: `${s4.pct}%` }}></div></div>
-              <span className={`sp-signal-val ${s4.color}`}>{s4.display}</span>
-            </div>
-            <div className="sp-signal-row">
-              <span className="sp-signal-name">{t('signal.chat_behavior')}</span>
-              <div className="sp-signal-bar-bg"><div className={`sp-signal-bar-fill ${s5.color}`} style={{ width: `${s5.pct}%` }}></div></div>
-              <span className={`sp-signal-val ${s5.color}`}>{s5.display}</span>
-            </div>
           </div>
         </div>
         <div className="sp-paywall-overlay">
@@ -234,33 +230,18 @@ export function Frame11LiveFreeGreen({
         </div>
       </div>
 
-      {/* <!-- M4: Reputation (paywall for Free) --> */}
+      {/* M4: Reputation (paywall blurred) — wireframe slim/12: 2 rows */}
       <div className="sp-paywall">
         <div className="sp-paywall-blurred">
           <div
             className="sp-reputation"
             style={{
+              padding: '8px',
               border: '2.5px solid #8B5CF6',
               borderRadius: '12px',
-              padding: '10px 12px',
               background: 'linear-gradient(180deg, rgba(139,92,246,0.05) 0%, transparent 100%)',
             }}
           >
-            <div className="sp-reputation-title" style={{ color: '#7C3AED' }}>
-              <svg
-                className="ico"
-                viewBox="0 0 24 24"
-                style={{ width: '13px', height: '13px', stroke: '#7C3AED', verticalAlign: '-0.1em' }}
-              >
-                <rect x="18" y="3" width="4" height="18" rx="1" fill="rgba(139,92,246,0.3)" stroke="#7C3AED" />
-                <rect x="10" y="8" width="4" height="13" rx="1" fill="rgba(139,92,246,0.2)" stroke="#7C3AED" />
-                <rect x="2" y="13" width="4" height="8" rx="1" fill="rgba(139,92,246,0.15)" stroke="#7C3AED" />
-              </svg>{' '}
-              {t('sp.rep_title')}{' '}
-              <span style={{ fontSize: '10px', fontWeight: 400, color: 'var(--ink-30)' }}>
-                — {t('sp.rep_subtitle')}
-              </span>
-            </div>
             <div className="sp-rep-row">
               <span className="sp-rep-name">{t('sp.rep_growth')}</span>
               <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
@@ -274,13 +255,6 @@ export function Frame11LiveFreeGreen({
                 <div className="sp-rep-bar-fill" style={{ width: `${repQuality}%`, background: '#8B5CF6' }}></div>
               </div>
               <span className="sp-rep-val" style={{ color: '#7C3AED' }}>{Math.round(repQuality)}</span>
-            </div>
-            <div className="sp-rep-row">
-              <span className="sp-rep-name">{t('sp.rep_loyalty')}</span>
-              <div className="sp-rep-bar-bg" style={{ border: '1px solid #DDD6FE' }}>
-                <div className="sp-rep-bar-fill" style={{ width: `${repLoyalty}%`, background: '#8B5CF6' }}></div>
-              </div>
-              <span className="sp-rep-val" style={{ color: '#7C3AED' }}>{Math.round(repLoyalty)}</span>
             </div>
           </div>
         </div>
@@ -303,7 +277,7 @@ export function Frame11LiveFreeGreen({
         </div>
       </div>
 
-      {/* <!-- M5: Mini Sparkline — wireframe slim/11 GREEN shape --> */}
+      {/* M5: Mini Sparkline — wireframe slim/12 YELLOW shape (ERV flat + total online drift) */}
       <div className="sp-sparkline">
         <div className="sp-sparkline-header">
           <span className="sp-sparkline-title">{t('sp.sparkline_title_live')}</span>
@@ -313,31 +287,31 @@ export function Frame11LiveFreeGreen({
         </div>
         <div className="sp-chart-stats">
           <div className="sp-chart-stat">
-            <div className="sp-chart-stat-label">{t('sp.chart_now')}</div>
-            <div className="sp-chart-stat-value green">{chart?.stats.now != null ? formatNumber(chart.stats.now, i18n.language) : '4,200'}</div>
+            <div className="sp-chart-stat-label">{t('sp.chart_real_short')}</div>
+            <div className="sp-chart-stat-value yellow">{chart?.stats.now != null ? formatNumber(chart.stats.now, i18n.language) : '7,400'}</div>
           </div>
           <div className="sp-chart-stat">
-            <div className="sp-chart-stat-label">{t('sp.chart_max')}</div>
-            <div className="sp-chart-stat-value">{chart?.stats.max != null ? formatNumber(chart.stats.max, i18n.language) : '4,500'}</div>
+            <div className="sp-chart-stat-label">{t('sp.chart_online_short')}</div>
+            <div className="sp-chart-stat-value">{chart?.stats.max != null ? formatNumber(chart.stats.max, i18n.language) : '12,000'}</div>
           </div>
           <div className="sp-chart-stat">
             <div className="sp-chart-stat-label">{t('sp.chart_change_30m')}</div>
-            <div className="sp-chart-stat-value green">{chart?.stats.change != null ? `${chart.stats.change >= 0 ? '+' : ''}${chart.stats.change}%` : '+8%'}</div>
+            <div className="sp-chart-stat-value yellow">{chart?.stats.change != null ? `${chart.stats.change >= 0 ? '+' : ''}${chart.stats.change}%` : '−10%'}</div>
           </div>
         </div>
         <svg className="sp-sparkline-chart" viewBox="0 0 340 160" preserveAspectRatio="none">
-          {/* Horizontal grid dashed */}
+          {/* Horizontal grid */}
           <line x1="34" y1="20" x2="330" y2="20" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
           <line x1="34" y1="55" x2="330" y2="55" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
           <line x1="34" y1="90" x2="330" y2="90" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="2,3" />
           <line x1="34" y1="125" x2="330" y2="125" stroke="#9CA3AF" strokeWidth="1" />
-          {/* Y labels — chart hook OR wireframe slim/11 defaults 5K/4K/3K/0 */}
+          {/* Y labels — wireframe slim/12 defaults 15K/10K/5K/0 */}
           {chart ? chart.yLabels.map((l) => (
             <text key={l.y} x="30" y={l.y} textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">{l.label}</text>
           )) : (<>
-            <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">5K</text>
-            <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">4K</text>
-            <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">3K</text>
+            <text x="30" y="24" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">15K</text>
+            <text x="30" y="59" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">10K</text>
+            <text x="30" y="94" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">5K</text>
             <text x="30" y="129" textAnchor="end" fontSize="9" fill="#9ca3af" fontFamily="JetBrains Mono,monospace">0</text>
           </>)}
           {/* X labels */}
@@ -345,37 +319,39 @@ export function Frame11LiveFreeGreen({
           <text x="132" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−20м</text>
           <text x="230" y="145" textAnchor="middle" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">−10м</text>
           <text x="328" y="145" textAnchor="end" fontSize="9" fill="#6b7280" fontFamily="JetBrains Mono,monospace">{t('sp.chart_now_label')}</text>
-          {/* ERV area / polyline / markers — wireframe slim/11 GREEN coords (growing trend) */}
+          {/* ERV area / polyline / markers — wireframe slim/12 YELLOW coords (flat declining) */}
           <path
-            d={chart?.ervAreaPath ?? "M34,90 L64,85 L94,80 L124,82 L154,75 L184,72 L214,68 L244,62 L274,55 L304,52 L330,48 L330,125 L34,125 Z"}
-            fill="#059669"
+            d={chart?.ervAreaPath ?? "M34,72 L64,70 L94,68 L124,66 L154,70 L184,75 L214,82 L244,88 L274,92 L304,90 L330,85 L330,125 L34,125 Z"}
+            fill="#D97706"
             fillOpacity="0.08"
           />
+          {/* Total online (grey dashed) — drifting away from ERV = anomaly */}
           <polyline
-            points={chart?.ccvPolylinePoints ?? "34,75 64,70 94,65 124,63 154,58 184,55 214,50 244,44 274,38 304,32 330,28"}
+            points={chart?.ccvPolylinePoints ?? "34,58 64,52 94,46 124,40 154,34 184,28 214,22 244,18 274,16 304,20 330,24"}
             fill="none"
             stroke="#9CA3AF"
             strokeWidth="1.5"
             strokeDasharray="3,2"
           />
+          {/* ERV yellow */}
           <polyline
-            points={chart?.ervPolylinePoints ?? "34,90 64,85 94,80 124,82 154,75 184,72 214,68 244,62 274,55 304,52 330,48"}
+            points={chart?.ervPolylinePoints ?? "34,72 64,70 94,68 124,66 154,70 184,75 214,82 244,88 274,92 304,90 330,85"}
             fill="none"
-            stroke="#059669"
+            stroke="#D97706"
             strokeWidth="2"
           />
           {chart ? chart.markers.map((m, i) => (
-            <circle key={i} cx={m.cx} cy={m.cy} r={m.r} fill="#059669" stroke={m.isLast ? 'white' : 'none'} strokeWidth={m.isLast ? 2 : 0} />
+            <circle key={i} cx={m.cx} cy={m.cy} r={m.r} fill="#D97706" stroke={m.isLast ? 'white' : 'none'} strokeWidth={m.isLast ? 2 : 0} />
           )) : (<>
-            <circle cx="34" cy="90" r="2.5" fill="#059669" />
-            <circle cx="154" cy="75" r="2.5" fill="#059669" />
-            <circle cx="244" cy="62" r="2.5" fill="#059669" />
-            <circle cx="330" cy="48" r="4" fill="#059669" stroke="white" strokeWidth="2" />
+            <circle cx="34" cy="72" r="2.5" fill="#D97706" />
+            <circle cx="154" cy="70" r="2.5" fill="#D97706" />
+            <circle cx="244" cy="88" r="2.5" fill="#D97706" />
+            <circle cx="330" cy="85" r="4" fill="#D97706" stroke="white" strokeWidth="2" />
           </>)}
         </svg>
         <div className="sp-sparkline-legend">
           <span className="sp-sparkline-legend-item">
-            <span className="sp-sparkline-legend-line green"></span> {t('sp.legend_real_viewers')}
+            <span className="sp-sparkline-legend-line" style={{ background: '#D97706' }}></span> {t('sp.legend_real_viewers')}
           </span>
           <span className="sp-sparkline-legend-item">
             <span className="sp-sparkline-legend-line grey"></span> {t('sp.legend_total_online')}
@@ -383,7 +359,7 @@ export function Frame11LiveFreeGreen({
         </div>
       </div>
 
-      {/* <!-- M6: Audience Preview --> */}
+      {/* M6: Audience Preview — wireframe slim/12: US/UK/DE */}
       <div className="sp-audience">
         <div className="sp-audience-header">
           <span className="sp-audience-title">{t('sp.audience_preview')}</span>
@@ -412,7 +388,7 @@ export function Frame11LiveFreeGreen({
         )}
       </div>
 
-      {/* Watchlist button — click navigates to Watchlists tab */}
+      {/* Watchlist button */}
       <button className="sp-watchlist-btn" onClick={() => onNavigate?.('watchlists')}>
         <svg
           className="ico ico-sm"

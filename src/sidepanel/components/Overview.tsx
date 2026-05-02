@@ -26,6 +26,8 @@ import { Frame08ColdStartProvisional } from './Frame08ColdStartProvisional';
 import { Frame09ColdStartDeepStreamer } from './Frame09ColdStartDeepStreamer';
 import { Frame10LiveGuestGreen } from './Frame10LiveGuestGreen';
 import { Frame11LiveFreeGreen } from './Frame11LiveFreeGreen';
+import { Frame12LiveFreeYellow } from './Frame12LiveFreeYellow';
+import { Frame13LiveFreeRed } from './Frame13LiveFreeRed';
 import { Frame14LivePremiumGreen } from './Frame14LivePremiumGreen';
 import { Frame15LiveStreamerOwnChannel } from './Frame15LiveStreamerOwnChannel';
 import { Frame16OfflineWithin18h } from './Frame16OfflineWithin18h';
@@ -110,25 +112,27 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
     );
   }
 
-  // Frames 11/12/13 — Live Free with M3/M4 paywall (color variants green/yellow/red).
-  // Literal port from slim/11. Free user (logged in, not Premium) sees blurred preview.
+  // Frames 11/12/13 — Live Free with M3/M4 paywall (3 standalone literal ports per ERV color).
+  // Routing per erv_label_color: green→Frame11 / yellow→Frame12 / red→Frame13. Each frame is JSX 1:1
+  // от соответствующего wireframe slim/11/12/13.html (sparkline coords/colors/alerts/audience defaults).
   if (trustCache.is_live && tier === 'free' && !isOwnChannel) {
-    return (
-      <Frame11LiveFreeGreen
-        ervPercent={trustCache.erv_percent}
-        ervCount={trustCache.erv_count}
-        ccv={trustCache.ccv}
-        ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
-        tiScore={trustCache.ti_score}
-        classification={trustCache.classification}
-        percentile={trustCache.percentile_in_category}
-        channelId={trustCache.channel_id}
-        signals={trustCache.signal_breakdown ?? []}
-        reputation={trustCache.streamer_reputation}
-        topCountries={trustCache.top_countries}
-        onNavigate={onNavigate}
-      />
-    );
+    const liveFreeProps = {
+      ervPercent: trustCache.erv_percent,
+      ervCount: trustCache.erv_count,
+      ccv: trustCache.ccv,
+      tiScore: trustCache.ti_score,
+      classification: trustCache.classification,
+      percentile: trustCache.percentile_in_category,
+      channelId: trustCache.channel_id,
+      signals: trustCache.signal_breakdown ?? [],
+      reputation: trustCache.streamer_reputation,
+      topCountries: trustCache.top_countries,
+      onNavigate,
+    };
+    const ervColor = trustCache.erv_label_color;
+    if (ervColor === 'yellow') return <Frame12LiveFreeYellow {...liveFreeProps} />;
+    if (ervColor === 'red') return <Frame13LiveFreeRed {...liveFreeProps} />;
+    return <Frame11LiveFreeGreen {...liveFreeProps} />;
   }
 
   // Frame 14 — Live Premium Green: literal port from slim/14. All 11 signals + 3 reputation

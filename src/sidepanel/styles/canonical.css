@@ -1052,6 +1052,7 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
 
 .sp-period-toggle {
     display:flex; gap:0; padding:0; border:2px solid var(--border-light); border-radius:6px; overflow:hidden; margin-bottom:0;
+    flex-shrink: 0; /* BUG-017: keep natural height (28px) inside .trends-tab column flex parent */
 }
 .sp-period-pill {
     flex:1; padding:7px 0; font-size:10px; font-family:'JetBrains Mono',monospace; font-weight:600;
@@ -1512,6 +1513,7 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     padding: 10px 12px; background: #FFFBEB;
     display: flex; align-items: flex-start; gap: 8px;
     margin-bottom: 8px;
+    flex-shrink: 0; /* BUG-017: keep natural height inside .trends-tab column flex parent */
 }
 .sp-stale-banner-body { flex: 1; min-width: 0; }
 .sp-stale-banner-title { font-size: 12px; font-weight: 700; color: #A16207; }
@@ -1521,6 +1523,7 @@ h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-
     padding: 10px 12px; background: #FEF2F2;
     display: flex; align-items: flex-start; gap: 8px;
     margin-bottom: 8px;
+    flex-shrink: 0; /* BUG-017: keep natural height inside .trends-tab column flex parent */
 }
 .sp-revoked-banner-title { font-size: 12px; font-weight: 700; color: #991B1B; }
 .sp-revoked-banner-detail { font-size: 10px; color: #B91C1C; margin-top: 2px; }

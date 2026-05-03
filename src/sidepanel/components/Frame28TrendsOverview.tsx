@@ -40,7 +40,7 @@ export function Frame28TrendsOverview({ onOpenModule }: Props) {
   return (
     <>
       {/* Insights cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 8, flexShrink: 0 }}>
         {insights.map((ins, i) => {
           if (dismissedInsights.has(i)) return null;
           const c = insightColors[ins.severity];
@@ -81,7 +81,7 @@ export function Frame28TrendsOverview({ onOpenModule }: Props) {
       </div>
 
       {/* Module grid 2 columns */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, flexShrink: 0 }}>
         {/* ERV Timeline */}
         <div className="sp-module-card" onClick={() => onOpenModule?.('erv')} style={moduleCardStyle}>
           <div style={moduleHeaderStyle}><span style={moduleLabelStyle}>{t('erv.real_viewers_label')}</span><span style={moduleArrowStyle}>→</span></div>

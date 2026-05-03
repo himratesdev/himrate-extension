@@ -203,6 +203,7 @@ Incident reference: 2026-04-30 — 19 dead chevrons (Signal/Rep/Health) нако
 | **Interpolation** | i18next default `{{var}}` (double brace). Не `{var}` (single) — ломает react-i18next |
 | **Pluralization** | Использовать `i18next` plurals API (`key_one`, `key_other`), не conditional rendering на frontend |
 | **No translation drift** | При изменении wireframe text — обновить i18n value СРАЗУ. Не оставлять stale translation |
+| **Wireframe HTML = source** | Если PO хочет изменить user-facing text: сначала правится `_tasks/TASK-039/wireframe-screens/slim/NN_*.html`, затем i18n value re-syncs к новому wireframe literal. **Запрещено** менять i18n value напрямую без update slim HTML — это silent divergence от literal-port discipline |
 
 ---
 

@@ -150,7 +150,7 @@ export function Watchlists({ tier, authState }: Props) {
   // S5: Guest blur overlay instead of early return
   if (!authState.loggedIn) {
     return (
-      <div style={{ position: 'relative', minHeight: '300px', overflow: 'hidden' }}>
+      <div className="sp-content" role="tabpanel" style={{ position: 'relative', minHeight: '300px', overflow: 'hidden' }}>
         {/* Skeleton-like background content with blur */}
         <div style={{ filter: 'blur(4px)', pointerEvents: 'none', userSelect: 'none' }}>
           {/* Fake selector */}
@@ -213,7 +213,7 @@ export function Watchlists({ tier, authState }: Props) {
   // Error state
   if (error) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '50px 20px', textAlign: 'center', flex: 1 }}>
+      <div className="sp-content" role="tabpanel" style={{ alignItems: 'center', justifyContent: 'center', padding: '50px 20px', textAlign: 'center' }}>
         <div style={{ fontSize: '40px', color: '#D97706', marginBottom: '10px' }}>⚠</div>
         <div style={{ fontSize: '13px', fontWeight: 600, fontFamily: "'Space Grotesk', sans-serif", color: '#374151', marginBottom: '4px' }}>{t('wl.error_title')}</div>
         <div style={{ fontSize: '11px', color: '#9CA3AF', marginBottom: '12px' }}>{t('wl.error_subtitle')}</div>
@@ -230,7 +230,7 @@ export function Watchlists({ tier, authState }: Props) {
   // Skeleton
   if (loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '12px 0' }}>
+      <div className="sp-content" role="tabpanel" style={{ gap: '10px', padding: '12px 0' }}>
         {[1, 2, 3].map(i => (
           <div key={i} style={{ height: '72px', borderRadius: '10px', background: 'linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%)', backgroundSize: '200% 100%', animation: 'shimmer 1.5s infinite' }} />
         ))}

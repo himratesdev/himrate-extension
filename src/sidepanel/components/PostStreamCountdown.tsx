@@ -1,5 +1,7 @@
-// TASK-035 FR-010: Post-stream countdown — 18h access window for Free users.
-// Recalculates every 60s. Shows blur message when expired.
+// BUG-016 PR-1 Section 9: PostStreamCountdown canonical match.
+// Wireframe: side-panel-wireframe-TASK-039.html sp-countdown (lines 3085-3089 normal,
+// 3244-3247 warning expired, 3350-3354 <1h warning).
+// Canonical: sp-countdown (.warning variant for <1h or expired).
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,49 +27,29 @@ export function PostStreamCountdown({ expiresAt }: Props) {
   }, [expiresAt]);
 
   const isExpired = remainingMin <= 0;
+  const isWarning = remainingMin > 0 && remainingMin < 60;
+  const variant = isExpired || isWarning ? ' warning' : '';
 
   if (isExpired) {
     return (
-      <div
-        className="sp-post-stream-expired"
-        style={{
-          padding: '12px',
-          background: '#f3f4f6',
-          border: '2px solid #e5e7eb',
-          borderRadius: '8px',
-          textAlign: 'center',
-          filter: 'blur(2px)',
-          userSelect: 'none',
-          fontSize: '12px',
-          color: '#6b7280',
-        }}
-      >
-        {t('popup.analytics_expired')}
+      <div className={`sp-countdown${variant}`}>
+        <span aria-hidden="true">⏱</span>
+        <span>{t('sp.countdown_expired')}</span>
       </div>
     );
   }
 
   const hours = Math.floor(remainingMin / 60);
   const minutes = remainingMin % 60;
+  const timeText = hours > 0
+    ? t('sp.countdown_time_hm', { h: hours, m: minutes })
+    : t('sp.countdown_time_m', { m: minutes });
 
   return (
-    <div
-      className="sp-post-stream-countdown"
-      style={{
-        padding: '10px 14px',
-        background: '#f0fdf4',
-        border: '2px solid #22c55e',
-        borderRadius: '8px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        fontSize: '12px',
-      }}
-    >
-      <span style={{ fontSize: '14px' }}>⏱</span>
-      <span style={{ fontWeight: 600 }}>
-        {t('stream_ended_cta.timer', { h: hours, m: minutes })}
-      </span>
+    <div className={`sp-countdown${variant}`}>
+      <span aria-hidden="true">⏱</span>
+      <span>{isWarning ? t('sp.countdown_remaining') : t('sp.countdown_available')}</span>
+      <span className="sp-countdown-time">{timeText}</span>
     </div>
   );
 }

@@ -1,5 +1,6 @@
-// TASK-035 FR-014: Error screen for Overview tab — API unavailable / timeout.
-// No props — retry fires GET_TRUST_DATA message to background.
+// BUG-016 PR-1 Section 10: ErrorOverview canonical match (wireframe lines 3498-3531).
+// Wireframe: side-panel-wireframe-TASK-039.html state-center + state-icon.error-icon
+// + state-title + state-subtitle + btn-primary retry.
 
 import { useTranslation } from 'react-i18next';
 
@@ -11,42 +12,15 @@ export function ErrorOverview() {
   };
 
   return (
-    <div
-      className="sp-error-overview"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px 24px',
-        gap: '12px',
-        textAlign: 'center',
-        flex: 1,
-      }}
-    >
-      <div
-        style={{
-          width: '48px',
-          height: '48px',
-          borderRadius: '50%',
-          border: '3px solid #ef4444',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '22px',
-          fontWeight: 700,
-          color: '#ef4444',
-        }}
-      >
+    <div className="state-center">
+      <div className="state-icon error-icon" aria-hidden="true">
         !
       </div>
-      <div style={{ fontWeight: 700, fontSize: '15px' }}>{t('sp.error')}</div>
-      <div style={{ fontSize: '12px', color: '#6b7280', maxWidth: '220px' }}>
-        {t('popup.error_subtitle')}
-      </div>
+      <div className="state-title">{t('sp.error_title')}</div>
+      <div className="state-subtitle">{t('popup.error_subtitle')}</div>
       <button
         className="btn btn-primary"
-        style={{ padding: '10px 32px', width: 'auto', marginTop: '4px' }}
+        style={{ padding: '10px 32px', width: 'auto' }}
         onClick={handleRetry}
       >
         {t('popup.retry')}

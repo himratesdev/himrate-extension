@@ -1,61 +1,48 @@
-// TASK-035 FR-016: "You're not on Twitch" screen for Overview tab.
-// Search hint. No props.
+// BUG-016 PR-1a: NotTwitchOverview LITERAL PORT — JSX 1:1 от wireframe slim/01_not-streaming-site.html.
+// Каждый <div>, <span>, <input> + class + inline style скопирован вербатим из wireframe.
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function NotTwitchOverview() {
   const { t } = useTranslation();
+  const [query, setQuery] = useState('');
+
+  const submitSearch = () => {
+    const term = query.trim();
+    if (!term) return;
+    chrome.tabs.create({ url: `https://www.twitch.tv/search?term=${encodeURIComponent(term)}` });
+  };
 
   return (
+    // <div class="sp-content" style="justify-content:center;align-items:center;text-align:center;gap:14px;">
     <div
-      className="sp-not-twitch"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '40px 24px',
-        gap: '14px',
-        textAlign: 'center',
-        flex: 1,
-      }}
+      className="sp-content"
+      role="tabpanel"
+      style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: '14px' }}
     >
-      <div
-        style={{
-          width: '52px',
-          height: '52px',
-          borderRadius: '50%',
-          border: '3px solid #111',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 700,
-          fontSize: '22px',
-        }}
-      >
-        H
+      {/* <div class="state-icon twitch-icon" style="width:48px;height:48px;font-size:22px;"> */}
+      <div className="state-icon twitch-icon" style={{ width: '48px', height: '48px', fontSize: '22px' }}>
+        {/* <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;">H</span> */}
+        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700 }}>H</span>
       </div>
-
-      <div style={{ fontWeight: 700, fontSize: '15px' }}>{t('not_twitch.title')}</div>
-
-      <div style={{ fontSize: '12px', color: '#6b7280', maxWidth: '220px', lineHeight: '1.5' }}>
+      {/* <div class="state-title" style="font-size:15px;">Вы не на Twitch</div> */}
+      <div className="state-title" style={{ fontSize: '15px' }}>{t('not_twitch.title')}</div>
+      {/* <div class="state-subtitle" style="max-width:240px;">...</div> */}
+      <div className="state-subtitle" style={{ maxWidth: '240px' }}>
         {t('not_twitch.subtitle')}
       </div>
-
-      <div
-        style={{
-          marginTop: '4px',
-          padding: '8px 14px',
-          background: '#f3f4f6',
-          borderRadius: '6px',
-          fontSize: '11px',
-          color: '#6b7280',
-          maxWidth: '220px',
-        }}
-      >
-        {t('search.no_results_hint')}
-      </div>
+      {/* <input type="text" class="search-input" placeholder="Поиск стримера..." style="width:100%;"> */}
+      <input
+        type="text"
+        className="search-input"
+        placeholder={t('search.placeholder')}
+        style={{ width: '100%' }}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => { if (e.key === 'Enter') submitSearch(); }}
+        aria-label={t('search.placeholder')}
+      />
     </div>
   );
 }

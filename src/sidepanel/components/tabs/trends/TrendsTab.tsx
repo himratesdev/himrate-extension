@@ -7,7 +7,11 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TrendsPeriod, AccessLevel, TrendsMeta } from '../../../../shared/trends-types';
 import { PeriodToggle } from './PeriodToggle';
-import { TrendsOverview } from './TrendsOverview';
+// TrendsOverview — old implementation (own architecture, not literal port).
+// Replaced by Frame28TrendsOverview. Kept import commented for now until full
+// trends frames port done (frames 29-47) — then remove TrendsOverview.tsx файл.
+// import { TrendsOverview } from './TrendsOverview';
+import { Frame28TrendsOverview } from '../../Frame28TrendsOverview';
 import { AnonymousState } from './states/AnonymousState';
 import { InsufficientData } from './states/InsufficientData';
 import { StaleBanner } from './states/StaleBanner';
@@ -41,7 +45,8 @@ export function TrendsTab({
   const [meta, setMeta] = useState<TrendsMeta | null>(null);
 
   // Stable identity — child useEffect avoid refetch на render.
-  const handleMetaUpdate = useCallback((m: TrendsMeta) => setMeta(m), []);
+  // Stable identity — kept для future Frame28 meta integration when API wired.
+  void useCallback((m: TrendsMeta) => setMeta(m), []);
 
   // Anonymous viewer — sign-in CTA, no fetches.
   if (accessLevel === 'anonymous') {
@@ -92,14 +97,14 @@ export function TrendsTab({
       {showBusinessPaywall ? (
         <Paywall variant="business" onUpgrade={() => onRequestUpgrade?.('business')} />
       ) : (
-        <TrendsOverview
-          channelId={channelId}
-          period={period}
-          accessLevel={accessLevel}
-          onMetaUpdate={handleMetaUpdate}
+        // Frame 28 LITERAL PORT — replaces previous TrendsOverview (own architecture).
+        // Wireframe slim/28: 9 module cards + 3 insights. Period toggle owned by parent
+        // PeriodToggle.tsx. Business gating handled by showBusinessPaywall above.
+        // Drill-down navigation handler — implementation tracked в parent task TASK-084.
+        <Frame28TrendsOverview
+          onOpenModule={() => { /* TASK-084 implements drill-down to module screens */ }}
         />
       )}
-      <span className="sr-only">{t('trends.period.aria')}</span>
     </div>
   );
 }

@@ -13,15 +13,27 @@ import { TrendsTab } from './components/tabs/trends/TrendsTab';
 import type { AccessLevel } from '../shared/trends-types';
 import { ChannelSwitchNotification } from './components/ChannelSwitchNotification';
 import { InfoBanner } from './components/InfoBanner';
+import { LockedTabPaywallModal } from './components/LockedTabPaywallModal';
 import type { TrustCache } from '../shared/api';
 
 const TABS = ['overview', 'trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid', 'settings'] as const;
 export type SidePanelTab = typeof TABS[number];
 
-// Tabs locked per tier (Design Spec §F3)
+// Tabs locked per tier (Design Spec §F3).
+// LOCKED_TABS = visual lock indicator (lock icon + opacity) per wireframes 11/32.
+// HARD_LOCKED_TABS = click triggers generic LockedTabPaywallModal.
+// Trends is soft-locked (visual lock only) because TrendsTab renders its own
+// rich Paywall content (frames 32 Free / 33 Guest) — generic modal would lose context.
 const LOCKED_TABS: Record<string, SidePanelTab[]> = {
   guest: ['trends', 'audience', 'watchlists', 'compare', 'overlap', 'botraid'],
   free: ['trends', 'audience', 'compare', 'overlap', 'botraid'],
+  premium: [],
+  business: [],
+  streamer: [],
+};
+const HARD_LOCKED_TABS: Record<string, SidePanelTab[]> = {
+  guest: ['audience', 'watchlists', 'compare', 'overlap', 'botraid'],
+  free: ['audience', 'compare', 'overlap', 'botraid'],
   premium: [],
   business: [],
   streamer: [],
@@ -35,21 +47,22 @@ export function SidePanel() {
     loggedIn: false, tier: 'guest', twitchLinked: false, twitchLogin: null,
   });
   const [pendingChannel, setPendingChannel] = useState<string | null>(null);
+  const [lockedTabPaywall, setLockedTabPaywall] = useState<SidePanelTab | null>(null);
   const [loading, setLoading] = useState(true);
+  // currentChannel: undefined = not yet known (Skeleton); null = no channel
+  // detected (NotTwitchOverview); string = channel found (wait for trustCache).
+  const [currentChannel, setCurrentChannel] = useState<string | null | undefined>(undefined);
 
-  // Boot: get auth state + current channel + trust data
   useEffect(() => {
     chrome.runtime.sendMessage({ action: 'GET_AUTH_STATE' }, (auth) => {
       if (auth) setAuthState(auth);
     });
-    chrome.runtime.sendMessage({ action: 'GET_TRUST_DATA' }, (data) => {
-      if (data) {
-        setTrustCache(data);
-        setLoading(false);
-      }
-    });
     chrome.runtime.sendMessage({ action: 'GET_CURRENT_CHANNEL' }, (ch) => {
-      if (!ch) setLoading(false);
+      setCurrentChannel(typeof ch === 'string' && ch.length > 0 ? ch : null);
+    });
+    chrome.runtime.sendMessage({ action: 'GET_TRUST_DATA' }, (data) => {
+      if (data) setTrustCache(data);
+      setLoading(false);
     });
   }, []);
 
@@ -73,9 +86,9 @@ export function SidePanel() {
 
   const handleTabChange = useCallback((tab: string) => {
     const tabId = tab as SidePanelTab;
-    const locked = LOCKED_TABS[authState.tier] || LOCKED_TABS.guest;
-    if (locked.includes(tabId)) {
-      // TODO: show paywall modal
+    const hardLocked = HARD_LOCKED_TABS[authState.tier] || HARD_LOCKED_TABS.guest;
+    if (hardLocked.includes(tabId)) {
+      setLockedTabPaywall(tabId);
       return;
     }
     setCurrentTab(tabId);
@@ -117,28 +130,51 @@ export function SidePanel() {
 
   return (
     <div className="panel">
-      {/* Header */}
-      <div className="panel-header">
-        <div className="panel-header-left">
-          {currentTab !== 'overview' && (
-            <button className="panel-header-back" onClick={() => setCurrentTab('overview')} aria-label={t('aria.back')}>
-              &#8592;
-            </button>
-          )}
-          <span className="panel-header-title">
-            {currentTab === 'overview' && trustCache?.display_name
-              ? trustCache.display_name
-              : t(`tab.${currentTab}`)}
+      {/* Header — literal port wireframe slim/06 lines 5-13.
+          <div class="sp-header">
+            <button class="sp-header-back">←</button>
+            <span class="sp-header-title">Overview</span>
+            <span class="sp-header-streamer">name</span>  ← ALWAYS rendered when streamer login known
+            <div class="sp-header-right">...</div>
+          </div>
+          Back arrow ВСЕГДА full opacity per wireframe (no greyed-out state).
+          Streamer name shown if trustCache.login available, на ЛЮБОМ tab (не только overview). */}
+      <div className="sp-header">
+        <button
+          className="sp-header-back"
+          onClick={() => setCurrentTab('overview')}
+          aria-label={t('aria.back')}
+          disabled={currentTab === 'overview'}
+        >
+          &#8592;
+        </button>
+        <span className="sp-header-title">{t(`tab.${currentTab}`)}</span>
+        {trustCache?.login && (
+          <span className="sp-header-streamer" title={trustCache.display_name || trustCache.login}>
+            {trustCache.login}
           </span>
-        </div>
-        <div className="panel-header-right">
+        )}
+        <div className="sp-header-right">
           <LangSwitcher compact />
           {authState.loggedIn && (
             <>
-              <button className="panel-settings" aria-label={t('aria.settings')} onClick={() => setCurrentTab('settings')}>
-                &#9881;&#65039;
+              <button
+                className="sp-header-icon"
+                aria-label={t('aria.settings')}
+                onClick={() => setCurrentTab('settings')}
+              >
+                <svg className="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
               </button>
-              <div className="panel-avatar" aria-label={t('aria.profile')}>
+              <div
+                className="sp-header-avatar"
+                aria-label={t('aria.profile')}
+                role="button"
+                onClick={() => setCurrentTab('settings')}
+                style={{ cursor: 'pointer' }}
+              >
                 {trustCache?.avatar_url
                   ? <img src={trustCache.avatar_url} alt="" width={20} height={20} style={{ borderRadius: '50%' }} />
                   : (authState.twitchLogin?.[0]?.toUpperCase() || 'U')
@@ -149,10 +185,20 @@ export function SidePanel() {
         </div>
       </div>
 
-      {/* Info Banner */}
+      {/* Info Banner — 2 variants:
+          link_twitch (loggedIn + !twitchLinked + tracked): "Привяжите Twitch..."
+          guest_signin (Guest + tracked + Live, frame 10): "Войдите через Twitch..."
+          Hidden on NotTracked / NotTwitch / Error / Offline per frames 03/05/17. */}
       <InfoBanner
-        show={authState.loggedIn && !authState.twitchLinked}
+        show={
+          authState.loggedIn &&
+          !authState.twitchLinked &&
+          Boolean(trustCache?.is_tracked)
+        }
+        variant="link_twitch"
       />
+      {/* SidePanel-level guest_signin banner DISABLED — Frame10 (LiveGuest) renders
+          its own banner inside sp-content per wireframe slim/10. Avoids duplication. */}
 
       {/* Tab Bar */}
       <TabBar
@@ -160,34 +206,36 @@ export function SidePanel() {
         currentTab={currentTab}
         onTabChange={handleTabChange}
         lockedTabs={lockedTabs}
-        anomalyTabs={getAnomalyTabs(trustCache)}
+        anomalyTabs={getAnomalyTabs(trustCache, lockedTabs)}
       />
 
-      {/* Content */}
-      <div className="panel-content" role="tabpanel">
-        {currentTab === 'overview' ? (
-          <Overview
-            trustCache={trustCache}
-            loading={loading}
-            tier={tier}
-            isOwnChannel={isOwnChannel}
-            authState={authState}
-          />
-        ) : currentTab === 'watchlists' ? (
-          <Watchlists tier={tier} authState={authState} />
-        ) : currentTab === 'trends' ? (
-          <TrendsTab
-            channelId={trustCache?.channel_id ?? null}
-            accessLevel={resolveAccessLevel(tier, isOwnChannel)}
-            onRequestSignIn={handleRequestSignIn}
-            onRequestUpgrade={handleRequestUpgrade}
-            onReconnectTwitch={handleReconnectTwitch}
-            oauthRevoked={authState.loggedIn && !authState.twitchLinked}
-          />
-        ) : (
-          <PlaceholderTab tabId={currentTab} />
-        )}
-      </div>
+      {/* Content — каждый tab/state owns свой sp-content (literal port wireframe).
+          sp-content inline styles варьируются per-frame (e.g. justify-content:center
+          для NotTwitch/NotTracked); поэтому wrapper в каждом компоненте, не здесь. */}
+      {currentTab === 'overview' ? (
+        <Overview
+          trustCache={trustCache}
+          loading={loading}
+          currentChannel={currentChannel}
+          tier={tier}
+          isOwnChannel={isOwnChannel}
+          authState={authState}
+          onNavigate={(tab) => setCurrentTab(tab as SidePanelTab)}
+        />
+      ) : currentTab === 'watchlists' ? (
+        <Watchlists tier={tier} authState={authState} />
+      ) : currentTab === 'trends' ? (
+        <TrendsTab
+          channelId={trustCache?.channel_id ?? null}
+          accessLevel={resolveAccessLevel(tier, isOwnChannel)}
+          onRequestSignIn={handleRequestSignIn}
+          onRequestUpgrade={handleRequestUpgrade}
+          onReconnectTwitch={handleReconnectTwitch}
+          oauthRevoked={authState.loggedIn && !authState.twitchLinked}
+        />
+      ) : (
+        <PlaceholderTab tabId={currentTab} />
+      )}
 
       {/* Channel Switch Notification */}
       {pendingChannel && (
@@ -198,23 +246,64 @@ export function SidePanel() {
         />
       )}
 
-      {/* Footer */}
-      <div className="panel-footer">
-        <a href="#" className="footer-link">{t('footer.support')}</a>
-        <div className="panel-footer-right">
-          <a href="#" className="footer-link">{t('footer.feedback')}</a>
-          <a href="https://youtube.com/@himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.youtube')}</a>
-          <a href="https://t.me/himrate" target="_blank" rel="noopener" className="footer-link">{t('footer.telegram')}</a>
-        </div>
+      {/* Locked Tab Paywall Modal */}
+      {lockedTabPaywall && (
+        <LockedTabPaywallModal
+          tabName={t(`tab.${lockedTabPaywall}`)}
+          onClose={() => setLockedTabPaywall(null)}
+          onUpgrade={() => {
+            setLockedTabPaywall(null);
+            handleRequestUpgrade('premium');
+          }}
+        />
+      )}
+
+      {/* Footer — canonical sp-footer §6.2. Все 4 link через chrome.tabs.create
+          для надёжной работы в extension context (anchor href может не работать). */}
+      <div className="sp-footer">
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://himrate.com/support' }); }}
+        >{t('footer.support')}</a>
+        <span className="sp-footer-sep">·</span>
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://himrate.com/feedback' }); }}
+        >{t('footer.feedback')}</a>
+        <span className="sp-footer-sep">·</span>
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://youtube.com/@himrate' }); }}
+        >{t('footer.youtube')}</a>
+        <span className="sp-footer-sep">·</span>
+        <a
+          href="#"
+          className="sp-footer-link"
+          onClick={(e) => { e.preventDefault(); chrome.tabs.create({ url: 'https://t.me/himrate' }); }}
+        >{t('footer.telegram')}</a>
       </div>
     </div>
   );
 }
 
-function getAnomalyTabs(cache: TrustCache | null): string[] {
-  if (!cache?.is_live || cache.erv_percent == null || cache.erv_percent >= 80) return [];
-  // Anomaly dots on Overview + relevant tabs when ERV < 80%
-  return ['overview'];
+function getAnomalyTabs(
+  cache: TrustCache | null,
+  lockedTabs: SidePanelTab[],
+): Record<string, 'yellow' | 'red'> {
+  if (!cache?.is_live || cache.erv_percent == null || cache.erv_percent >= 80) return {};
+  // ERV<50 = red, ERV 50-79 = yellow per wireframe.
+  const color: 'yellow' | 'red' = cache.erv_percent < 50 ? 'red' : 'yellow';
+  // Tabs with anomaly-relevant drill-down: overview always; overlap when
+  // user has access (frames 12/26 — locked tabs in Free skip dot).
+  const candidateTabs: SidePanelTab[] = ['overview', 'overlap'];
+  const result: Record<string, 'yellow' | 'red'> = {};
+  for (const tab of candidateTabs) {
+    if (!lockedTabs.includes(tab)) result[tab] = color;
+  }
+  return result;
 }
 
 // TASK-039: access_level resolution для Trends API (FR-011..014).

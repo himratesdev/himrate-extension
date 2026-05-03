@@ -5,3 +5,12 @@ dist/
 key.pem
 e2e/report/
 e2e/results/
+e2e/visual-qa/.tmp-profile/
+e2e/visual-qa/.tmp-profile-*/
+e2e/visual-qa/screens/
+e2e/visual-qa/screens-archive/
+e2e/visual-qa/screens-wireframe/
+e2e/visual-qa/extension-elements/
+e2e/visual-qa/wireframe-elements/
+e2e/visual-qa/diff-reports/
+e2e/visual-qa/trends-debug-logs/

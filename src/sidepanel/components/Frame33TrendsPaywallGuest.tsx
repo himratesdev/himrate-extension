@@ -1,7 +1,6 @@
 // LITERAL PORT — wireframe slim/33_screen-6-paywall-guest-avtorizaciya.html.
 // Trends Guest Paywall — Twitch + Google sign-in CTAs.
 
-import { useTranslation } from 'react-i18next';
 
 interface Props {
   onTwitchSignIn?: () => void;
@@ -9,8 +8,6 @@ interface Props {
 }
 
 export function Frame33TrendsPaywallGuest({ onTwitchSignIn, onGoogleSignIn }: Props) {
-  const { t: _t } = useTranslation();
-
   return (
     <div
       className="sp-content"

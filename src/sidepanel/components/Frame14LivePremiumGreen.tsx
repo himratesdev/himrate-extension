@@ -94,10 +94,10 @@ export function Frame14LivePremiumGreen({
     'per_user_chat_behavior', 'channel_protection_score', 'cross_channel_bot_presence',
     'known_bot_list_matching', 'raid_attribution', 'ccv_chat_rate_correlation', 'account_profile_scoring'];
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(allTypes));
-  const toggle = (k: string) => setExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggle = (k: string) => setExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
 
   const [repExpanded, setRepExpanded] = useState<Set<string>>(() => new Set(['growth', 'quality', 'loyalty']));
-  const toggleRep = (k: string) => setRepExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggleRep = (k: string) => setRepExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
 
   // Reputation
   const repGrowth = reputation?.growth_pattern_score ?? 85;

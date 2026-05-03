@@ -97,7 +97,7 @@ export function Frame15LiveStreamerOwnChannel({
 
   // Streamer Tools accordion state — Bейдж first row open per slim/15
   const [toolsExpanded, setToolsExpanded] = useState<Set<string>>(() => new Set(['badge']));
-  const toggleTool = (k: string) => setToolsExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggleTool = (k: string) => setToolsExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
   const color = ervLabelColor || 'green';
   const stroke = ERV_STROKE[color];
   const pct = ervPercent ?? 88;
@@ -120,15 +120,15 @@ export function Frame15LiveStreamerOwnChannel({
 
   // Per slim/15: первый signal row open, остальные closed
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['auth_ratio']));
-  const toggle = (k: string) => setExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggle = (k: string) => setExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
 
   // Reputation rows — все closed по умолчанию per slim/15 (нет sp-rep-detail в slim)
   const [repExpanded, setRepExpanded] = useState<Set<string>>(() => new Set());
-  const toggleRep = (k: string) => setRepExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggleRep = (k: string) => setRepExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
 
   // HealthScore — first row (TI) open per slim/15
   const [hsExpanded, setHsExpanded] = useState<Set<string>>(() => new Set(['ti']));
-  const toggleHs = (k: string) => setHsExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggleHs = (k: string) => setHsExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
 
   // Reputation values
   const repGrowth = reputation?.growth_pattern_score ?? 80;

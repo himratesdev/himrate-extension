@@ -3,7 +3,6 @@
 // Yellow/red bordered box с list of detected anomalies (raid attribution, audience overlap, etc.).
 // Distinct from AlertCounter (transient threshold-triggered alerts с auto-dismiss).
 
-import { useTranslation } from 'react-i18next';
 
 export interface AnomalyAlert {
   id: string;
@@ -19,7 +18,6 @@ interface Props {
 }
 
 export function AlertsBlock({ alerts }: Props) {
-  const { t: _t } = useTranslation();
   if (alerts.length === 0) return null;
 
   return (

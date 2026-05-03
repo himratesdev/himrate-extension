@@ -40,7 +40,7 @@ export function Frame09ColdStartDeepStreamer({
   const [tiExpanded, setTiExpanded] = useState(true);
   // First row (TI) open by default per wireframe slim/09. Click toggle each row.
   const [hsExpanded, setHsExpanded] = useState<Set<string>>(() => new Set(['ti']));
-  const toggleHs = (k: string) => setHsExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggleHs = (k: string) => setHsExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
   const tiVal = hsTi ?? 88;
   const stabVal = hsStability ?? 91;
   const engVal = hsEngagement ?? 90;

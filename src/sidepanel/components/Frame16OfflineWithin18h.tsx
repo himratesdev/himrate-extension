@@ -91,9 +91,9 @@ export function Frame16OfflineWithin18h({
   const [tiExpanded, setTiExpanded] = useState(true);
   // Expand state — Frame16 (slim/16) shows all signals collapsible, all closed by default
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
-  const toggle = (k: string) => setExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggle = (k: string) => setExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
   const [repExpanded, setRepExpanded] = useState<Set<string>>(() => new Set());
-  const toggleRep = (k: string) => setRepExpanded(p => { const n = new Set(p); n.has(k) ? n.delete(k) : n.add(k); return n; });
+  const toggleRep = (k: string) => setRepExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
 
   // Reputation
   const repGrowth = reputation?.growth_pattern_score ?? 72;

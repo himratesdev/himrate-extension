@@ -1,0 +1,85 @@
+name: Cross-repo CLAUDE.md sync
+
+on:
+  pull_request:
+    paths:
+      - 'CLAUDE.md'
+      - 'docs/global-claude-md-mirror.md'
+
+jobs:
+  verify-mirror-sync:
+    name: Verify §FRONTEND mirror touched together
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute changed files
+        id: changes
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+          echo "Changed files in PR:"
+          echo "$CHANGED"
+
+          CLAUDE_CHANGED=$(echo "$CHANGED" | grep -E '^CLAUDE\.md$' || true)
+          MIRROR_CHANGED=$(echo "$CHANGED" | grep -E '^docs/global-claude-md-mirror\.md$' || true)
+
+          echo "claude_changed=$([ -n "$CLAUDE_CHANGED" ] && echo "true" || echo "false")" >> "$GITHUB_OUTPUT"
+          echo "mirror_changed=$([ -n "$MIRROR_CHANGED" ] && echo "true" || echo "false")" >> "$GITHUB_OUTPUT"
+
+      - name: Detect §Frontend Literal-Port section diff
+        id: section
+        if: steps.changes.outputs.claude_changed == 'true'
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          # Extract section bounds in CLAUDE.md (between "## Frontend Literal-Port Discipline" and next "## ")
+          extract_section() {
+            local sha="$1"
+            git show "$sha:CLAUDE.md" 2>/dev/null | awk '
+              /^## Frontend Literal-Port Discipline/ { in_section=1; print; next }
+              in_section && /^## / && !/^## Frontend Literal-Port Discipline/ { exit }
+              in_section { print }
+            '
+          }
+
+          BASE_SECTION=$(extract_section "$BASE_SHA")
+          HEAD_SECTION=$(extract_section "$HEAD_SHA")
+
+          if [ "$BASE_SECTION" = "$HEAD_SECTION" ]; then
+            echo "literal_port_changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "literal_port_changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Enforce sync rule
+        run: |
+          CLAUDE_CHANGED="${{ steps.changes.outputs.claude_changed }}"
+          MIRROR_CHANGED="${{ steps.changes.outputs.mirror_changed }}"
+          LITERAL_PORT_CHANGED="${{ steps.section.outputs.literal_port_changed }}"
+
+          # Rule 1: If §Frontend Literal-Port Discipline section changed in CLAUDE.md,
+          #         mirror file must also be updated.
+          if [ "$LITERAL_PORT_CHANGED" = "true" ] && [ "$MIRROR_CHANGED" = "false" ]; then
+            echo "::error::§Frontend Literal-Port Discipline section in CLAUDE.md was modified, but docs/global-claude-md-mirror.md was not updated. Sync rule violation."
+            echo ""
+            echo "Per cross-repo sync rule (verivio clode/CLAUDE.md §FRONTEND > Sync requirement):"
+            echo "при изменении §FRONTEND в verivio-clode (source of truth) — обновить ОБА:"
+            echo "  1. CLAUDE.md §Frontend Literal-Port Discipline (quick-reference)"
+            echo "  2. docs/global-claude-md-mirror.md (this CI guard)"
+            echo ""
+            echo "Action: copy verbatim §FRONTEND content из verivio-clode/CLAUDE.md в docs/global-claude-md-mirror.md, обновить 'Last synced from verivio-clode' дату, push."
+            exit 1
+          fi
+
+          # Rule 2: If mirror file changed, CLAUDE.md should also be touched (likely both need sync).
+          if [ "$MIRROR_CHANGED" = "true" ] && [ "$CLAUDE_CHANGED" = "false" ]; then
+            echo "::warning::docs/global-claude-md-mirror.md was updated, but CLAUDE.md was not touched. Verify §Frontend Literal-Port Discipline reflects mirror changes."
+          fi
+
+          echo "Cross-repo CLAUDE.md sync OK."

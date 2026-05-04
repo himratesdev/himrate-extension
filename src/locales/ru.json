@@ -798,5 +798,25 @@
   "settings.language_interface": "Язык интерфейса",
   "settings.data": "Данные",
   "settings.privacy_policy": "Политика конфиденциальности",
-  "settings.terms": "Условия использования"
+  "settings.terms": "Условия использования",
+
+  "alert.ccv_spike.title": "Скачок зрителей",
+  "alert.ccv_spike.detail": "+{{N}}% за {{M}} мин (рост с {{From}} до {{To}})",
+  "alert.confirmed_raid.title": "Подтверждённый рейд",
+  "alert.confirmed_raid.detail": "Рейд от @{{raider}}: {{viewers}} зрителей",
+  "alert.confirmed_raid.detail_no_raider": "Рейд: {{viewers}} зрителей",
+  "alert.anomaly_wave.title": "Аномальная волна аккаунтов",
+  "alert.anomaly_wave.detail": "{{N}} новых аккаунтов с подозрительным паттерном за {{M}} мин",
+  "alert.ti_drop.title": "Резкое падение Trust Index",
+  "alert.ti_drop.detail": "TI упал с {{From}} до {{To}} (−{{N}} pts) за {{M}} мин",
+  "alert.chatter_to_ccv_anomaly.title": "Аномалия активности чата",
+  "alert.chatter_to_ccv_anomaly.detail": "Доля пишущих {{N}}% (норма для категории {{Category}}: {{Min}}-{{Max}}%)",
+  "alert.chat_entropy_drop.title": "Падение энтропии чата",
+  "alert.chat_entropy_drop.detail": "Энтропия {{N}} (норма >2.0) — чат шаблонный",
+  "alert.erv_divergence.title": "Расхождение ERV/CCV",
+  "alert.erv_divergence.detail": "ERV/CCV изменился на {{N}}% за {{M}} мин",
+  "alert.severity.info.aria": "Информация",
+  "alert.severity.yellow.aria": "Внимание",
+  "alert.severity.red.aria": "Критическая аномалия",
+  "alert.dismiss": "Скрыть"
 }

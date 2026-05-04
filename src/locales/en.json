@@ -798,5 +798,25 @@
   "settings.language_interface": "Interface language",
   "settings.data": "Data",
   "settings.privacy_policy": "Privacy Policy",
-  "settings.terms": "Terms of Service"
+  "settings.terms": "Terms of Service",
+
+  "alert.ccv_spike.title": "Viewer surge",
+  "alert.ccv_spike.detail": "+{{N}}% in {{M}} min ({{From}} → {{To}})",
+  "alert.confirmed_raid.title": "Confirmed raid",
+  "alert.confirmed_raid.detail": "Raid from @{{raider}}: {{viewers}} viewers",
+  "alert.confirmed_raid.detail_no_raider": "Raid: {{viewers}} viewers",
+  "alert.anomaly_wave.title": "Anomalous account wave",
+  "alert.anomaly_wave.detail": "{{N}} new accounts with suspicious pattern in {{M}} min",
+  "alert.ti_drop.title": "Trust Index sharp drop",
+  "alert.ti_drop.detail": "TI dropped {{From}} → {{To}} (−{{N}} pts) in {{M}} min",
+  "alert.chatter_to_ccv_anomaly.title": "Chat activity anomaly",
+  "alert.chatter_to_ccv_anomaly.detail": "Chatter ratio {{N}}% (normal for {{Category}}: {{Min}}-{{Max}}%)",
+  "alert.chat_entropy_drop.title": "Chat entropy drop",
+  "alert.chat_entropy_drop.detail": "Entropy {{N}} (normal >2.0) — chat is templated",
+  "alert.erv_divergence.title": "ERV/CCV divergence",
+  "alert.erv_divergence.detail": "ERV/CCV ratio changed {{N}}% in {{M}} min",
+  "alert.severity.info.aria": "Info",
+  "alert.severity.yellow.aria": "Caution",
+  "alert.severity.red.aria": "Critical anomaly",
+  "alert.dismiss": "Dismiss"
 }

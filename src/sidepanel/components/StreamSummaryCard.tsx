@@ -11,6 +11,8 @@ interface Props {
   avgCcv: number | null;
   ervPercent: number | null;
   ervLabelColor?: 'green' | 'yellow' | 'red' | null;
+  /** TASK-085 PR-2 (CR M-3): true = post_stream_report ещё генерируется. */
+  preliminary?: boolean;
 }
 
 export function StreamSummaryCard({
@@ -19,13 +21,24 @@ export function StreamSummaryCard({
   avgCcv,
   ervPercent,
   ervLabelColor,
+  preliminary = false,
 }: Props) {
   const { t, i18n } = useTranslation();
   const colorClass = ervLabelColor ? ` ${ervLabelColor}` : '';
 
   return (
     <div className="sp-signals" style={{ gap: 4 }}>
-      <div className="sp-signals-title">{t('sp.stream_summary_title')}</div>
+      <div className="sp-signals-title">
+        {t('sp.stream_summary_title')}
+        {preliminary && (
+          <span
+            style={{ marginLeft: '8px', fontSize: '9px', fontWeight: 500, color: 'var(--ink-30)', textTransform: 'lowercase' }}
+            title={t('sp.stream_summary_preliminary_hint')}
+          >
+            · {t('sp.stream_summary_preliminary_badge')}
+          </span>
+        )}
+      </div>
       <div className="sp-summary-grid">
         <div className="sp-summary-tile">
           <div className="sp-summary-tile-value">{durationText || '—'}</div>

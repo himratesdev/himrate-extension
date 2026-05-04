@@ -28,6 +28,8 @@ interface Props {
   streamDuration: string | null;
   peakViewers: number | null;
   avgCcv: number | null;
+  /** TASK-085 PR-2 (CR M-3): true = post_stream_report ещё генерируется. ERV/erv_count nullable. */
+  summaryPreliminary?: boolean;
   signals?: Signal[];
   reputation?: ReputationData | null;
 }
@@ -44,6 +46,7 @@ function signalColor(value: number): 'green' | 'yellow' | 'red' {
 export function Frame17OfflineExpired({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore,
   streamDuration, peakViewers, avgCcv,
+  summaryPreliminary = false,
   signals = [], reputation = null,
 }: Props) {
   const { t, i18n } = useTranslation();
@@ -117,9 +120,20 @@ export function Frame17OfflineExpired({
         </div>
       </div>
 
-      {/* <!-- Stream Summary still visible --> */}
+      {/* <!-- Stream Summary still visible -->
+           TASK-085 PR-2 (CR M-3): preliminary badge когда post_stream_report ещё не сгенерирован. */}
       <div className="sp-signals" style={{ gap: '4px' }}>
-        <div className="sp-signals-title">{t('sp.stream_summary_title')}</div>
+        <div className="sp-signals-title">
+          {t('sp.stream_summary_title')}
+          {summaryPreliminary && (
+            <span
+              style={{ marginLeft: '8px', fontSize: '9px', fontWeight: 500, color: 'var(--ink-30)', textTransform: 'lowercase' }}
+              title={t('sp.stream_summary_preliminary_hint')}
+            >
+              · {t('sp.stream_summary_preliminary_badge')}
+            </span>
+          )}
+        </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', padding: '4px 0' }}>
           <div style={{ background: 'var(--bg-page)', borderRadius: '6px', padding: '8px', textAlign: 'center' }}>
             <div style={{ fontSize: '16px', fontWeight: 700, fontFamily: "'JetBrains Mono', monospace" }}>{streamDuration ?? '—'}</div>

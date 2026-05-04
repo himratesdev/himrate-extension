@@ -38,7 +38,7 @@ import { Frame22VerificationModal } from './Frame22VerificationModal';
 import { Frame23VerificationLimitModal } from './Frame23VerificationLimitModal';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
-import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
+import { useStreamSummary } from '../hooks/useStreamSummary';
 import type { TrustCache } from '../../shared/api';
 
 interface Props {
@@ -59,6 +59,18 @@ function isPostStreamWindowOpen(cache: TrustCache): boolean {
 
 export function Overview({ trustCache, loading, currentChannel, tier, isOwnChannel, authState, onNavigate }: Props) {
   const { t } = useTranslation();
+
+  // TASK-085 PR-2: fetch latest stream summary для post-stream frames (16/17/18 + StreamSummaryCard fallback).
+  // Enabled только когда есть channelId + не live (live state не нуждается в last stream).
+  // Hook called at top level (rules of hooks). Returns { data: null, loading: false } когда disabled.
+  const channelId = trustCache?.channel_id ?? null;
+  const isLiveForHook = trustCache?.is_live ?? false;
+  const summaryEnabled = !!channelId && !loading && !isLiveForHook;
+  const { data: streamSummary } = useStreamSummary(channelId, summaryEnabled);
+  const summaryDuration = streamSummary?.data.duration_text ?? null;
+  const summaryPeak = streamSummary?.data.peak_viewers ?? null;
+  const summaryAvg = streamSummary?.data.avg_ccv ?? null;
+  const summaryPreliminary = streamSummary?.meta.preliminary ?? false;
 
   // Streamer Tools modal state — frames 20/21/22/23
   type ModalKey = 'badge' | 'card' | 'verification' | 'verificationLimit' | null;
@@ -127,6 +139,9 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
       signals: trustCache.signal_breakdown ?? [],
       reputation: trustCache.streamer_reputation,
       topCountries: trustCache.top_countries,
+      // TASK-085 PR-2: real anomaly_alerts из drill_down view (Free tracked + LIVE → drill_down).
+      // Headline view не возвращает ключ → fallback []. Frame12/13 render section только если present.
+      anomalyAlerts: trustCache.anomaly_alerts ?? [],
       onNavigate,
     };
     const ervColor = trustCache.erv_label_color;
@@ -152,6 +167,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         signals={trustCache.signal_breakdown ?? []}
         reputation={trustCache.streamer_reputation}
         topCountries={trustCache.top_countries}
+        anomalyAlerts={trustCache.anomaly_alerts ?? []}
         onNavigate={onNavigate}
       />
     );
@@ -179,6 +195,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
           healthScore={trustCache.health_score}
           topCountries={trustCache.top_countries}
           verificationRequestsUsed={verificationRequestsUsed}
+          anomalyAlerts={trustCache.anomaly_alerts ?? []}
           onNavigate={onNavigate}
           onOpenBadgeModal={() => setActiveModal('badge')}
           onOpenChannelCardModal={() => setActiveModal('card')}
@@ -299,9 +316,10 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         ccv={trustCache.ccv}
         ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
         tiScore={trustCache.ti_score}
-        streamDuration={null}
-        peakViewers={null}
-        avgCcv={null}
+        streamDuration={summaryDuration}
+        peakViewers={summaryPeak}
+        avgCcv={summaryAvg}
+        summaryPreliminary={summaryPreliminary}
         signals={trustCache.signal_breakdown ?? []}
         reputation={trustCache.streamer_reputation}
       />
@@ -328,9 +346,10 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         percentile={trustCache.percentile_in_category}
         countdownText={countdownText}
         countdownWarning={isWarning}
-        streamDuration={null}
-        peakViewers={null}
-        avgCcv={null}
+        streamDuration={summaryDuration}
+        peakViewers={summaryPeak}
+        avgCcv={summaryAvg}
+        summaryPreliminary={summaryPreliminary}
         channelId={trustCache.channel_id}
         isWatched={trustCache.is_watched_by_user}
         signals={trustCache.signal_breakdown ?? []}
@@ -421,36 +440,22 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         </div>
       )}
 
-      {/* M-Anomaly: Persistent anomaly attribution (frame 26 — Premium Live ERV<80%).
-          Real-data slot: trustCache.anomaly_alerts array (backend integration pending).
-          Without it, render placeholder alerts so canonical structure visible per wireframe. */}
-      {isLive && isPremium && trustCache.erv_percent != null && trustCache.erv_percent < 80 && (
-        <AlertsBlock
-          alerts={
-            (trustCache as TrustCache & { anomaly_alerts?: AnomalyAlert[] }).anomaly_alerts ??
-            (trustCache.erv_percent < 50
-              ? [
-                  { id: 'pl-raid', severity: 'red', title: t('sp.alert_anomaly_raid_title'), detail: t('sp.alert_anomaly_raid_detail') },
-                  { id: 'pl-overlap', severity: 'yellow', title: t('sp.alert_anomaly_overlap_title'), detail: t('sp.alert_anomaly_overlap_detail') },
-                ]
-              : [
-                  { id: 'pl-anomaly', severity: 'yellow', title: t('sp.alert_anomaly_audience_title'), detail: t('sp.alert_anomaly_audience_detail') },
-                ])
-          }
-        />
-      )}
+      {/* TASK-085 PR-2 (CR M-NEW-1): removed dead AlertsBlock branch — unreachable в actual
+          control flow (Frame14 для !own+premium+live, Frame15 для own+live перехватывают
+          isLive=true до этого catch-all). AlertsBlock imported here used api.AnomalyAlert vs
+          AlertsBlock-local AnomalyAlert через unsafe cast — type collision. Real anomaly_alerts
+          rendering moved в Frame12/13/14/15 inline (per-frame ownership matches wireframe ports). */}
 
-      {/* Stream Summary — offline only (Section 9 wireframe "Итоги стрима").
-          Real-data slot: durationText/peakCcv/avgCcv all null until stream session
-          summary endpoint exposes them. trustCache.ccv is current/last live CCV,
-          NOT stream-average — passing it as avgCcv would mislead. */}
+      {/* TASK-085 PR-2: Stream Summary wired to /streams/latest/summary endpoint.
+          Returns null когда нет PSR (preliminary state) или 4xx — StreamSummaryCard renders `—`. */}
       {!isLive && (
         <StreamSummaryCard
-          durationText={null}
-          peakCcv={null}
-          avgCcv={null}
-          ervPercent={trustCache.erv_percent}
+          durationText={summaryDuration}
+          peakCcv={summaryPeak}
+          avgCcv={summaryAvg}
+          ervPercent={streamSummary?.data.erv_percent_final ?? trustCache.erv_percent}
           ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+          preliminary={summaryPreliminary}
         />
       )}
 

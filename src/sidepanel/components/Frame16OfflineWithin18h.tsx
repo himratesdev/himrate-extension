@@ -40,6 +40,8 @@ interface Props {
   streamDuration: string | null;
   peakViewers: number | null;
   avgCcv: number | null;
+  /** TASK-085 PR-2 (CR M-3): true = post_stream_report ещё генерируется. ERV/erv_count nullable. */
+  summaryPreliminary?: boolean;
   channelId?: string | null;
   isWatched?: boolean;
   signals?: Signal[];
@@ -67,6 +69,7 @@ function flagEmoji(code: string): string {
 export function Frame16OfflineWithin18h({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, percentile,
   countdownText, countdownWarning = false, streamDuration, peakViewers, avgCcv,
+  summaryPreliminary = false,
   channelId = null, isWatched = true,
   signals = [], reputation = null, topCountries = null, onNavigate,
 }: Props) {
@@ -175,8 +178,20 @@ export function Frame16OfflineWithin18h({
 
       {/* <!-- Stream Summary (итоги стрима) --> */}
       <div className="sp-signals" style={{ gap: '4px' }}>
-        {/* <div class="sp-signals-title">Итоги стрима</div> */}
-        <div className="sp-signals-title">{t('sp.stream_summary_title')}</div>
+        {/* <div class="sp-signals-title">Итоги стрима</div>
+            TASK-085 PR-2 (CR M-3): preliminary badge когда post_stream_report ещё не сгенерирован
+            (meta.preliminary=true). ERV/erv_count cells render `—` пока final report не готов. */}
+        <div className="sp-signals-title">
+          {t('sp.stream_summary_title')}
+          {summaryPreliminary && (
+            <span
+              style={{ marginLeft: '8px', fontSize: '9px', fontWeight: 500, color: 'var(--ink-30)', textTransform: 'lowercase' }}
+              title={t('sp.stream_summary_preliminary_hint')}
+            >
+              · {t('sp.stream_summary_preliminary_badge')}
+            </span>
+          )}
+        </div>
         {/* <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:4px 0;"> */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', padding: '4px 0' }}>
           {/* 4 cells */}

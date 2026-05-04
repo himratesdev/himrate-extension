@@ -38,6 +38,14 @@ interface Props {
   signals?: Signal[];
   reputation?: ReputationData | null;
   topCountries?: Country[] | null;
+  /**
+   * TASK-085 PR-2 (CR S-3): explicit prop signature для type safety когда Overview spreads
+   * shared liveFreeProps. Frame11 (green tier) does NOT render alerts by design — wireframe
+   * slim/11 shows no alert section, green ERV tier signals "no anomalies detected" per
+   * CLAUDE.md ERV labels v3. Если backend returns alerts при green ERV, parent routing
+   * (Overview ervColor switch) направляет на Frame12/13. Prop accepted but ignored here.
+   */
+  anomalyAlerts?: unknown[];
   onNavigate?: (tab: string) => void;
 }
 

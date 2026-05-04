@@ -1,0 +1,637 @@
+[
+  {
+    "key": "alert.error",
+    "value": "Сервис временно недоступен",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "alert.info",
+    "value": "Доступно обновление расширения",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.back",
+    "value": "Назад",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.close",
+    "value": "Закрыть",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.dismiss",
+    "value": "Закрыть",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.expand",
+    "value": "Развернуть компоненты",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.favorite_add",
+    "value": "Добавить в избранное",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.favorite_remove",
+    "value": "Убрать из избранного",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.lang",
+    "value": "Сменить язык",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.profile",
+    "value": "Профиль",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "aria.search_close",
+    "value": "Закрыть поиск",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "audience.delta_7d",
+    "value": "Изм. 7д",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "auth.error.failed",
+    "value": "Не удалось войти",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "auth.error.network",
+    "value": "Произошла ошибка при авторизации. Проверьте подключение к интернету и попробуйте ещё раз.",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "auth.retry",
+    "value": "Попробовать снова",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "auth.signing_in",
+    "value": "Вход...",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "btn.last_stream_analytics",
+    "value": "Аналитика последнего стрима",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "classification.fraudulent",
+    "value": "Жулик",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "cold_start.streams_for_analysis",
+    "value": "{{current}} из {{required}} стримов для анализа",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "collecting.hint_history",
+    "value": "Посмотрите аналитику по более ранним стримам в разделе «Аналитика канала»",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "collecting.status",
+    "value": "Собираем данные... Аналитика появится через несколько минут",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "erv_label.green",
+    "value": "Аномалий не замечено",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "label.streamer_rating",
+    "value": "Рейтинг стримера: {{N}}",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "label.streamer_rating_live",
+    "value": "Рейтинг стримера: {{N}}",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "label.streamer_rating_short",
+    "value": "рейтинг стримера",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "not_tracked.badge",
+    "value": "Не отслеживается",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "not_tracked.submitted_btn",
+    "value": "Заявка отправлена",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "not_tracked.toast",
+    "value": "Заявка принята",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "not_twitch.open_panel",
+    "value": "Открыть боковую панель",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "not_twitch.subtitle",
+    "value": "Откройте канал стримера на twitch.tv или найдите его через поиск",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "offline.anomalies_detected",
+    "value": "На стриме были замечены аномалии",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "offline.no_anomalies",
+    "value": "На стриме не было замечено аномалий",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.analytics_expired",
+    "value": "Подробная аналитика недоступна",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.analytics_remaining",
+    "value": "Аналитика доступна ещё {{hours}}ч {{minutes}}мин",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.cta_channel",
+    "value": "Аналитика канала",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.cta_guest",
+    "value": "Посмотреть полную аналитику",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.cta_my",
+    "value": "Моя\nаналитика",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.guest_sign_in_hint",
+    "value": "Войдите для персональной аналитики",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.last_stream",
+    "value": "Последний стрим:",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.offline",
+    "value": "Стрим офлайн",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.stream_ended",
+    "value": "Стрим {{nick}} завершён",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "popup.stream_offline",
+    "value": "Стрим завершён",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "search.cta.full_analytics",
+    "value": "Посмотреть полную аналитику",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "search.cta.navigate",
+    "value": "Перейти к каналу",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "search.favorites",
+    "value": "Избранные каналы",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "search.hint",
+    "value": "Начните вводить никнейм стримера",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "search.no_results",
+    "value": "Стример не найден",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "search.placeholder",
+    "value": "Поиск стримера...",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "search.retry",
+    "value": "Попробовать снова",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "signal.account_scoring",
+    "value": "Признаки аномалий",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "signal.chat_behavior_desc",
+    "value": "Анализ поведения отдельных пользователей в чате: длина сообщений, повторы, спам-паттерны. Аномальные аккаунты часто пишут шаблонные короткие сообщения или молчат.",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.alert_anomaly_overlap_detail",
+    "value": "Совпадение с подозрительным каналом",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.alert_anomaly_overlap_title",
+    "value": "Аномальное пересечение аудитории",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.alert_bot_wave",
+    "value": "Аномальный приток",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.badge_copied",
+    "value": "Скопировано",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.badge_title",
+    "value": "Бейдж канала",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.card_streams_week",
+    "value": "Стримов/неделя",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.countdown_time_hm",
+    "value": "{{h}}ч {{m}}м",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.health_full",
+    "value": "Полная оценка",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.login_required",
+    "value": "Войдите для доступа",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.modal_channel_switch_title",
+    "value": "Сменить канал",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.request_verification",
+    "value": "Запрос на проверку",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.streamer_verify_usage",
+    "value": "Использовано {{used}} из {{limit}} запросов в этом месяце",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.verification_chars",
+    "value": "{{used}} / {{limit}} символов",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.verification_limit_close",
+    "value": "Понятно",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.verify_placeholder",
+    "value": "Опишите причину",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.verify_title",
+    "value": "Запрос на проверку",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.view_channel_card",
+    "value": "Посмотреть Channel Card",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.watchlist_empty_lists",
+    "value": "Списков пока нет",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "sp.watchlist_in",
+    "value": "В списке",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "stream_ended_cta.button",
+    "value": "Аналитика последнего стрима",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "stream_ended_cta.expired",
+    "value": "Аналитика недоступна",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "stream_ended_cta.timer",
+    "value": "Аналитика доступна ещё {{h}}ч {{m}}м",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "tab.overview",
+    "value": "Обзор",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "tab.watchlists",
+    "value": "Списки",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.anonymous.aria",
+    "value": "Требуется авторизация",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.anonymous.message",
+    "value": "Исторические данные доступны авторизованным пользователям.",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.anonymous.title",
+    "value": "Войдите чтобы увидеть тренды",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.confidence.low",
+    "value": "Низкая точность",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.insights.dismiss_aria",
+    "value": "Закрыть",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.insights.priority.P0",
+    "value": "Критично",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.insights.priority.P2",
+    "value": "Хорошо",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.anomalies.event_empty",
+    "value": "За выбранный период аномалий не зафиксировано",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.anomalies.insufficient_baseline",
+    "value": "недостаточно базы для сравнения",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.anomalies.normal",
+    "value": "в норме",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.anomalies.types_title",
+    "value": "По типам",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.anomalies.unattributed_few",
+    "value": "{{count}} неизвестных",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.anomalies.unattributed_many",
+    "value": "{{count}} неизвестных",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.anomalies.unattributed_other",
+    "value": "{{count}} неизвестных",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.categories.empty",
+    "value": "Не хватает данных по категориям",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.components.botted_count",
+    "value": "{{count}} из {{total}} стримов за {{period}}",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.components.botted_title",
+    "value": "Стримы с признаками аномалий",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.components.changes_title",
+    "value": "Изменения за период",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.rehabilitation.eta",
+    "value": "До полного восстановления: ~{{streams}} стримов",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.stability.label.moderate",
+    "value": "Умеренная стабильность",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.stability.label.volatile",
+    "value": "Нестабильный канал",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.weekday.day.mon",
+    "value": "Понедельник",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.weekday.day.sat",
+    "value": "Суббота",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.modules.weekday.day.thu",
+    "value": "Четверг",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.oauth_revoked.title",
+    "value": "Доступ к данным отозван",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall_free.feat_forecast_desc",
+    "value": "Рост, стагнация или падение",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall_free.feat_long_term",
+    "value": "Долгосрочная аналитика",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall_free.feat_weekday_desc",
+    "value": "Когда канал на пике",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall.business.feature_categories_desc",
+    "value": "Лучшие игры и форматы",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall.business.feature_export_desc",
+    "value": "Отчёты для спонсоров",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall.business.feature_year_desc",
+    "value": "Годовые тренды и сезонность",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall.business.tier_report_sub",
+    "value": "разовый",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall.free.feature_forecast_desc",
+    "value": "Куда движется доверие к каналу",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall.free.feature_weekday",
+    "value": "Анализ по дням",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.paywall.free.feature_weekday_desc",
+    "value": "Лучшие дни и категории",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.reliability.low",
+    "value": "Низкая точность прогноза",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.tier_changes.count_few",
+    "value": "{{count}} смены тира",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.tier_changes.count_many",
+    "value": "{{count}} смен тира",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "trends.tier_changes.count_other",
+    "value": "{{count}} смен тира",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.create_title",
+    "value": "Новый Watchlist",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.delete",
+    "value": "Удалить",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.error_subtitle",
+    "value": "Проверьте соединение и попробуйте снова",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.export_coming_soon",
+    "value": "Экспорт будет доступен скоро",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.freshness_days",
+    "value": "Обн. {{n}}д назад",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.freshness_hours",
+    "value": "Обн. {{n}}ч назад",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.remove",
+    "value": "Удалить",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.rename",
+    "value": "Переименовать",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.rename_title",
+    "value": "Переименовать Watchlist",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.search_placeholder",
+    "value": "Поиск в списке...",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.sort_added",
+    "value": "Добавлен ↓",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.sort_name",
+    "value": "Имя А-Я",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  },
+  {
+    "key": "wl.stat_tracked",
+    "value": "Отслеживаются",
+    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
+  }
+]

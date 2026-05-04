@@ -1,0 +1,51 @@
+name: Wireframe manifest drift check
+
+on:
+  pull_request:
+    paths:
+      - 'wireframes/**'
+      - 'src/sidepanel/components/Frame*.tsx'
+      - 'e2e/visual-qa/wireframe-manifest.json'
+      - 'scripts/wireframe-manifest.ts'
+
+jobs:
+  manifest-check:
+    name: Verify wireframe ↔ Frame*.tsx SHA256 sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Detect wireframe-only label
+        id: label
+        run: |
+          LABELS='${{ toJSON(github.event.pull_request.labels.*.name) }}'
+          if echo "$LABELS" | grep -q '"wireframe-only"'; then
+            echo "wireframe_only=true" >> "$GITHUB_OUTPUT"
+            echo "PR labeled \`wireframe-only\` — manifest enforcement deferred per ADR-OQ-5 (frame port follow-up PR within 7 days)."
+          else
+            echo "wireframe_only=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run manifest check
+        id: check
+        run: |
+          set +e
+          npx tsx scripts/wireframe-manifest.ts check
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          set -e
+
+          if [ "$EXIT_CODE" -ne 0 ] && [ "${{ steps.label.outputs.wireframe_only }}" = "true" ]; then
+            echo "::warning::Wireframe manifest drift detected, but PR labeled wireframe-only. Frame port follow-up PR required within 7 days per ADR-OQ-5."
+            exit 0
+          fi
+
+          exit "$EXIT_CODE"

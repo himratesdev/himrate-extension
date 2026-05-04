@@ -15,7 +15,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "i18n-drift:snapshot": "tsx scripts/i18n-drift-snapshot.ts"
+    "i18n-drift:snapshot": "tsx scripts/i18n-drift-snapshot.ts",
+    "wireframe-manifest:update": "tsx scripts/wireframe-manifest.ts update",
+    "wireframe-manifest:check": "tsx scripts/wireframe-manifest.ts check"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",

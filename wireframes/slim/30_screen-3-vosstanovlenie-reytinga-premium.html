@@ -1,0 +1,130 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Screen 3 · Восстановление рейтинга · Premium</div>
+            <div class="screen-sublabel">15-segment progress, прогноз, бонус, история стримов</div>
+            <div class="panel">
+                <div class="sp-header">
+                    <button class="sp-header-back">&larr;</button>
+                    <span class="sp-header-title">Восстановление</span>
+                    <span class="sp-header-streamer">shroud</span>
+                    <div class="sp-header-right"><div class="sp-header-avatar">S</div></div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab">Overview</button><button class="sp-tab active">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-content">
+                    <div style="font-size:11px;color:var(--color-primary);font-weight:600;cursor:pointer;margin-bottom:6px;">&larr; Все модули</div>
+                    <!-- Progress section -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:10px;padding:16px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Прогресс восстановления</div>
+                        <div style="display:flex;gap:3px;margin-bottom:12px;">
+                            <div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#22C55E;border-radius:2px;"></div><div style="flex:1;height:8px;background:#EF4444;border-radius:2px;"></div><div style="flex:1;height:8px;background:#E5E7EB;border-radius:2px;"></div><div style="flex:1;height:8px;background:#E5E7EB;border-radius:2px;"></div><div style="flex:1;height:8px;background:#E5E7EB;border-radius:2px;"></div><div style="flex:1;height:8px;background:#E5E7EB;border-radius:2px;"></div><div style="flex:1;height:8px;background:#E5E7EB;border-radius:2px;"></div><div style="flex:1;height:8px;background:#E5E7EB;border-radius:2px;"></div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div>
+                                <span style="font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#22C55E;">8</span>
+                                <span style="font-size:14px;color:var(--ink-30);font-family:'JetBrains Mono',monospace;"> / 15</span>
+                            </div>
+                            <span style="font-size:10px;color:var(--ink-50);padding:3px 8px;background:var(--bg-warm);border-radius:4px;">Ещё ~7 чистых стримов</span>
+                        </div>
+                    </div>
+                    <!-- TI projection with recovery curve -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:10px;padding:14px 16px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <div style="text-align:center;">
+                                <div style="font-size:9px;color:var(--ink-30);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:2px;">Сейчас</div>
+                                <div style="font-size:28px;font-family:'JetBrains Mono',monospace;font-weight:700;color:#EAB308;">66</div>
+                            </div>
+                            <!-- Recovery curve SVG — dots ON the line -->
+                            <svg width="160" height="48" viewBox="0 0 160 48" style="flex-shrink:0;">
+                                <defs>
+                                    <linearGradient id="recoveryGrad" x1="0" y1="0" x2="1" y2="0">
+                                        <stop offset="0%" stop-color="#EAB308"/>
+                                        <stop offset="100%" stop-color="#22C55E"/>
+                                    </linearGradient>
+                                </defs>
+                                <!-- Filled area under polyline -->
+                                <polygon points="8,40 28,35 48,30 68,25 88,20 108,15 128,10 152,5 152,48 8,48" fill="url(#recoveryGrad)" opacity="0.12"/>
+                                <!-- Line through ALL points -->
+                                <polyline points="8,40 28,35 48,30 68,25 88,20 108,15 128,10 152,5" stroke="#8B5CF6" stroke-width="2" stroke-dasharray="4,3" fill="none" opacity="0.7" stroke-linecap="round" stroke-linejoin="round"/>
+                                <!-- Stream milestone dots — exactly on line vertices -->
+                                <circle cx="28" cy="35" r="3.5" fill="#8B5CF6" opacity="0.5"/>
+                                <circle cx="48" cy="30" r="3.5" fill="#8B5CF6" opacity="0.55"/>
+                                <circle cx="68" cy="25" r="3.5" fill="#8B5CF6" opacity="0.6"/>
+                                <circle cx="88" cy="20" r="3.5" fill="#8B5CF6" opacity="0.65"/>
+                                <circle cx="108" cy="15" r="3.5" fill="#8B5CF6" opacity="0.7"/>
+                                <circle cx="128" cy="10" r="3.5" fill="#8B5CF6" opacity="0.75"/>
+                                <!-- Start point (yellow) -->
+                                <circle cx="8" cy="40" r="4.5" fill="#EAB308" stroke="white" stroke-width="1.5"/>
+                                <!-- End point (green) -->
+                                <circle cx="152" cy="5" r="4.5" fill="#22C55E" stroke="white" stroke-width="1.5"/>
+                            </svg>
+                            <div style="text-align:center;">
+                                <div style="font-size:9px;color:var(--ink-30);font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:2px;">Прогноз</div>
+                                <div style="font-size:28px;font-family:'JetBrains Mono',monospace;font-weight:700;color:#22C55E;">80</div>
+                            </div>
+                        </div>
+                        <div style="text-align:center;margin-top:4px;"><span style="font-size:9px;color:var(--ink-30);font-family:'JetBrains Mono',monospace;">Если сохранить темп · ~7 стримов</span></div>
+                    </div>
+                    <!-- Bonus -->
+                    <div style="border:2.5px solid #8B5CF6;border-radius:8px;padding:12px;background:rgba(139,92,246,0.04);box-shadow:2px 2px 0 rgba(139,92,246,0.15);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                            <span style="font-size:10px;color:#7C3AED;font-family:'JetBrains Mono',monospace;text-transform:uppercase;font-weight:600;">Бонус за хорошие показатели</span>
+                            <span style="font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#7C3AED;">+8 pts</span>
+                        </div>
+                        <div style="height:4px;background:rgba(139,92,246,0.15);border-radius:2px;margin-bottom:6px;"><div style="height:100%;width:53%;background:#8B5CF6;border-radius:2px;"></div></div>
+                        <div style="font-size:10px;color:var(--ink-50);">Максимум: +15 баллов. Начисляется за качество чата и вовлечённость зрителей.</div>
+                        <!-- Tooltip: За что начислен бонус -->
+                        <div style="border:1.5px solid #8B5CF6;border-radius:8px;padding:10px;background:rgba(139,92,246,0.06);margin-top:8px;">
+                            <div style="font-size:10px;font-weight:700;color:#7C3AED;font-family:'Space Grotesk',sans-serif;margin-bottom:6px;">За что начислен бонус</div>
+                            <div style="display:flex;flex-direction:column;gap:4px;">
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#8B5CF6" opacity="0.15" stroke="#8B5CF6" stroke-width="1.5"/><path d="M3.5 5l1.2 1.2L6.5 4" stroke="#8B5CF6" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+                                    <span style="font-size:10px;color:var(--ink-70);">Качество чата:</span>
+                                    <span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#7C3AED;">85 / 100</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;">
+                                    <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#8B5CF6" opacity="0.15" stroke="#8B5CF6" stroke-width="1.5"/><path d="M3.5 5l1.2 1.2L6.5 4" stroke="#8B5CF6" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+                                    <span style="font-size:10px;color:var(--ink-70);">Вовлечённость:</span>
+                                    <span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#7C3AED;">82 / 100</span>
+                                </div>
+                            </div>
+                            <div style="font-size:9px;color:var(--ink-30);margin-top:6px;">Продолжай в&nbsp;том же духе&nbsp;&mdash; бонус ускоряет восстановление</div>
+                        </div>
+                    </div>
+                    <!-- Stream history -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:8px;">Последние стримы</div>
+                        <div style="display:flex;flex-direction:column;gap:0;">
+                            <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--ink-10);">
+                                <div style="width:16px;flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#22C55E" opacity="0.15" stroke="#22C55E" stroke-width="1.5"/><path d="M3.5 5l1.2 1.2L6.5 4" stroke="#22C55E" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></div>
+                                <span style="width:52px;flex-shrink:0;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;">15 апр</span>
+                                <span style="flex:1;font-size:11px;color:var(--ink-30);">Чистый</span>
+                                <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;width:28px;text-align:right;">72</span>
+                            </div>
+                            <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--ink-10);">
+                                <div style="width:16px;flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#22C55E" opacity="0.15" stroke="#22C55E" stroke-width="1.5"/><path d="M3.5 5l1.2 1.2L6.5 4" stroke="#22C55E" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></div>
+                                <span style="width:52px;flex-shrink:0;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;">14 апр</span>
+                                <span style="flex:1;font-size:11px;color:var(--ink-30);">Чистый</span>
+                                <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;width:28px;text-align:right;">70</span>
+                            </div>
+                            <div style="display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--ink-10);">
+                                <div style="width:16px;flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#EF4444" opacity="0.15" stroke="#EF4444" stroke-width="1.5"/><path d="M3.5 3.5L6.5 6.5M6.5 3.5L3.5 6.5" stroke="#EF4444" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+                                <span style="width:52px;flex-shrink:0;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;color:#EF4444;">13 апр</span>
+                                <span style="flex:1;font-size:11px;color:#EF4444;">Не зачтён</span>
+                                <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;color:#EF4444;width:28px;text-align:right;">58</span>
+                            </div>
+                            <div style="display:flex;align-items:center;padding:7px 0;">
+                                <div style="width:16px;flex-shrink:0;"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#22C55E" opacity="0.15" stroke="#22C55E" stroke-width="1.5"/><path d="M3.5 5l1.2 1.2L6.5 4" stroke="#22C55E" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></div>
+                                <span style="width:52px;flex-shrink:0;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;">12 апр</span>
+                                <span style="flex:1;font-size:11px;color:var(--ink-30);">Чистый</span>
+                                <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;width:28px;text-align:right;">68</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div

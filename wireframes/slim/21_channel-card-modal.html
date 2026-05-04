@@ -1,0 +1,113 @@
+<div class="screen-group tilted-right">
+            <div class="screen-label">Channel Card Modal</div>
+            <div class="screen-sublabel">Полная карточка канала + статистика + последние 5 стримов</div>
+            <div class="panel" style="height:780px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Overview</span>
+                    <span class="sp-header-streamer">my_channel</span>
+                    <div class="sp-header-right">
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+                        <div class="sp-header-avatar">M</div>
+                    </div>
+                </div>
+                <div class="sp-modal-overlay">
+                    <div class="sp-modal" style="max-height:90%;overflow-y:auto;">
+                        <div class="sp-modal-header">
+                            <span class="sp-modal-title">Карточка канала</span>
+                            <button class="sp-modal-close">×</button>
+                        </div>
+                        <div class="sp-modal-body">
+                            <!-- Avatar + Name -->
+                            <div class="sp-card-avatar-row">
+                                <div class="sp-card-avatar">M</div>
+                                <div>
+                                    <div class="sp-card-name">my_channel</div>
+                                    <div class="sp-card-partner">✓ Партнёр · 342 стрима</div>
+                                </div>
+                            </div>
+                            <!-- TI + ERV + Classification -->
+                            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+                                <span class="sp-erv-label green" style="font-size:10px;"><span class="erv-dot"></span> TI: 88</span>
+                                <span class="sp-erv-label green" style="font-size:10px;"><span class="erv-dot"></span> ERV: 88%</span>
+                                <span style="font-size:10px;color:var(--ink-50);padding:4px 8px;">Доверенный</span>
+                            </div>
+
+                            <!-- 🛡️ Health Score (green) -->
+                            <div style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;margin:0 0 4px;text-transform:uppercase;letter-spacing:0.05em;"><svg class="ico" viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#059669;vertical-align:-0.1em;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(5,150,105,0.1)"/></svg> Здоровье канала <span style="color:var(--color-erv-green);text-transform:none;letter-spacing:0;">— текущий стрим</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Рейтинг доверия</span><div class="sp-health-bar-bg"><div class="sp-health-bar-fill green" style="width:88%"></div></div><span class="sp-health-val">88</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Стабильность ERV</span><div class="sp-health-bar-bg"><div class="sp-health-bar-fill green" style="width:82%"></div></div><span class="sp-health-val">82</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Вовлечённость</span><div class="sp-health-bar-bg"><div class="sp-health-bar-fill green" style="width:90%"></div></div><span class="sp-health-val">90</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Рост аудитории</span><div class="sp-health-bar-bg"><div class="sp-health-bar-fill green" style="width:76%"></div></div><span class="sp-health-val">76</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Постоянство</span><div class="sp-health-bar-bg"><div class="sp-health-bar-fill green" style="width:84%"></div></div><span class="sp-health-val">84</span></div>
+
+                            <!-- 📊 Reputation (purple) -->
+                            <div style="font-size:10px;color:#7C3AED;font-family:'JetBrains Mono',monospace;margin:8px 0 4px;text-transform:uppercase;letter-spacing:0.05em;"><svg class="ico" viewBox="0 0 24 24" style="width:13px;height:13px;stroke:#7C3AED;vertical-align:-0.1em;"><rect x="18" y="3" width="4" height="18" rx="1" fill="rgba(139,92,246,0.3)" stroke="#7C3AED"/><rect x="10" y="8" width="4" height="13" rx="1" fill="rgba(139,92,246,0.2)" stroke="#7C3AED"/><rect x="2" y="13" width="4" height="8" rx="1" fill="rgba(139,92,246,0.15)" stroke="#7C3AED"/></svg> Репутация <span style="text-transform:none;letter-spacing:0;">— история&nbsp;канала</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Естественность роста</span><div class="sp-health-bar-bg" style="border:1px solid #DDD6FE;"><div class="sp-health-bar-fill" style="width:80%;background:#8B5CF6;"></div></div><span class="sp-health-val" style="color:#7C3AED;">80</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Качество подписчиков</span><div class="sp-health-bar-bg" style="border:1px solid #DDD6FE;"><div class="sp-health-bar-fill" style="width:90%;background:#8B5CF6;"></div></div><span class="sp-health-val" style="color:#7C3AED;">90</span></div>
+                            <div class="sp-health-row"><span class="sp-health-name" style="width:85px;font-size:10px;">Лояльность</span><div class="sp-health-bar-bg" style="border:1px solid #DDD6FE;"><div class="sp-health-bar-fill" style="width:86%;background:#8B5CF6;"></div></div><span class="sp-health-val" style="color:#7C3AED;">86</span></div>
+
+                            <!-- Stats -->
+                            <div class="sp-card-stats" style="margin-top:8px;">
+                                <div class="sp-card-stat"><div class="sp-card-stat-label">Средний онлайн</div><div class="sp-card-stat-val">4,800</div></div>
+                                <div class="sp-card-stat"><div class="sp-card-stat-label">Пик онлайна</div><div class="sp-card-stat-val">12,400</div></div>
+                                <div class="sp-card-stat"><div class="sp-card-stat-label">Ср. длительность</div><div class="sp-card-stat-val">5ч 20м</div></div>
+                            </div>
+
+                            <!-- Последние 5 стримов — компактный кликабельный блок -->
+                            <div style="background:var(--bg-card);border:2px solid var(--border-light);border-radius:10px;overflow:hidden;cursor:pointer;margin-top:8px;">
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--border-light);background:var(--bg-page);">
+                                    <span style="font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;">Последние 5 стримов</span>
+                                    <span style="font-size:10px;color:var(--color-primary);font-weight:600;">Вся история →</span>
+                                </div>
+                                <!-- Grid rows: fixed columns date+duration | peak | badges -->
+                                <div style="display:grid;grid-template-columns:100px 55px 1fr;align-items:center;gap:6px;padding:5px 10px;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">04.04 · 6ч 12м</span>
+                                    <span style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-align:right;">5.2K</span>
+                                    <div style="display:flex;gap:3px;justify-content:flex-end;">
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Trust Index">Дов. 88</span>
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Estimated Real Viewers">Зрит. 88%</span>
+                                    </div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:100px 55px 1fr;align-items:center;gap:6px;padding:5px 10px;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">03.04 · 4ч 45м</span>
+                                    <span style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-align:right;">4.8K</span>
+                                    <div style="display:flex;gap:3px;justify-content:flex-end;">
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Trust Index">Дов. 86</span>
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Estimated Real Viewers">Зрит. 85%</span>
+                                    </div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:100px 55px 1fr;align-items:center;gap:6px;padding:5px 10px;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">02.04 · 5ч 30м</span>
+                                    <span style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-align:right;">5.5K</span>
+                                    <div style="display:flex;gap:3px;justify-content:flex-end;">
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Trust Index">Дов. 90</span>
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Estimated Real Viewers">Зрит. 91%</span>
+                                    </div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:100px 55px 1fr;align-items:center;gap:6px;padding:5px 10px;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">01.04 · 3ч 20м</span>
+                                    <span style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-align:right;">3.9K</span>
+                                    <div style="display:flex;gap:3px;justify-content:flex-end;">
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Trust Index">Дов. 84</span>
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Estimated Real Viewers">Зрит. 82%</span>
+                                    </div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:100px 55px 1fr;align-items:center;gap:6px;padding:5px 10px;">
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">31.03 · 7ч 00м</span>
+                                    <span style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-align:right;">6.1K</span>
+                                    <div style="display:flex;gap:3px;justify-content:flex-end;">
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Trust Index">Дов. 89</span>
+                                        <span style="font-size:8px;padding:1px 5px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;" title="Estimated Real Viewers">Зрит. 90%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sp-modal-footer">
+                            <button class="btn btn-primary" style="font-size:11px;padding:8px 12px;">Открыть на himrate.com</button>
+                            <button class="btn btn-secondary" style="font-size:11px;padding:8px 12px;">Экспорт PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div

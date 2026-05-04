@@ -1,0 +1,263 @@
+<div class="screen-group tilted">
+            <div class="screen-label">BotRaid · Premium</div>
+            <div class="screen-sublabel">Потоки зрителей при&nbsp;рейдах + история инцидентов</div>
+            <div class="panel" style="height:auto;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">BotRaid</span>
+                    <div class="sp-header-right"><button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button><button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><div class="sp-header-avatar">S</div></div>
+                </div>
+                <div class="sp-content">
+                    <!-- Current stream summary -->
+                    <div class="sp-signals" style="padding:10px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <span style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;">Текущий стрим</span>
+                            <span class="sp-erv-label green" style="font-size:9px;padding:2px 6px;">Чисто</span>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <div style="flex:1;text-align:center;padding:6px;background:var(--color-skeleton-from);border-radius:6px;">
+                                <div style="font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;">5,200</div>
+                                <div style="font-size:9px;color:var(--ink-50);">Проверено</div>
+                            </div>
+                            <div style="flex:1;text-align:center;padding:6px;background:var(--color-skeleton-from);border-radius:6px;">
+                                <div style="font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--color-erv-green);">12</div>
+                                <div style="font-size:9px;color:var(--ink-50);">Подозрит. (0.2%)</div>
+                            </div>
+                            <div style="flex:1;text-align:center;padding:6px;background:var(--color-skeleton-from);border-radius:6px;">
+                                <div style="font-size:16px;font-weight:700;font-family:'JetBrains Mono',monospace;">0</div>
+                                <div style="font-size:9px;color:var(--ink-50);">Рейдов сейчас</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History of incidents — EXPANDED with viewer flow -->
+                    <div class="sp-signals" style="gap:0;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                            <span class="sp-signals-title" style="margin:0;">История инцидентов</span>
+                            <span style="font-size:9px;color:var(--ink-30);">Последние 30 дней</span>
+                        </div>
+
+                        <!-- Incident 1: Bot wave — EXPANDABLE -->
+                        <div class="sp-signal-expandable" style="border-bottom:1px solid var(--border-light);padding:10px 0;cursor:pointer;">
+                            <div style="display:flex;align-items:flex-start;gap:8px;">
+                                <span style="font-size:10px;color:var(--color-erv-red);margin-top:2px;animation:pulse 2s infinite;">●</span>
+                                <div style="flex:1;min-width:0;">
+                                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
+                                        <span style="font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;">Волна ботов</span>
+                                        <span style="font-size:8px;padding:2px 6px;background:rgba(239,68,68,0.12);color:var(--color-erv-red);border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;font-family:'JetBrains Mono',monospace;">Бот-атака</span>
+                                    </div>
+                                    <div style="font-size:9px;color:var(--ink-30);font-family:'JetBrains Mono',monospace;">01.04 · 14:32 — 14:47 · 15&nbsp;мин</div>
+                                </div>
+                                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                                    <span style="font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--color-erv-red);">+3,200</span>
+                                    <span style="font-size:8px;color:var(--ink-30);">зрителей</span>
+                                </div>
+                                <span class="sp-signal-expand-icon" style="margin-top:2px;">▾</span>
+                            </div>
+                        </div>
+                        <!-- Incident 1 DETAIL -->
+                        <div class="sp-signal-detail">
+                            <div style="font-size:10px;color:var(--ink-50);margin-bottom:6px;font-weight:600;">Поток зрителей</div>
+                            <!-- Where bots CAME FROM -->
+                            <div style="margin-bottom:8px;">
+                                <div style="font-size:9px;color:var(--ink-30);margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;">Откуда пришли</div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">🤖</span>
+                                    <span style="font-size:10px;flex:1;">Новые аккаунты (без истории)</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">2,400</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">75%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">🔴</span>
+                                    <span style="font-size:10px;flex:1;">bot_farm_nl (забанен)</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">520</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">16%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+                                    <span style="font-size:10px;width:16px;text-align:center;">❓</span>
+                                    <span style="font-size:10px;flex:1;">Разные каналы (мелкие)</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">280</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">9%</span>
+                                </div>
+                            </div>
+                            <!-- Where bots WENT after -->
+                            <div style="margin-bottom:8px;">
+                                <div style="font-size:9px;color:var(--ink-30);margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;">Куда ушли после</div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">💀</span>
+                                    <span style="font-size:10px;flex:1;">Отключились (оффлайн)</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">2,800</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">88%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">→</span>
+                                    <span style="font-size:10px;flex:1;">xQc</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">250</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">8%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+                                    <span style="font-size:10px;width:16px;text-align:center;">→</span>
+                                    <span style="font-size:10px;flex:1;">Другие каналы</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">150</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">4%</span>
+                                </div>
+                            </div>
+                            <!-- Impact: user-friendly explanation -->
+                            <div style="padding:10px 12px;background:rgba(239,68,68,0.04);border-radius:8px;border-left:3px solid var(--color-erv-red);font-size:10px;">
+                                <div style="font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--ink-50);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Что произошло с&nbsp;каналом</div>
+
+                                <div style="margin-bottom:8px;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px;">
+                                        <span style="color:var(--ink-70);font-weight:600;">Доля реальных зрителей (ERV)</span>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;">
+                                        <span style="color:var(--color-erv-green);">85%</span>
+                                        <span style="color:var(--ink-30);">→</span>
+                                        <span style="color:var(--color-erv-red);">42%</span>
+                                        <span style="color:var(--ink-30);">→</span>
+                                        <span style="color:var(--color-erv-green);">85%</span>
+                                    </div>
+                                    <div style="font-size:9px;color:var(--ink-50);margin-top:3px;line-height:1.4;">До&nbsp;атаки · во&nbsp;время · после восстановления</div>
+                                </div>
+
+                                <div style="padding-top:8px;border-top:1px solid rgba(239,68,68,0.15);">
+                                    <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:2px;">
+                                        <span style="color:var(--ink-70);font-weight:600;">Восстановление: </span>
+                                        <span style="color:var(--color-erv-green);font-weight:700;font-family:'JetBrains Mono',monospace;">~3&nbsp;мин</span>
+                                    </div>
+                                    <div style="font-size:9px;color:var(--ink-50);line-height:1.4;">Через 3&nbsp;минуты после того как&nbsp;боты ушли, ERV вернулся к&nbsp;обычному уровню. Рейтинг канала не&nbsp;пострадал.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Incident 2: Suspicious raid — EXPANDABLE -->
+                        <div class="sp-signal-expandable" style="border-bottom:1px solid var(--border-light);padding:8px 0;cursor:pointer;">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span style="font-size:10px;color:var(--color-erv-yellow);">●</span>
+                                <div style="flex:1;">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <span style="font-size:11px;font-weight:600;">Подозрительный рейд</span>
+                                        <span class="sp-erv-label yellow" style="font-size:8px;padding:2px 5px;">Рейд</span>
+                                    </div>
+                                    <div style="font-size:9px;color:var(--ink-30);">28.03 · 08:15 — 08:28 (13 мин)</div>
+                                </div>
+                                <span style="font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--color-erv-yellow);">+1,800</span>
+                                <span class="sp-signal-expand-icon">▾</span>
+                            </div>
+                        </div>
+                        <!-- Incident 2 DETAIL -->
+                        <div class="sp-signal-detail">
+                            <div style="font-size:10px;color:var(--ink-50);margin-bottom:6px;font-weight:600;">Поток зрителей</div>
+                            <div style="margin-bottom:8px;">
+                                <div style="font-size:9px;color:var(--ink-30);margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;">Откуда пришли</div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">⚠</span>
+                                    <span style="font-size:10px;flex:1;">unknown_channel</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">1,400</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">78%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+                                    <span style="font-size:10px;width:16px;text-align:center;">❓</span>
+                                    <span style="font-size:10px;flex:1;">Аккаунты < 7 дней</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">400</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">22%</span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:8px;">
+                                <div style="font-size:9px;color:var(--ink-30);margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;">Куда ушли после</div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">→</span>
+                                    <span style="font-size:10px;flex:1;">Вернулись на unknown_channel</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">1,100</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">61%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">💀</span>
+                                    <span style="font-size:10px;flex:1;">Отключились</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">500</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">28%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+                                    <span style="font-size:10px;width:16px;text-align:center;">→</span>
+                                    <span style="font-size:10px;flex:1;">Остались у shroud</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">200</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">11%</span>
+                                </div>
+                            </div>
+                            <div style="font-size:9px;color:var(--ink-50);padding:4px 8px;background:var(--color-skeleton-from);border-radius:4px;">Связь: 85% аккаунтов привязаны через одного создателя</div>
+                        </div>
+
+                        <!-- Incident 3: Normal raid — EXPANDABLE -->
+                        <div class="sp-signal-expandable" style="padding:8px 0;cursor:pointer;">
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span style="font-size:10px;color:var(--color-erv-green);">●</span>
+                                <div style="flex:1;">
+                                    <div style="display:flex;align-items:center;gap:6px;">
+                                        <span style="font-size:11px;font-weight:600;">Рейд от Tarik</span>
+                                        <span class="sp-erv-label green" style="font-size:8px;padding:2px 5px;">Норма</span>
+                                    </div>
+                                    <div style="font-size:9px;color:var(--ink-30);">25.03 · 19:44 — 20:10 (26 мин)</div>
+                                </div>
+                                <span style="font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--color-erv-green);">+500</span>
+                                <span class="sp-signal-expand-icon">▾</span>
+                            </div>
+                        </div>
+                        <!-- Incident 3 DETAIL -->
+                        <div class="sp-signal-detail">
+                            <div style="font-size:10px;color:var(--ink-50);margin-bottom:6px;font-weight:600;">Поток зрителей</div>
+                            <div style="margin-bottom:8px;">
+                                <div style="font-size:9px;color:var(--ink-30);margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;">Откуда пришли</div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+                                    <span style="font-size:10px;width:16px;text-align:center;">✅</span>
+                                    <span style="font-size:10px;flex:1;">Tarik (100% реальные, история 1+ мес)</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">500</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">100%</span>
+                                </div>
+                            </div>
+                            <div style="margin-bottom:8px;">
+                                <div style="font-size:9px;color:var(--ink-30);margin-bottom:4px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;">Куда ушли после</div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border-light);">
+                                    <span style="font-size:10px;width:16px;text-align:center;">✅</span>
+                                    <span style="font-size:10px;flex:1;">Остались у shroud</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">320</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">64%</span>
+                                </div>
+                                <div style="display:flex;align-items:center;gap:6px;padding:4px 0;">
+                                    <span style="font-size:10px;width:16px;text-align:center;">→</span>
+                                    <span style="font-size:10px;flex:1;">Разошлись по другим каналам</span>
+                                    <span style="font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;">180</span>
+                                    <span style="font-size:9px;color:var(--ink-30);">36%</span>
+                                </div>
+                            </div>
+                            <div style="font-size:9px;color:var(--color-erv-green);padding:4px 8px;background:var(--color-skeleton-from);border-radius:4px;">Влияние на&nbsp;реальных зрителей: без изменений (все реальные)</div>
+                        </div>
+                    </div>
+
+                    <!-- 30-day summary -->
+                    <div class="sp-signals" style="padding:8px 10px;">
+                        <div style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Итого за&nbsp;30 дней</div>
+                        <div style="display:flex;gap:8px;font-size:10px;">
+                            <div style="flex:1;text-align:center;">
+                                <div style="font-weight:700;font-family:'JetBrains Mono',monospace;">3</div>
+                                <div style="font-size:9px;color:var(--ink-30);">Инцидента</div>
+                            </div>
+                            <div style="flex:1;text-align:center;">
+                                <div style="font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--color-erv-red);">1</div>
+                                <div style="font-size:9px;color:var(--ink-30);">Бот-атака</div>
+                            </div>
+                            <div style="flex:1;text-align:center;">
+                                <div style="font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--color-erv-yellow);">1</div>
+                                <div style="font-size:9px;color:var(--ink-30);">Подозрит.</div>
+                            </div>
+                            <div style="flex:1;text-align:center;">
+                                <div style="font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--color-erv-green);">1</div>
+                                <div style="font-size:9px;color:var(--ink-30);">Норма</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div

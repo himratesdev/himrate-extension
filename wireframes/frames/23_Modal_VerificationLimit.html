@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HimRate Wireframe — 23 — Modal · Verification (limit reached)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="container">
+    <div class="title-block">
+        <h1>23 — Modal · Verification (limit reached)</h1>
+        <p>Frame extracted from side-panel-wireframe-TASK-039.html lines 3742-3771</p>
+    </div>
+    <div class="screens-grid">
+        <div class="screen-group tilted-right">
+            <div class="screen-label">Запрос на&nbsp;проверку · Лимит исчерпан</div>
+            <div class="screen-sublabel">5/5 запросов — кнопка disabled</div>
+            <div class="panel" style="height:400px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Overview</span>
+                    <span class="sp-header-streamer">my_channel</span>
+                    <div class="sp-header-right">
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+                        <div class="sp-header-avatar">M</div>
+                    </div>
+                </div>
+                <div class="sp-modal-overlay">
+                    <div class="sp-modal">
+                        <div class="sp-modal-header">
+                            <span class="sp-modal-title">Запрос на&nbsp;проверку</span>
+                            <button class="sp-modal-close">×</button>
+                        </div>
+                        <div class="sp-modal-body">
+                            <div class="sp-verify-remaining" style="color:var(--color-erv-red);">Лимит исчерпан (5/мес)</div>
+                            <textarea class="sp-verify-textarea" disabled placeholder="Запрос недоступен..." style="opacity:0.5;"></textarea>
+                        </div>
+                        <div class="sp-modal-footer">
+                            <button class="btn btn-primary sp-streamer-btn disabled" style="font-size:12px;padding:10px;opacity:0.5;cursor:not-allowed;">Лимит исчерпан</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

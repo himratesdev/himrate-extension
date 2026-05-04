@@ -1,0 +1,107 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Screen 10 · Рейтинг доверия (TI) · Premium</div>
+            <div class="screen-sublabel">Hero + Chart + Trend + Forecast + Best/Worst</div>
+            <div class="panel">
+                <div class="sp-header">
+                    <button class="sp-header-back">&larr;</button>
+                    <span class="sp-header-title">Рейтинг доверия</span>
+                    <span class="sp-header-streamer">shroud</span>
+                    <div class="sp-header-right"><div class="sp-header-avatar">S</div></div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab">Overview</button><button class="sp-tab active">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-content">
+                    <div style="font-size:11px;color:var(--color-primary);font-weight:600;cursor:pointer;margin-bottom:6px;">&larr; Все модули</div>
+                    <!-- Hero -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:10px;padding:12px 14px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);display:flex;align-items:center;gap:14px;">
+                        <div style="flex-shrink:0;">
+                            <div style="font-size:32px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#3B82F6;line-height:1;">77</div>
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px;">Рейтинг доверия</div>
+                            <div style="font-size:11px;color:var(--ink-70);margin-bottom:4px;">Требует внимания</div>
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                <span style="font-size:9px;padding:2px 6px;background:rgba(59,130,246,0.08);color:#3B82F6;border-radius:4px;font-weight:600;">3 смены</span>
+                                <span style="font-size:9px;padding:2px 6px;background:#FEF2F2;color:#DC2626;border-radius:4px;font-weight:600;">2 аномалии</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <span style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">Рейтинг доверия · 30д</span>
+                            <div style="display:flex;gap:0;border:1.5px solid var(--border-dark);border-radius:4px;overflow:hidden;">
+                                <button style="padding:3px 10px;font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:600;border:none;background:var(--ink);color:white;cursor:pointer;">Балл</button>
+                                <button style="padding:3px 10px;font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:500;border:none;border-left:1.5px solid var(--border-dark);background:white;color:var(--ink-50);cursor:pointer;">Уровень</button>
+                            </div>
+                        </div>
+                        <svg width="100%" height="120" viewBox="0 0 320 120" preserveAspectRatio="xMidYMid meet">
+                            <!-- Tier zones: 100=y5, 80=y25, 60=y45, 40=y65, 20=y85 — equal 20px steps -->
+                            <rect x="32" y="5" width="275" height="20" fill="#22C55E" opacity="0.04"/>
+                            <rect x="32" y="25" width="275" height="20" fill="#EAB308" opacity="0.04"/>
+                            <rect x="32" y="45" width="275" height="20" fill="#EF4444" opacity="0.04"/>
+                            <line x1="32" y1="25" x2="305" y2="25" stroke="#22C55E" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.3"/>
+                            <text x="28" y="18" text-anchor="end" font-size="7" fill="#22C55E" font-family="'JetBrains Mono',monospace" opacity="0.5">80+</text>
+                            <line x1="32" y1="45" x2="305" y2="45" stroke="#EAB308" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.3"/>
+                            <text x="28" y="38" text-anchor="end" font-size="7" fill="#EAB308" font-family="'JetBrains Mono',monospace" opacity="0.5">60</text>
+                            <line x1="32" y1="65" x2="305" y2="65" stroke="#EF4444" stroke-width="0.5" stroke-dasharray="3,2" opacity="0.3"/>
+                            <text x="28" y="58" text-anchor="end" font-size="7" fill="#EF4444" font-family="'JetBrains Mono',monospace" opacity="0.5">40</text>
+                            <!-- X-axis: evenly spaced -->
+                            <text x="50" y="100" text-anchor="middle" font-size="7" fill="#9ca3af" font-family="'JetBrains Mono',monospace">1 мар</text>
+                            <text x="135" y="100" text-anchor="middle" font-size="7" fill="#9ca3af" font-family="'JetBrains Mono',monospace">10 мар</text>
+                            <text x="220" y="100" text-anchor="middle" font-size="7" fill="#9ca3af" font-family="'JetBrains Mono',monospace">20 мар</text>
+                            <text x="300" y="100" text-anchor="middle" font-size="7" fill="#9ca3af" font-family="'JetBrains Mono',monospace">30 мар</text>
+                            <!-- TI line: TI89=y16, TI85=y20, TI72=y33, TI78=y27, TI65=y40, TI68=y37, TI77=y28 -->
+                            <polyline points="50,16 92,20 135,33 178,27 220,40 262,37 300,28" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                            <circle cx="178" cy="27" r="4" fill="#F97316" opacity="0.9"/><text x="178" y="30" text-anchor="middle" font-size="5" fill="white" font-weight="700" font-family="'Space Grotesk',Arial,sans-serif">!</text>
+                            <circle cx="300" cy="28" r="3.5" fill="#3B82F6" stroke="white" stroke-width="2"/>
+                        </svg>
+                        <div style="display:flex;gap:8px;font-size:8px;font-family:'JetBrains Mono',monospace;margin-top:3px;">
+                            <span style="color:#22C55E;">Доверенный (80+)</span>
+                            <span style="color:#EAB308;">Внимание (60-79)</span>
+                            <span style="color:#EF4444;">Риск (&lt;60)</span>
+                        </div>
+                    </div>
+                    <!-- Trend + Forecast -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+                        <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:8px 10px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Тренд</div>
+                            <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EF4444;line-height:1;">−12</div>
+                            <div style="font-size:9px;color:var(--ink-30);margin-top:3px;">за 30 дней</div>
+                        </div>
+                        <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:8px 10px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Прогноз 7д</div>
+                            <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EAB308;line-height:1;">74</div>
+                            <div style="font-size:9px;color:var(--ink-30);margin-top:3px;">разброс 70–78</div>
+                        </div>
+                        <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:8px 10px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Прогноз 30д</div>
+                            <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EAB308;line-height:1;">71</div>
+                            <div style="font-size:9px;color:var(--ink-30);margin-top:3px;">разброс 64–78</div>
+                        </div>
+                    </div>
+                    <!-- Explanation -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:var(--bg-warm);box-shadow:2px 2px 0 rgba(0,0,0,0.08);">
+                        <div style="font-size:11px;color:var(--ink-70);line-height:1.5;">Рейтинг снижается: авторизация зрителей упала (82→54%). Две аномалии сместили среднее. Рекомендуется проверить источники аудитории.</div>
+                    </div>
+                    <!-- Best/Worst -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                        <div style="border:2.5px solid var(--border-dark);border-left:4px solid #22C55E;border-radius:8px;padding:8px 10px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);cursor:pointer;">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Лучший</div>
+                            <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#22C55E;line-height:1;">84</div>
+                            <div style="font-size:9px;color:var(--ink-50);margin-top:3px;">10 мар · Just Chatting</div>
+                        </div>
+                        <div style="border:2.5px solid var(--border-dark);border-left:4px solid #EF4444;border-radius:8px;padding:8px 10px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);cursor:pointer;">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Худший</div>
+                            <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EF4444;line-height:1;">58</div>
+                            <div style="font-size:9px;color:var(--ink-50);margin-top:3px;">19 фев · Just Chatting</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div

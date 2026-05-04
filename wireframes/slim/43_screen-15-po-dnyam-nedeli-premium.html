@@ -1,0 +1,79 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Screen 15 · По дням недели · Premium</div>
+            <div class="screen-sublabel">7-bar chart + лучший/худший день</div>
+            <div class="panel" style="height:600px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">&larr;</button>
+                    <span class="sp-header-title">По дням недели</span>
+                    <span class="sp-header-streamer">shroud</span>
+                    <div class="sp-header-right"><div class="sp-header-avatar">S</div></div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab">Overview</button><button class="sp-tab active">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-content">
+                    <div style="font-size:11px;color:var(--color-primary);font-weight:600;cursor:pointer;margin-bottom:6px;">&larr; Все модули</div>
+                    <!-- Chart -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:8px;">Рейтинг доверия по&nbsp;дням</div>
+                        <!-- Value labels -->
+                        <div style="display:flex;gap:4px;margin-bottom:2px;">
+                            <div style="flex:1;text-align:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">74</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">72</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">76</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">75</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#22C55E;">81</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#10B981;">78</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--ink-30);">68</div>
+                        </div>
+                        <!-- Bars -->
+                        <div style="display:flex;gap:4px;align-items:flex-end;height:70px;margin-bottom:4px;">
+                            <div style="flex:1;height:62%;background:#3B82F6;border-radius:3px 3px 0 0;opacity:0.6;"></div>
+                            <div style="flex:1;height:55%;background:#3B82F6;border-radius:3px 3px 0 0;opacity:0.5;"></div>
+                            <div style="flex:1;height:70%;background:#3B82F6;border-radius:3px 3px 0 0;opacity:0.6;"></div>
+                            <div style="flex:1;height:65%;background:#3B82F6;border-radius:3px 3px 0 0;opacity:0.55;"></div>
+                            <div style="flex:1;height:100%;background:#22C55E;border-radius:3px 3px 0 0;"></div>
+                            <div style="flex:1;height:77%;background:#10B981;border-radius:3px 3px 0 0;opacity:0.6;"></div>
+                            <div style="flex:1;height:37%;background:#10B981;border-radius:3px 3px 0 0;opacity:0.3;"></div>
+                        </div>
+                        <!-- Day labels -->
+                        <div style="display:flex;gap:4px;">
+                            <div style="flex:1;text-align:center;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">Пн</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">Вт</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">Ср</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">Чт</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-family:'JetBrains Mono',monospace;color:#22C55E;font-weight:700;">Пт</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">Сб</div>
+                            <div style="flex:1;text-align:center;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink-50);">Вс</div>
+                        </div>
+                        <div style="display:flex;gap:10px;font-size:8px;font-family:'JetBrains Mono',monospace;margin-top:6px;">
+                            <span style="display:flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;background:#3B82F6;border-radius:1px;display:inline-block;"></span>Будни</span>
+                            <span style="display:flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;background:#10B981;border-radius:1px;display:inline-block;"></span>Выходные</span>
+                        </div>
+                    </div>
+                    <!-- Best/Worst day -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                        <div style="border:2.5px solid var(--border-dark);border-left:4px solid #22C55E;border-radius:8px;padding:8px 10px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Лучший день</div>
+                            <div style="font-size:15px;font-weight:700;font-family:'Space Grotesk',sans-serif;">Пятница</div>
+                            <div style="font-size:9px;color:var(--ink-50);margin-top:4px;line-height:1.4;">Доверие 81 · Зрители 87%</div>
+                            <div style="font-size:9px;color:#059669;font-weight:600;margin-top:2px;">Лояльная аудитория</div>
+                        </div>
+                        <div style="border:2.5px solid var(--border-dark);border-left:4px solid #EF4444;border-radius:8px;padding:8px 10px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:4px;">Худший день</div>
+                            <div style="font-size:15px;font-weight:700;font-family:'Space Grotesk',sans-serif;">Воскресенье</div>
+                            <div style="font-size:9px;color:var(--ink-50);margin-top:4px;line-height:1.4;">Доверие 68 · Зрители 72%</div>
+                            <div style="font-size:9px;color:#DC2626;font-weight:600;margin-top:2px;">Много анонимных зрителей</div>
+                        </div>
+                    </div>
+                    <!-- Explanation -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:var(--bg-warm);box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="font-size:11px;color:var(--ink-70);line-height:1.5;">Пятничные стримы стабильно показывают лучшие результаты. Воскресенье&nbsp;&mdash; наименее удачный день. Разница составляет 13&nbsp;пунктов Рейтинга доверия.</div>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div

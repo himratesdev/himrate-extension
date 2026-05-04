@@ -1,0 +1,49 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Badge Modal</div>
+            <div class="screen-sublabel">SVG preview + HTML/MD/BBCode tabs</div>
+            <div class="panel" style="height:500px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Overview</span>
+                    <span class="sp-header-streamer">my_channel</span>
+                    <div class="sp-header-right">
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                        <div class="sp-header-avatar">M</div>
+                    </div>
+                </div>
+                <!-- Modal overlay -->
+                <div class="sp-modal-overlay">
+                    <div class="sp-modal">
+                        <div class="sp-modal-header">
+                            <span class="sp-modal-title">Сгенерировать бейдж</span>
+                            <button class="sp-modal-close">×</button>
+                        </div>
+                        <div class="sp-modal-body">
+                            <!-- Badge Preview -->
+                            <div class="sp-badge-preview">
+                                <svg width="260" height="40" viewBox="0 0 260 40">
+                                    <rect x="0" y="0" width="260" height="40" rx="8" fill="#059669"/>
+                                    <text x="16" y="25" fill="white" font-family="'Space Grotesk', Arial, sans-serif" font-size="13" font-weight="700">HimRate Рейтинг доверия: 88</text>
+                                    <circle cx="240" cy="20" r="8" fill="white" opacity="0.3"/>
+                                    <text x="236" y="24" fill="white" font-family="'JetBrains Mono', monospace" font-size="10" font-weight="700">✓</text>
+                                </svg>
+                            </div>
+                            <!-- Code tabs -->
+                            <div class="sp-code-tabs">
+                                <button class="sp-code-tab active">HTML</button>
+                                <button class="sp-code-tab">Markdown</button>
+                                <button class="sp-code-tab">BBCode</button>
+                            </div>
+                            <div class="sp-code-block">
+                                <button class="sp-code-copy">Копировать</button>
+                                &lt;a href="https://himrate.com/c/my_channel"&gt;<br>
+                                &nbsp;&nbsp;&lt;img src="https://himrate.com/badge/my_channel.svg"<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;alt="HimRate TI: 88" /&gt;<br>
+                                &lt;/a&gt;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div

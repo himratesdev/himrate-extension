@@ -7,6 +7,28 @@ import { extractChannel, formatCCV, getBadgeColor } from '../shared/utils';
 import { api, type TrustCache } from '../shared/api';
 import { searchUsers, getChattersCount } from '../shared/gql';
 
+// Background-layer literal map for badge text. Service worker MV3 loads
+// на каждом extension activation — full locale JSONs (~30KB each) bundling
+// для одной строки = bloat. Const map = lightweight (PG W-1).
+//
+// NOTE: bg layer не имеет wireframe (badge — Chrome toolbar UI, не side panel)
+// → literal-port discipline N/A здесь. Cyrillic literal acceptable, listed
+// в CLAUDE.md known-violations table (категория "Background-layer").
+//
+// Sync invariant: эти значения должны matchить locales/{ru,en}.json
+// badge.offline (i18n drift test Phase 1 verifies ru/en sync). Если ключ
+// в locales переименуется/удалится → обновить ОБА.
+const BG_BADGE_TEXT = {
+  offline: { ru: 'офф', en: 'OFF' },
+} as const;
+
+type LocaleKey = keyof typeof BG_BADGE_TEXT.offline;
+
+async function getLocale(): Promise<LocaleKey> {
+  const stored = ((await chrome.storage.local.get('himrate_locale')).himrate_locale as string) || 'en';
+  return stored === 'ru' ? 'ru' : 'en';
+}
+
 // =============================================
 // AUTH (unchanged from TASK-018)
 // =============================================
@@ -271,8 +293,8 @@ async function updateBadgeFromCache(cache: TrustCache): Promise<void> {
   if (cache.is_tracked && cache.is_live && cache.ccv !== null) {
     await setBadge(formatCCV(cache.ccv), cache.ti_score);
   } else if (cache.is_tracked && !cache.is_live) {
-    const locale = ((await chrome.storage.local.get('himrate_locale')).himrate_locale as string) || 'en';
-    await setBadge(locale === 'ru' ? 'офф' : 'OFF', cache.ti_score);
+    const locale = await getLocale();
+    await setBadge(BG_BADGE_TEXT.offline[locale], cache.ti_score);
   } else if (!cache.is_tracked && cache.is_live && cache.ccv !== null) {
     await setBadge(formatCCV(cache.ccv), null); // grey for untracked
   } else {

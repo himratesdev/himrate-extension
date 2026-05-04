@@ -43,12 +43,21 @@ describe('anomaly_alerts i18n catalog', () => {
     expect(en).toHaveProperty('alert.dismiss');
   });
 
-  it('legal-safe wording — no "бот"/"bot"/"накрутк"/"fake" в alert texts', () => {
-    const forbidden = ['бот', 'bot', 'накрутк', 'фейк', 'fake', 'cheat'];
+  it('legal-safe wording — no "бот"/"bot"/"накрутк"/"fake" word in alert texts (word-boundary match)', () => {
+    // CR N-3: word-boundary regex avoids false positives типа "bottom"/"robot"/"botanical".
+    // Cyrillic + Latin letter classes via Unicode property escapes.
+    const forbiddenPatterns = [
+      /\bбот\w*/iu,        // бот, боты, ботов, ботный
+      /\bbot\b/iu,         // bot only — NOT bottom/robot/botanical
+      /\bнакрутк\w*/iu,    // накрутка, накрутки, накруткой
+      /\bфейк\w*/iu,
+      /\bfake\b/iu,
+      /\bcheat\w*/iu,
+    ];
     const alertEntries = Object.entries({ ...ru, ...en }).filter(([k]) => k.startsWith('alert.'));
     for (const [key, val] of alertEntries) {
-      for (const word of forbidden) {
-        expect(val.toLowerCase(), `${key} contains forbidden "${word}"`).not.toContain(word);
+      for (const pattern of forbiddenPatterns) {
+        expect(val, `${key} matches forbidden pattern ${pattern}`).not.toMatch(pattern);
       }
     }
   });
@@ -118,7 +127,7 @@ describe('formatAnomalyAlert helper', () => {
     expect(r.detail).toContain('30');
   });
 
-  it('chat_entropy_drop formats entropy_bits как 2-decimal', () => {
+  it('chat_entropy_drop formats entropy_bits as 2-decimal', () => {
     const alert: AnomalyAlert = { ...baseAlert, type: 'chat_entropy_drop', value: 1.4, metadata: {} };
     const r = formatAnomalyAlert(alert, t);
     expect(r.detail).toContain('1.40');

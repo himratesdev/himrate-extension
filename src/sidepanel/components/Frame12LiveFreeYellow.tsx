@@ -122,9 +122,10 @@ export function Frame12LiveFreeYellow({
 
   return (
     <div className="sp-content" role="tabpanel">
-      {/* TASK-085 PR-2: Anomaly alerts — wireframe slim/12 default = single yellow alert.
-          Real backend data: zero-or-many alerts via trustCache.anomaly_alerts. Empty → no section.
-          Per-alert severity class (red/yellow/info), per-alert dismiss. */}
+      {/* TASK-085 PR-2 (CR N-1): Anomaly alerts — real backend = zero-or-many alerts via
+          trustCache.anomaly_alerts (sorted red→yellow→info by AnomalyAlertsPresenter).
+          Wireframe default (single yellow alert) was placeholder mock — replaced by data-driven
+          iteration. Per-alert severity class (red/yellow/info) + per-alert dismiss by alert.id. */}
       {visibleAlerts.length > 0 && (
         <div className="sp-alert-stack">
           {visibleAlerts.map((alert) => {

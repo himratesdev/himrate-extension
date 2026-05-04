@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 import { useSparkline } from '../hooks/useSparkline';
+import { formatAnomalyAlert } from '../utils/formatAnomalyAlert';
+import type { AnomalyAlert } from '../../shared/api';
 
 interface Signal {
   type: string;
@@ -38,6 +40,8 @@ interface Props {
   signals?: Signal[];
   reputation?: ReputationData | null;
   topCountries?: Country[] | null;
+  /** TASK-085 PR-2: real-time anomaly alerts from /trust drill_down view. Empty → no alert section. */
+  anomalyAlerts?: AnomalyAlert[];
   onNavigate?: (tab: string) => void;
 }
 
@@ -58,7 +62,8 @@ function flagEmoji(code: string): string {
 
 export function Frame13LiveFreeRed({
   ervPercent, ervCount, ccv, tiScore, classification, percentile,
-  channelId = null, signals = [], reputation = null, topCountries = null, onNavigate,
+  channelId = null, signals = [], reputation = null, topCountries = null,
+  anomalyAlerts = [], onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
   const chart = useSparkline(channelId, true, false); // Free user — 30m only
@@ -99,9 +104,10 @@ export function Frame13LiveFreeRed({
   // TI expand state — wireframe slim/13 percentile visible
   const [tiExpanded, setTiExpanded] = useState(true);
 
-  // Red alerts dismissable separately (wireframe slim/13: 2 alerts)
+  // TASK-085 PR-2: per-alert dismiss by alert.id (replaces hardcoded red_surge/red_unauth keys).
   const [dismissed, setDismissed] = useState<Set<string>>(() => new Set());
   const dismiss = (key: string) => setDismissed(p => { const n = new Set(p); n.add(key); return n; });
+  const visibleAlerts = anomalyAlerts.filter((a) => !dismissed.has(a.id));
 
   // M3 paywall preview — 2 first signals (wireframe slim/13 narrowest preview)
   const s1 = sig('auth_ratio', 20, '20%');
@@ -109,23 +115,21 @@ export function Frame13LiveFreeRed({
 
   return (
     <div className="sp-content" role="tabpanel">
-      {/* Alerts — wireframe slim/13: 2 red alerts */}
-      {(!dismissed.has('red_surge') || !dismissed.has('red_unauth')) && (
+      {/* TASK-085 PR-2: Anomaly alerts — wireframe slim/13 default = 2 red alerts.
+          Real backend data: zero-or-many alerts via trustCache.anomaly_alerts (sorted red→yellow→info).
+          Per-alert severity class + per-alert dismiss by alert.id. Empty → no section. */}
+      {visibleAlerts.length > 0 && (
         <div className="sp-alert-stack">
-          {!dismissed.has('red_surge') && (
-            <div className="sp-alert red" role="alert">
-              <span className="sp-alert-dot"></span>
-              <span>{t('sp.alert_red_surge', { count: '5,000', minutes: 2 })}</span>
-              <button className="sp-alert-dismiss" aria-label={t('aria.close')} onClick={() => dismiss('red_surge')}>×</button>
-            </div>
-          )}
-          {!dismissed.has('red_unauth') && (
-            <div className="sp-alert red" role="alert">
-              <span className="sp-alert-dot"></span>
-              <span>{t('sp.alert_red_unauthorized', { pct: 80 })}</span>
-              <button className="sp-alert-dismiss" aria-label={t('aria.close')} onClick={() => dismiss('red_unauth')}>×</button>
-            </div>
-          )}
+          {visibleAlerts.map((alert) => {
+            const formatted = formatAnomalyAlert(alert, t);
+            return (
+              <div key={alert.id} className={`sp-alert ${alert.severity}`} role="alert">
+                <span className="sp-alert-dot"></span>
+                <span>{formatted.detail ? `${formatted.title}: ${formatted.detail}` : formatted.title}</span>
+                <button className="sp-alert-dismiss" aria-label={t('alert.dismiss')} onClick={() => dismiss(alert.id)}>×</button>
+              </div>
+            );
+          })}
         </div>
       )}
 

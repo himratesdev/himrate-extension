@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 import { useSparkline } from '../hooks/useSparkline';
+import { formatAnomalyAlert } from '../utils/formatAnomalyAlert';
+import type { AnomalyAlert } from '../../shared/api';
 
 interface Signal {
   type: string;
@@ -38,6 +40,8 @@ interface Props {
   signals?: Signal[];
   reputation?: ReputationData | null;
   topCountries?: Country[] | null;
+  /** TASK-085 PR-2: real-time anomaly alerts from /trust drill_down view. Empty → no alert section. */
+  anomalyAlerts?: AnomalyAlert[];
   onNavigate?: (tab: string) => void;
 }
 
@@ -58,7 +62,8 @@ function flagEmoji(code: string): string {
 
 export function Frame12LiveFreeYellow({
   ervPercent, ervCount, ccv, tiScore, classification, percentile,
-  channelId = null, signals = [], reputation = null, topCountries = null, onNavigate,
+  channelId = null, signals = [], reputation = null, topCountries = null,
+  anomalyAlerts = [], onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
   const chart = useSparkline(channelId, true, false); // Free user — 30m only
@@ -100,8 +105,14 @@ export function Frame12LiveFreeYellow({
   // TI expand state — wireframe slim/12 percentile visible
   const [tiExpanded, setTiExpanded] = useState(true);
 
-  // Yellow alert dismiss (wireframe slim/12 — single yellow alert, dismissable)
-  const [alertDismissed, setAlertDismissed] = useState(false);
+  // TASK-085 PR-2: per-alert dismiss state (Set of alert IDs). Each alert independently dismissable.
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(() => new Set());
+  const visibleAlerts = anomalyAlerts.filter((a) => !dismissedIds.has(a.id));
+  const dismissAlert = (id: string) => setDismissedIds((prev) => {
+    const next = new Set(prev);
+    next.add(id);
+    return next;
+  });
 
   // M3 paywall preview — 3 first signals (wireframe slim/12 narrower preview)
   const s1 = sig('auth_ratio', 55, '55%');
@@ -111,14 +122,21 @@ export function Frame12LiveFreeYellow({
 
   return (
     <div className="sp-content" role="tabpanel">
-      {/* Alert Counter — wireframe slim/12: single yellow alert "Скачок зрителей" */}
-      {!alertDismissed && (
+      {/* TASK-085 PR-2: Anomaly alerts — wireframe slim/12 default = single yellow alert.
+          Real backend data: zero-or-many alerts via trustCache.anomaly_alerts. Empty → no section.
+          Per-alert severity class (red/yellow/info), per-alert dismiss. */}
+      {visibleAlerts.length > 0 && (
         <div className="sp-alert-stack">
-          <div className="sp-alert yellow" role="alert" aria-live="polite">
-            <span className="sp-alert-dot"></span>
-            <span>{t('sp.alert_yellow_surge', { count: '2,400', minutes: 5 })}</span>
-            <button className="sp-alert-dismiss" aria-label={t('aria.close')} onClick={() => setAlertDismissed(true)}>×</button>
-          </div>
+          {visibleAlerts.map((alert) => {
+            const formatted = formatAnomalyAlert(alert, t);
+            return (
+              <div key={alert.id} className={`sp-alert ${alert.severity}`} role="alert" aria-live="polite">
+                <span className="sp-alert-dot"></span>
+                <span>{formatted.detail ? `${formatted.title}: ${formatted.detail}` : formatted.title}</span>
+                <button className="sp-alert-dismiss" aria-label={t('alert.dismiss')} onClick={() => dismissAlert(alert.id)}>×</button>
+              </div>
+            );
+          })}
         </div>
       )}
 

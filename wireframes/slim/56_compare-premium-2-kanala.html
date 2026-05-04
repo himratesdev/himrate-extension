@@ -1,0 +1,171 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Compare · Premium · 2 канала</div>
+            <div class="screen-sublabel">Полное сравнение с реальными числами, HimRate/Twitch, + кнопка для 3го канала</div>
+            <div class="panel" style="height:auto;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Compare</span>
+                    <div class="sp-header-right"><button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button><button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><div class="sp-header-avatar">S</div></div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab">Overview</button><button class="sp-tab">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab active">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-content">
+                    <!-- Period selector -->
+                    <div style="display:flex;gap:6px;margin-bottom:10px;">
+                        <button class="sp-tab active" style="padding:4px 10px;font-size:10px;border-radius:20px;border:1.5px solid var(--color-primary);">7 дней</button>
+                        <button class="sp-tab" style="padding:4px 10px;font-size:10px;border-radius:20px;border:1.5px solid var(--border-light);">30 дней</button>
+                        <button class="sp-tab" style="padding:4px 10px;font-size:10px;border-radius:20px;border:1.5px solid var(--border-light);">90 дней</button>
+                    </div>
+
+                    <!-- Channel selectors + ADD button -->
+                    <div style="display:flex;gap:6px;margin-bottom:10px;align-items:stretch;">
+                        <div class="sp-signals" style="flex:1;padding:8px;text-align:center;cursor:pointer;">
+                            <div style="font-size:9px;color:var(--ink-30);margin-bottom:2px;">Канал 1</div>
+                            <div style="font-size:12px;font-weight:700;color:var(--color-erv-green);">shroud</div>
+                            <div style="font-size:9px;color:var(--ink-30);">Зрит. 85%</div>
+                        </div>
+                        <div style="display:flex;align-items:center;font-size:10px;color:var(--ink-30);font-weight:700;">vs</div>
+                        <div class="sp-signals" style="flex:1;padding:8px;text-align:center;cursor:pointer;">
+                            <div style="font-size:9px;color:var(--ink-30);margin-bottom:2px;">Канал 2</div>
+                            <div style="font-size:12px;font-weight:700;color:var(--color-erv-yellow);">xQc</div>
+                            <div style="font-size:9px;color:var(--ink-30);">Зрит. 62%</div>
+                        </div>
+                        <!-- + button for 3rd channel -->
+                        <div class="sp-signals" style="width:40px;padding:8px 0;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0.6;">
+                            <span style="font-size:20px;color:var(--color-primary);font-weight:300;">+</span>
+                        </div>
+                    </div>
+
+                    <!-- Comparison table — 12 metrics, ordered by advertiser importance -->
+                    <!-- Header row -->
+                    <div class="sp-signals" style="gap:0;">
+                        <div style="display:flex;font-size:9px;font-family:'JetBrains Mono',monospace;padding:4px 0;border-bottom:2px solid var(--border-dark);color:var(--ink-30);text-transform:uppercase;letter-spacing:0.05em;">
+                            <span style="flex:1;text-align:center;color:var(--color-erv-green);">shroud</span>
+                            <span style="width:90px;text-align:center;">Метрика</span>
+                            <span style="flex:1;text-align:center;color:var(--color-erv-yellow);">xQc</span>
+                            <span style="width:14px;"></span>
+                        </div>
+
+                        <!-- 1. ERV% (HimRate) — higher=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">85%</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;" title="Estimated Real Viewers — оценка реальных зрителей">Реальные<br>зрители<br><span style="font-size:7px;color:var(--ink-30);">HimRate</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-yellow);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">62%</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 2. Real viewers (HimRate) — higher=better → xQc wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">4,420</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Реальные<br><span style="font-size:7px;color:var(--ink-30);">HimRate</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-yellow);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">26,040</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 3. Average online (Twitch) — higher=better → xQc wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">5,200</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Средн. онлайн<br><span style="font-size:7px;color:var(--ink-30);">Twitch</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">42,000</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 4. Peak online (Twitch) — higher=better → xQc wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">7,800</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Пик онлайна<br><span style="font-size:7px;color:var(--ink-30);">Twitch</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">156,000</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 5. Trust Index (HimRate) — higher=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">88</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;" title="Trust Index — комплексная оценка доверия к каналу">Рейтинг<br>доверия<br><span style="font-size:7px;color:var(--ink-30);">HimRate</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-yellow);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">62</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 6. Auth % (HimRate) — higher=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">92%</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Авторизация<br><span style="font-size:7px;color:var(--ink-30);">HimRate</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-red);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">55%</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 7. Chat/viewers ratio — higher=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">8.2%</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Чат/зрители<br><span style="font-size:7px;color:var(--ink-30);">HimRate</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-yellow);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">5.1%</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 8. Subscribers ratio — higher=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">34%</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Подписчики<br><span style="font-size:7px;color:var(--ink-30);">Twitch</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-red);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">12%</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 9. Silent viewers % — LOWER=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">78%</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Молчуны<br><span style="font-size:7px;color:var(--ink-30);">HimRate</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-red);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">88%</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 10. Avg stream duration — higher=better → xQc wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">5ч 20м</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Средн. длит.<br><span style="font-size:7px;color:var(--ink-30);">Twitch</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">8ч 45м</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 11. Reputation (HimRate) — higher=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;border-bottom:1px solid var(--border-light);cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">85</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Репутация<br><span style="font-size:7px;color:var(--ink-30);">HimRate</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-red);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">45</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+
+                        <!-- 12. Reputation trend — higher=better → shroud wins -->
+                        <div style="display:flex;font-size:10px;font-family:'JetBrains Mono',monospace;padding:6px 0;cursor:pointer;align-items:center;">
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-green);background:rgba(34,197,94,0.08);border-left:3px solid #22c55e;padding:4px 0;">+12%</span>
+                            <span style="width:90px;text-align:center;color:var(--ink-50);font-size:9px;">Тренд репут.<br><span style="font-size:7px;color:var(--ink-30);">HimRate 30д</span></span>
+                            <span style="flex:1;text-align:center;font-weight:700;color:var(--color-erv-red);background:rgba(239,68,68,0.08);border-left:3px solid #ef4444;padding:4px 0;">-8%</span>
+                            <span style="width:14px;text-align:center;color:var(--ink-30);font-size:9px;">→</span>
+                        </div>
+                    </div>
+
+                    <!-- Legend — clean stacked rows -->
+                    <div style="margin-top:10px;padding:10px 12px;background:rgba(0,0,0,0.03);border-radius:6px;font-size:10px;color:var(--ink-70);">
+                        <div style="font-size:9px;color:var(--ink-30);text-transform:uppercase;letter-spacing:0.04em;font-family:'JetBrains Mono',monospace;margin-bottom:6px;">Источник данных</div>
+                        <div style="margin-bottom:4px;"><span style="display:inline-block;width:10px;height:10px;background:var(--color-primary);border-radius:2px;vertical-align:middle;margin-right:6px;"></span>HimRate&nbsp;— наши расчёты</div>
+                        <div style="margin-bottom:10px;"><span style="display:inline-block;width:10px;height:10px;background:var(--ink-50);border-radius:2px;vertical-align:middle;margin-right:6px;"></span>Twitch&nbsp;— официальные данные</div>
+                        <div style="font-size:9px;color:var(--ink-30);text-transform:uppercase;letter-spacing:0.04em;font-family:'JetBrains Mono',monospace;margin-bottom:6px;padding-top:8px;border-top:1px dashed rgba(0,0,0,0.08);">Цвет строки</div>
+                        <div style="margin-bottom:4px;"><span style="display:inline-block;width:3px;height:12px;background:#22c55e;vertical-align:middle;margin-right:8px;"></span>Лучше у&nbsp;канала</div>
+                        <div><span style="display:inline-block;width:3px;height:12px;background:#ef4444;vertical-align:middle;margin-right:8px;"></span>Хуже у&nbsp;канала</div>
+                    </div>
+                    <div style="font-size:9px;color:var(--ink-30);text-align:center;margin-top:6px;font-style:italic;">Нажмите на&nbsp;строку для&nbsp;графика сравнения за&nbsp;период</div>
+
+                    <!-- B2B: Business unlimited banner -->
+                    <div style="margin-top:14px;padding:12px 14px;border-radius:10px;background:linear-gradient(135deg, #1a1a1a 0%, #2d1e5e 100%);border:2.5px solid #1a1a1a;color:white;position:relative;box-shadow:3px 3px 0 rgba(0,0,0,0.15);">
+                        <div style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#a5b4fc;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Business</div>
+                        <div style="font-size:13px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:white;margin-bottom:4px;line-height:1.3;">Сравнивайте до&nbsp;5 каналов одновременно</div>
+                        <div style="font-size:10px;color:rgba(255,255,255,0.7);line-height:1.4;margin-bottom:10px;">Premium ограничен 2 каналами. Business снимает лимит + даёт API-доступ для&nbsp;интеграций в&nbsp;ваши дашборды.</div>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <button style="flex:1;padding:8px 12px;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2px solid white;border-radius:8px;background:white;color:#1a1a1a;cursor:pointer;">Перейти на&nbsp;Business</button>
+                            <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:#a5b4fc;font-weight:700;white-space:nowrap;">$99/мес</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HimRate Wireframe — 25 — Modal · Channel Switch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="container">
+    <div class="title-block">
+        <h1>25 — Modal · Channel Switch</h1>
+        <p>Frame extracted from side-panel-wireframe-TASK-039.html lines 3808-3836</p>
+    </div>
+    <div class="screens-grid">
+        <div class="screen-group tilted-right">
+            <div class="screen-label">Channel Switch</div>
+            <div class="screen-sublabel">Overlay + Yes/No + progress bar (10s)</div>
+            <div class="panel" style="height:450px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Overview</span>
+                    <span class="sp-header-streamer">shroud</span>
+                    <div class="sp-header-right">
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+                        <div class="sp-header-avatar">U</div>
+                    </div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab active">Overview</button><button class="sp-tab">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-channel-switch" role="dialog" aria-modal="true">
+                    <div class="sp-channel-switch-card">
+                        <div class="sp-channel-switch-title">Переключить канал?</div>
+                        <div class="sp-channel-switch-sub">Вы перешли на&nbsp;канал <strong>xQc</strong>. Переключить аналитику?</div>
+                        <div class="sp-channel-switch-btns">
+                            <button class="btn-yes">Да</button>
+                            <button class="btn-no">Нет</button>
+                        </div>
+                        <div class="sp-channel-switch-progress">
+                            <div class="sp-channel-switch-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

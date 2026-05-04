@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HimRate Wireframe — 22 — Modal · Verification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="container">
+    <div class="title-block">
+        <h1>22 — Modal · Verification</h1>
+        <p>Frame extracted from side-panel-wireframe-TASK-039.html lines 3706-3739</p>
+    </div>
+    <div class="screens-grid">
+        <div class="screen-group tilted">
+            <div class="screen-label">Запрос на&nbsp;проверку</div>
+            <div class="screen-sublabel">Форма запроса + лимит символов + счётчик запросов</div>
+            <div class="panel" style="height:450px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Overview</span>
+                    <span class="sp-header-streamer">my_channel</span>
+                    <div class="sp-header-right">
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+                        <div class="sp-header-avatar">M</div>
+                    </div>
+                </div>
+                <div class="sp-modal-overlay">
+                    <div class="sp-modal">
+                        <div class="sp-modal-header">
+                            <span class="sp-modal-title">Запрос на&nbsp;проверку</span>
+                            <button class="sp-modal-close">×</button>
+                        </div>
+                        <div class="sp-modal-body">
+                            <div style="font-size:11px;color:var(--ink-50);line-height:1.5;margin-bottom:10px;">
+                                Если вы&nbsp;считаете, что данные вашего канала неточны — отправьте запрос. Наши аналитики проверят показатели и&nbsp;скорректируют их&nbsp;в&nbsp;течение 48&nbsp;часов.
+                            </div>
+                            <div class="sp-verify-remaining">Осталось 3/5 запросов в&nbsp;этом месяце</div>
+                            <textarea class="sp-verify-textarea" placeholder="Опишите, что вам кажется неточным..."></textarea>
+                            <div class="sp-verify-limit">0 / 200</div>
+                        </div>
+                        <div class="sp-modal-footer">
+                            <button class="btn btn-primary" style="font-size:12px;padding:10px;">Отправить запрос на&nbsp;проверку</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HimRate Wireframe — 39 — Trends · Rating Components</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="container">
+    <div class="title-block">
+        <h1>39 — Trends · Rating Components</h1>
+        <p>Frame extracted from side-panel-wireframe-TASK-039.html lines 5062-5158</p>
+    </div>
+    <div class="screens-grid">
+        <div class="screen-group tilted">
+            <div class="screen-label">Screen 12 · Компоненты рейтинга · Premium</div>
+            <div class="screen-sublabel">Что влияет на Рейтинг доверия</div>
+            <div class="panel">
+                <div class="sp-header">
+                    <button class="sp-header-back">&larr;</button>
+                    <span class="sp-header-title">Из чего складывается рейтинг</span>
+                    <div class="sp-header-right"><div class="sp-header-avatar">S</div></div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab">Overview</button><button class="sp-tab active">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-content">
+                    <div style="font-size:11px;color:var(--color-primary);font-weight:600;cursor:pointer;margin-bottom:6px;">&larr; Все модули</div>
+                    <!-- Stacked chart -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <span style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;">Вклад компонентов</span>
+                            <span style="font-size:9px;color:var(--ink-30);font-family:'JetBrains Mono',monospace;">Итого: 77 баллов</span>
+                        </div>
+                        <!-- Horizontal stacked bar -->
+                        <div style="display:flex;height:28px;border-radius:4px;overflow:hidden;margin-bottom:6px;">
+                            <div style="width:35%;background:#3B82F6;display:flex;align-items:center;justify-content:center;"><span style="font-size:8px;font-weight:700;color:white;font-family:'JetBrains Mono',monospace;">35%</span></div>
+                            <div style="width:25%;background:#22C55E;display:flex;align-items:center;justify-content:center;"><span style="font-size:8px;font-weight:700;color:white;font-family:'JetBrains Mono',monospace;">25%</span></div>
+                            <div style="width:18%;background:#8B5CF6;display:flex;align-items:center;justify-content:center;"><span style="font-size:8px;font-weight:700;color:white;font-family:'JetBrains Mono',monospace;">18%</span></div>
+                            <div style="width:14%;background:#EAB308;display:flex;align-items:center;justify-content:center;"><span style="font-size:7px;font-weight:700;color:white;font-family:'JetBrains Mono',monospace;">14%</span></div>
+                            <div style="width:8%;background:#EF4444;display:flex;align-items:center;justify-content:center;"></div>
+                        </div>
+                        <!-- Legend with values -->
+                        <div style="display:flex;flex-direction:column;gap:4px;">
+                            <div style="display:flex;align-items:center;gap:6px;font-size:9px;"><span style="width:8px;height:8px;background:#3B82F6;border-radius:2px;flex-shrink:0;"></span><span style="flex:1;font-weight:600;">Авторизация</span><span style="width:38px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:#3B82F6;flex-shrink:0;">27 pts</span><span style="width:24px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--ink-30);flex-shrink:0;">35%</span></div>
+                            <div style="display:flex;align-items:center;gap:6px;font-size:9px;"><span style="width:8px;height:8px;background:#22C55E;border-radius:2px;flex-shrink:0;"></span><span style="flex:1;font-weight:600;">Вовлечённость</span><span style="width:38px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:#22C55E;flex-shrink:0;">19 pts</span><span style="width:24px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--ink-30);flex-shrink:0;">25%</span></div>
+                            <div style="display:flex;align-items:center;gap:6px;font-size:9px;"><span style="width:8px;height:8px;background:#8B5CF6;border-radius:2px;flex-shrink:0;"></span><span style="flex:1;font-weight:600;">Чат-паттерны</span><span style="width:38px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:#8B5CF6;flex-shrink:0;">14 pts</span><span style="width:24px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--ink-30);flex-shrink:0;">18%</span></div>
+                            <div style="display:flex;align-items:center;gap:6px;font-size:9px;"><span style="width:8px;height:8px;background:#EAB308;border-radius:2px;flex-shrink:0;"></span><span style="flex:1;font-weight:600;">Рост аудитории</span><span style="width:38px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:#EAB308;flex-shrink:0;">11 pts</span><span style="width:24px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--ink-30);flex-shrink:0;">14%</span></div>
+                            <div style="display:flex;align-items:center;gap:6px;font-size:9px;"><span style="width:8px;height:8px;background:#EF4444;border-radius:2px;flex-shrink:0;"></span><span style="flex:1;font-weight:600;">Другие</span><span style="width:38px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;color:#EF4444;flex-shrink:0;">6 pts</span><span style="width:24px;text-align:right;font-family:'JetBrains Mono',monospace;color:var(--ink-30);flex-shrink:0;">8%</span></div>
+                        </div>
+                    </div>
+                    <!-- Component breakdown -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);padding:8px 10px;">
+                        <div style="font-size:9px;color:var(--ink-30);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Изменения за 30 дней</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;">
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;background:#FEF2F2;border-radius:4px;"><div style="display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:#3B82F6;border-radius:1px;display:inline-block;"></span><span style="font-size:10px;font-weight:600;">Авторизация</span></div><span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EF4444;">−18</span></div>
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;background:#FEF2F2;border-radius:4px;"><div style="display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:#22C55E;border-radius:1px;display:inline-block;"></span><span style="font-size:10px;font-weight:600;">Вовлечённость</span></div><span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EF4444;">−5</span></div>
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;background:#FEF2F2;border-radius:4px;"><div style="display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:#8B5CF6;border-radius:1px;display:inline-block;"></span><span style="font-size:10px;font-weight:600;">Чат-паттерны</span></div><span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EF4444;">−3</span></div>
+                            <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 6px;background:#F0FDF4;border-radius:4px;"><div style="display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:#EAB308;border-radius:1px;display:inline-block;"></span><span style="font-size:10px;font-weight:600;">Рост аудитории</span></div><span style="font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#22C55E;">+2</span></div>
+                        </div>
+                    </div>
+                    <!-- Discovery Phase: Тип роста канала — arrow-up-right icon -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px;">
+                        <div style="width:20px;height:20px;border-radius:6px;background:#22C55E;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                            <svg width="12" height="12" viewBox="0 0 12 12"><path d="M3 9L9 3M9 3H5M9 3v4" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-size:11px;font-weight:700;color:var(--ink);font-family:'Space Grotesk',sans-serif;">Тип роста канала: Органический рост</div>
+                            <div style="font-size:10px;color:var(--ink-50);margin-top:1px;">Фолловеры и&nbsp;зрители растут вместе</div>
+                        </div>
+                    </div>
+                    <!-- Follower-CCV Coupling — chain-link icon -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px;">
+                        <div style="width:20px;height:20px;border-radius:50%;background:#22C55E;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                            <svg width="12" height="12" viewBox="0 0 12 12"><path d="M5 7L7 5M4.5 5.5L3.3 6.7a1.5 1.5 0 002.1 2.1L6.5 7.5M5.5 4.5L6.7 3.3a1.5 1.5 0 012.1 2.1L7.5 6.5" stroke="white" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-size:11px;font-weight:700;color:var(--ink);font-family:'Space Grotesk',sans-serif;">Связь фолловеров и&nbsp;зрителей: Здоровая</div>
+                            <div style="font-size:10px;color:var(--ink-50);margin-top:1px;">Чем больше фолловеров&nbsp;&mdash; тем больше зрителей. Это нормально</div>
+                        </div>
+                    </div>
+                    <!-- Botted Streams Fraction -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;">
+                        <div style="width:40px;height:40px;border-radius:8px;background:#FEF2F2;border:1.5px solid #FECACA;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 3L2 17h16L10 3z" stroke="#EF4444" stroke-width="1.5" fill="#FEF2F2" stroke-linejoin="round"/>
+                                <path d="M10 8v4" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="10" cy="14.5" r="1" fill="#EF4444"/>
+                            </svg>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="font-size:10px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;font-weight:600;margin-bottom:2px;">Стримы с&nbsp;признаками накрутки</div>
+                            <div style="display:flex;align-items:baseline;gap:4px;">
+                                <span style="font-size:22px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#EF4444;line-height:1;">3</span>
+                                <span style="font-size:11px;color:var(--ink-50);">из 28 стримов за&nbsp;30 дней</span>
+                            </div>
+                            <!-- Mini bar: 3/28 ratio -->
+                            <div style="height:4px;background:#FEE2E2;border-radius:2px;margin-top:6px;"><div style="height:100%;width:10.7%;background:#EF4444;border-radius:2px;"></div></div>
+                        </div>
+                    </div>
+                    <!-- Explanation -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:8px;padding:10px 12px;background:var(--bg-warm);box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                        <div style="font-size:11px;color:var(--ink-70);line-height:1.5;">Главная причина снижения&nbsp;&mdash; авторизация зрителей (−18&nbsp;pts). Это означает, что доля зрителей без&nbsp;Twitch-аккаунта выросла. Органический трафик при&nbsp;этом растёт.</div>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">&middot;</span>
+                    <a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

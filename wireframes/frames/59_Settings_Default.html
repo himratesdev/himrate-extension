@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HimRate Wireframe — 59 — Settings (all tiers)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="container">
+    <div class="title-block">
+        <h1>59 — Settings (all tiers)</h1>
+        <p>Frame extracted from side-panel-wireframe-TASK-039.html lines 7203-7293</p>
+    </div>
+    <div class="screens-grid">
+        <div class="screen-group tilted">
+            <div class="screen-label">Settings</div>
+            <div class="screen-sublabel">Настройки · уведомления · аккаунт</div>
+            <div class="panel">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Settings</span>
+                    <div class="sp-header-right"><button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button><div class="sp-header-avatar">U</div></div>
+                </div>
+                <div class="sp-content">
+                    <!-- Account -->
+                    <div class="sp-signals" style="gap:8px;">
+                        <div class="sp-signals-title">Аккаунт</div>
+                        <div style="display:flex;align-items:center;gap:10px;padding:4px 0;">
+                            <div style="width:36px;height:36px;border-radius:50%;background:var(--color-avatar-fallback);display:flex;align-items:center;justify-content:center;color:white;font-size:14px;font-weight:700;">U</div>
+                            <div>
+                                <div style="font-size:12px;font-weight:600;">user_name</div>
+                                <div style="font-size:10px;color:var(--ink-50);">Free план · Twitch привязан</div>
+                            </div>
+                        </div>
+
+                        <!-- Upgrade: compact two tiers -->
+                        <div style="border:2px solid rgba(99,102,241,0.3);border-radius:10px;padding:10px 12px;background:rgba(99,102,241,0.04);display:flex;align-items:center;gap:10px;">
+                            <div style="flex:1;">
+                                <div style="font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:#4f46e5;">Premium · per channel</div>
+                                <div style="font-size:10px;color:var(--ink-50);">$9.99/мес за&nbsp;каждый канал</div>
+                            </div>
+                            <button style="padding:7px 12px;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2px solid #4f46e5;border-radius:8px;background:#4f46e5;color:white;cursor:pointer;white-space:nowrap;">$9.99/мес</button>
+                        </div>
+
+                        <div style="border:2.5px solid #1a1a1a;border-radius:10px;padding:10px 12px;background:linear-gradient(135deg, #1a1a1a 0%, #2d1e5e 100%);color:white;position:relative;box-shadow:2px 2px 0 rgba(0,0,0,0.15);">
+                            <div style="background:#22c55e;color:white;font-size:8px;font-weight:800;font-family:'JetBrains Mono',monospace;padding:3px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em;display:inline-block;margin-bottom:6px;">Рекомендуем</div>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div style="flex:1;min-width:0;">
+                                    <div style="font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:#a5b4fc;">Business · до&nbsp;50 каналов</div>
+                                    <div style="font-size:10px;color:rgba(255,255,255,0.7);">Для агентств и&nbsp;брендов</div>
+                                </div>
+                                <button style="padding:7px 12px;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2px solid white;border-radius:8px;background:white;color:#1a1a1a;cursor:pointer;white-space:nowrap;flex-shrink:0;">$99/мес</button>
+                            </div>
+                        </div>
+
+                        <div style="font-size:10px;text-align:center;padding-top:2px;"><a href="#" style="color:#6366f1;text-decoration:underline;">Сравнить планы →</a></div>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="sp-signals" style="gap:6px;">
+                        <div class="sp-signals-title">Уведомления</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-light);">
+                            <span style="font-size:11px;">Аномалии зрителей</span>
+                            <span style="font-size:10px;color:var(--color-erv-green);font-weight:600;">Вкл</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-light);">
+                            <span style="font-size:11px;">Бот-атаки</span>
+                            <span style="font-size:10px;color:var(--color-erv-green);font-weight:600;">Вкл</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;">
+                            <span style="font-size:11px;">Стрим в&nbsp;watchlist начался</span>
+                            <span style="font-size:10px;color:var(--ink-30);font-weight:600;">Выкл</span>
+                        </div>
+                    </div>
+
+                    <!-- Language -->
+                    <div class="sp-signals" style="gap:6px;">
+                        <div class="sp-signals-title">Язык интерфейса</div>
+                        <div style="display:flex;gap:6px;">
+                            <button class="sp-tab active" style="padding:4px 10px;font-size:10px;border-radius:20px;border:1.5px solid var(--color-primary);">Русский</button>
+                            <button class="sp-tab" style="padding:4px 10px;font-size:10px;border-radius:20px;border:1.5px solid var(--border-light);">English</button>
+                        </div>
+                    </div>
+
+                    <!-- Data -->
+                    <div class="sp-signals" style="gap:6px;">
+                        <div class="sp-signals-title">Данные</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;">
+                            <span style="font-size:11px;">Автообновление (30с)</span>
+                            <span style="font-size:10px;color:var(--color-erv-green);font-weight:600;">Вкл</span>
+                        </div>
+                    </div>
+
+                    <!-- Links -->
+                    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                        <a href="#" style="font-size:11px;color:var(--color-primary);text-decoration:none;">Политика конфиденциальности</a>
+                        <a href="#" style="font-size:11px;color:var(--color-primary);text-decoration:none;">Условия использования</a>
+                        <div style="font-size:9px;color:var(--ink-30);margin-top:4px;">HimRate Extension v1.0.0 · © 2026</div>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

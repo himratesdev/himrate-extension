@@ -1,0 +1,149 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Watchlists · Premium · Bulk Actions</div>
+            <div class="screen-sublabel">Filters + Sort active, 2 selected → M3 Bulk Bar (Compare, Export, Deselect)</div>
+            <div class="panel">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Watchlists</span>
+                    <div class="sp-header-right"><button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button><button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><div class="sp-header-avatar" style="background:#6366f1;">P</div></div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab">Overview</button><button class="sp-tab">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab active">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-content">
+
+                    <!-- M1: Selector (two-level wrapper to prevent vertical clipping) -->
+                    <div style="border-bottom:1px solid var(--border-light);margin-bottom:8px;padding-bottom:6px;">
+                        <div style="display:flex;align-items:center;gap:6px;overflow-x:auto;overflow-y:hidden;padding:6px 0;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+                            <button style="padding:6px 12px;font-size:11px;font-weight:600;font-family:'Space Grotesk',sans-serif;border:2px solid var(--ink-90);border-radius:20px;background:var(--ink-90);color:white;white-space:nowrap;flex-shrink:0;line-height:1.2;">Кандидаты (8)</button>
+                            <button style="padding:6px 12px;font-size:11px;font-weight:500;font-family:'Space Grotesk',sans-serif;border:2px solid var(--border-dark);border-radius:20px;background:white;color:var(--ink-70);white-space:nowrap;flex-shrink:0;line-height:1.2;">Топ (5)</button>
+                            <button style="padding:6px 12px;font-size:11px;font-weight:500;font-family:'Space Grotesk',sans-serif;border:2px solid var(--border-dark);border-radius:20px;background:white;color:var(--ink-70);white-space:nowrap;flex-shrink:0;line-height:1.2;">Q2 (12)</button>
+                            <button style="padding:6px 12px;font-size:11px;font-weight:500;font-family:'Space Grotesk',sans-serif;border:2px solid var(--border-dark);border-radius:20px;background:white;color:var(--ink-70);white-space:nowrap;flex-shrink:0;line-height:1.2;">Архив (3)</button>
+                            <button style="padding:6px 12px;font-size:11px;font-weight:500;font-family:'Space Grotesk',sans-serif;border:2px solid rgba(99,102,241,0.3);border-radius:20px;background:rgba(99,102,241,0.05);color:#6366f1;white-space:nowrap;flex-shrink:0;line-height:1.2;">+ Создать</button>
+                            <button style="padding:4px 6px;font-size:14px;color:var(--ink-30);background:none;border:none;line-height:1;flex-shrink:0;">⋮</button>
+                        </div>
+                    </div>
+
+                    <!-- Stats: 3 metric chips -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:0 0 10px 0;border-bottom:1px solid var(--border-light);margin-bottom:8px;">
+                        <div style="background:rgba(34,197,94,0.06);border-radius:6px;padding:6px 8px;text-align:center;">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:1px;" title="Средний ERV по списку">Средний ERV</div>
+                            <div style="font-size:13px;font-weight:700;color:var(--color-erv-green);font-family:'JetBrains Mono',monospace;line-height:1;">78%</div>
+                        </div>
+                        <div style="background:rgba(34,197,94,0.06);border-radius:6px;padding:6px 8px;text-align:center;">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:1px;">Онлайн</div>
+                            <div style="font-size:13px;font-weight:700;color:var(--color-erv-green);font-family:'JetBrains Mono',monospace;line-height:1;display:flex;align-items:center;justify-content:center;gap:4px;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--color-erv-green);animation:pulse 2s infinite;"></span>3</div>
+                        </div>
+                        <div style="background:rgba(99,102,241,0.08);border-radius:6px;padding:6px 8px;text-align:center;">
+                            <div style="font-size:9px;color:var(--ink-50);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:1px;" title="Каналов с подпиской Premium/Business">Tracked</div>
+                            <div style="font-size:13px;font-weight:700;color:#6366f1;font-family:'JetBrains Mono',monospace;line-height:1;">4<span style="font-size:10px;color:var(--ink-30);">/8</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Search -->
+                    <div style="position:relative;margin-bottom:8px;">
+                        <svg class="ico ico-sm" viewBox="0 0 24 24" style="position:absolute;left:8px;top:7px;color:var(--ink-30);width:14px;height:14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" placeholder="Поиск в&nbsp;списке..." style="width:100%;padding:6px 10px 6px 28px;font-size:11px;font-family:'Inter',sans-serif;border:2px solid var(--border-dark);border-radius:8px;background:white;box-sizing:border-box;" disabled>
+                    </div>
+
+                    <!-- Filters + Sort (ACTIVE for Premium) — two-column expressive -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+                        <button style="padding:8px 10px;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2.5px solid var(--ink-90);border-radius:8px;background:white;color:var(--ink-90);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:4px;box-shadow:2px 2px 0 rgba(0,0,0,0.08);">
+                            <span style="display:flex;align-items:center;gap:5px;">
+                                <svg class="ico ico-xs" viewBox="0 0 24 24" style="width:12px;height:12px;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" fill="none"/></svg>
+                                Фильтры
+                            </span>
+                            <span style="display:inline-flex;align-items:center;gap:3px;font-size:9px;color:#6366f1;">
+                                <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#6366f1;"></span>
+                                2
+                            </span>
+                        </button>
+                        <button style="padding:8px 10px;font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:2.5px solid var(--ink-90);border-radius:8px;background:white;color:var(--ink-90);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:4px;box-shadow:2px 2px 0 rgba(0,0,0,0.08);">
+                            <span style="display:flex;align-items:center;gap:5px;">
+                                <svg class="ico ico-xs" viewBox="0 0 24 24" style="width:12px;height:12px;"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+                                Сортировка
+                            </span>
+                            <span style="font-size:9px;color:var(--color-erv-green);font-family:'JetBrains Mono',monospace;">Зрит.%↓</span>
+                        </button>
+                    </div>
+
+                    <!-- Card: shroud — SELECTED (checkbox checked) -->
+                    <div style="border:2.5px solid #6366f1;border-radius:10px;padding:10px 12px;margin-bottom:6px;background:rgba(99,102,241,0.03);box-shadow:2px 2px 0 rgba(99,102,241,0.1);cursor:pointer;position:relative;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:16px;height:16px;border-radius:4px;background:#6366f1;border:2px solid #6366f1;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:white;stroke-width:3;"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div style="width:32px;height:32px;border-radius:50%;background:var(--color-twitch);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0;">S</div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;">shroud</div>
+                                <div style="font-size:10px;color:var(--ink-50);display:flex;align-items:center;gap:3px;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--color-erv-green);animation:pulse 2s infinite;"></span> Онлайн · 5,200 зр.</div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+                                <span style="font-size:9px;padding:2px 7px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;">Зрит. 85%</span>
+                                <span style="font-size:8px;padding:1px 5px;background:rgba(34,197,94,0.06);color:var(--color-erv-green);border-radius:4px;font-weight:600;font-family:'JetBrains Mono',monospace;">Дов. 88</span>
+                            </div>
+                            <button style="position:absolute;top:6px;right:6px;background:none;border:none;color:var(--ink-30);font-size:14px;cursor:pointer;padding:2px 4px;line-height:1;">⋮</button>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px;margin-top:5px;padding-top:5px;border-top:1px solid rgba(99,102,241,0.15);">
+                            <span style="font-size:9px;padding:1px 6px;background:rgba(0,0,0,0.04);color:var(--ink-50);border-radius:4px;">#fps</span>
+                            <span style="font-size:9px;padding:1px 6px;background:rgba(0,0,0,0.04);color:var(--ink-50);border-radius:4px;">#partner</span>
+                            <span style="flex:1;"></span>
+                            <span style="font-size:9px;color:var(--ink-30);">Обн. сейчас</span>
+                        </div>
+                    </div>
+
+                    <!-- Card: xQc — SELECTED -->
+                    <div style="border:2.5px solid #6366f1;border-radius:10px;padding:10px 12px;margin-bottom:6px;background:rgba(99,102,241,0.03);box-shadow:2px 2px 0 rgba(99,102,241,0.1);cursor:pointer;position:relative;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:16px;height:16px;border-radius:4px;background:#6366f1;border:2px solid #6366f1;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:white;stroke-width:3;"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div style="width:32px;height:32px;border-radius:50%;background:var(--color-erv-yellow);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0;">X</div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;">xQc</div>
+                                <div style="font-size:10px;color:var(--ink-50);display:flex;align-items:center;gap:3px;"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--color-erv-yellow);animation:pulse 2s infinite;"></span> Онлайн · 42,000 зр.</div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+                                <span style="font-size:9px;padding:2px 7px;background:var(--color-erv-yellow-bg);color:var(--color-erv-yellow);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;">Зрит. 62%</span>
+                                <span style="font-size:8px;padding:1px 5px;background:rgba(234,179,8,0.06);color:var(--color-erv-yellow);border-radius:4px;font-weight:600;font-family:'JetBrains Mono',monospace;">Дов. 70</span>
+                            </div>
+                            <button style="position:absolute;top:6px;right:6px;background:none;border:none;color:var(--ink-30);font-size:14px;cursor:pointer;padding:2px 4px;line-height:1;">⋮</button>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px;margin-top:5px;padding-top:5px;border-top:1px solid rgba(99,102,241,0.15);">
+                            <span style="font-size:9px;padding:1px 6px;background:rgba(0,0,0,0.04);color:var(--ink-50);border-radius:4px;">#variety</span>
+                            <span style="font-size:9px;padding:1px 6px;background:rgba(0,0,0,0.04);color:var(--ink-50);border-radius:4px;">#gambling</span>
+                            <span style="flex:1;"></span>
+                            <span style="font-size:9px;color:var(--ink-30);">Обн. сейчас</span>
+                        </div>
+                    </div>
+
+                    <!-- Card: pokimane — not selected, offline -->
+                    <div style="border:2.5px solid var(--border-dark);border-radius:10px;padding:10px 12px;margin-bottom:6px;background:white;box-shadow:2px 2px 0 rgba(0,0,0,0.06);cursor:pointer;position:relative;opacity:0.6;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <div style="width:16px;height:16px;border-radius:4px;background:white;border:2px solid var(--ink-30);flex-shrink:0;"></div>
+                            <div style="width:32px;height:32px;border-radius:50%;background:var(--ink-30);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0;">P</div>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:12px;font-weight:600;font-family:'Space Grotesk',sans-serif;">pokimane</div>
+                                <div style="font-size:10px;color:var(--ink-30);">Офлайн · 3ч назад</div>
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+                                <span style="font-size:9px;padding:2px 7px;background:var(--color-erv-green-bg);color:var(--color-erv-green);border-radius:6px;font-weight:600;font-family:'JetBrains Mono',monospace;">Зрит. 92%</span>
+                                <span style="font-size:8px;padding:1px 5px;background:rgba(34,197,94,0.06);color:var(--color-erv-green);border-radius:4px;font-weight:600;font-family:'JetBrains Mono',monospace;">Дов. 90</span>
+                            </div>
+                            <button style="position:absolute;top:6px;right:6px;background:none;border:none;color:var(--ink-30);font-size:14px;cursor:pointer;padding:2px 4px;line-height:1;">⋮</button>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- M3: BULK ACTIONS BAR — sits between content and footer -->
+                <div style="padding:10px 14px;background:#1a1a1a;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                    <span style="font-size:11px;color:#ffffff;font-weight:700;font-family:'Space Grotesk',sans-serif;flex-shrink:0;">2 выбрано</span>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <button style="padding:5px 10px;font-size:10px;font-weight:700;font-family:'Space Grotesk',sans-serif;border:1.5px solid #ffffff;border-radius:6px;background:#ffffff;color:#1a1a1a;cursor:pointer;">Сравнить</button>
+                        <button style="padding:5px 10px;font-size:10px;font-weight:600;font-family:'Space Grotesk',sans-serif;border:1.5px solid rgba(255,255,255,0.5);border-radius:6px;background:transparent;color:#ffffff;cursor:pointer;">Экспорт PDF</button>
+                        <button style="padding:5px 8px;font-size:10px;font-weight:500;font-family:'Inter',sans-serif;border:none;background:transparent;color:rgba(255,255,255,0.7);cursor:pointer;text-decoration:underline;">Снять</button>
+                    </div>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Обр.связь</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">YouTube</a><span class="sp-footer-sep">·</span><a class="sp-footer-link" href="#">Telegram</a>
+                </div>
+            </div>
+        </div

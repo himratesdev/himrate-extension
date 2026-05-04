@@ -1,0 +1,118 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Watchlist Dropdown · Premium · LIVE</div>
+            <div class="screen-sublabel">Click «★ В списке» → dropdown. Overlay поверх контента</div>
+            <div class="panel" style="height:580px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Overview</span>
+                    <span class="sp-header-streamer">shroud</span>
+                    <div class="sp-header-right">
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                        <div class="sp-header-avatar">S</div>
+                    </div>
+                </div>
+                <div class="sp-tab-bar"><button class="sp-tab active">Overview</button><button class="sp-tab">Trends</button><button class="sp-tab">Audience</button><button class="sp-tab">Watchlists</button><button class="sp-tab">Compare</button><button class="sp-tab">Overlap</button><button class="sp-tab">Bot-Raid</button><button class="sp-tab">Settings</button></div>
+                <div class="sp-content">
+                    <!-- Real Overview content (dimmed behind dropdown) -->
+                    <div style="opacity:0.3;pointer-events:none;display:flex;flex-direction:column;gap:10px;">
+                        <!-- ERV Gauge mini -->
+                        <div class="sp-gauge-section" role="img" aria-label="ERV 88%">
+                            <div class="sp-gauge-wrap">
+                                <svg width="120" height="120" viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" stroke-width="8"/>
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#059669" stroke-width="8"
+                                        stroke-dasharray="314" stroke-dashoffset="38"
+                                        stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                                </svg>
+                                <div class="sp-gauge-center">
+                                    <span class="sp-gauge-percent green">88%</span>
+                                    <span class="sp-gauge-sub" title="Estimated Real Viewers — оценка реальных зрителей">Реальные зрители</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sp-erv-hero green" style="font-size:13px;">~4,400 реальных зрителей</div>
+                        <div class="sp-erv-ccv">Twitch онлайн: 5,000</div>
+                        <div style="text-align:center;"><span class="sp-erv-label green"><span class="erv-dot"></span> Аномалий не&nbsp;замечено · 88%</span></div>
+                    </div>
+
+                    <!-- Watchlist Button — ACTIVE state with dropdown open -->
+                    <div style="position:relative;z-index:10;margin-top:8px;">
+                        <button class="sp-watchlist-btn active" style="width:100%;box-shadow:0 0 0 3px rgba(99,102,241,0.2);">
+                            <svg class="ico ico-sm" viewBox="0 0 24 24" style="vertical-align:-0.2em;fill:currentColor;stroke:currentColor;stroke-width:1.5;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> В списке ▾
+                        </button>
+
+                        <!-- Dropdown overlay -->
+                        <div style="position:absolute;top:100%;left:0;right:0;z-index:20;margin-top:4px;background:var(--bg-card);border:2.5px solid var(--color-primary);border-radius:10px;box-shadow:3px 3px 0 var(--color-primary);overflow:hidden;">
+                            <div style="padding:8px 12px;border-bottom:1.5px solid var(--border-light);font-size:11px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:var(--text-secondary);">
+                                Мои списки
+                            </div>
+                            <div style="padding:4px 0;">
+                                <!-- Watchlist 1 — channel IS in this list -->
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--color-erv-green-bg);border-left:3px solid var(--color-erv-green);">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px;vertical-align:-0.2em;fill:currentColor;stroke:currentColor;stroke-width:1.5;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        <div>
+                                            <div style="font-size:12px;font-weight:600;">Основной</div>
+                                            <div style="font-size:9px;color:var(--ink-30);">Для ежедневного мониторинга</div>
+                                        </div>
+                                    </div>
+                                    <span style="font-size:10px;color:var(--text-secondary);">12 каналов</span>
+                                </div>
+                                <!-- Watchlist 2 — not in this list -->
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;border-left:3px solid transparent;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px;vertical-align:-0.2em;stroke-width:1.5;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        <div>
+                                            <div style="font-size:12px;font-weight:600;">CS2 стримеры</div>
+                                            <div style="font-size:9px;color:var(--ink-30);">FPS категория</div>
+                                        </div>
+                                    </div>
+                                    <span style="font-size:10px;color:var(--text-secondary);">8 каналов</span>
+                                </div>
+                                <!-- Watchlist 3 -->
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;border-left:3px solid transparent;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px;vertical-align:-0.2em;stroke-width:1.5;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        <div>
+                                            <div style="font-size:12px;font-weight:600;">Конкуренты</div>
+                                            <div style="font-size:9px;color:var(--ink-30);">Для рекламодателя</div>
+                                        </div>
+                                    </div>
+                                    <span style="font-size:10px;color:var(--text-secondary);">5 каналов</span>
+                                </div>
+                                <!-- Watchlist 4 -->
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;border-left:3px solid transparent;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px;vertical-align:-0.2em;stroke-width:1.5;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        <div>
+                                            <div style="font-size:12px;font-weight:600;">Подозрительные</div>
+                                            <div style="font-size:9px;color:var(--ink-30);">Для расследований</div>
+                                        </div>
+                                    </div>
+                                    <span style="font-size:10px;color:var(--text-secondary);">3 канала</span>
+                                </div>
+                            </div>
+                            <!-- Create new list -->
+                            <div style="border-top:1.5px solid var(--border-light);padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;">
+                                <span style="font-size:14px;color:var(--color-primary);">+</span>
+                                <span style="font-size:12px;font-weight:600;color:var(--color-primary);">Создать список</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content below dropdown (dimmed) -->
+                    <div style="opacity:0.15;pointer-events:none;margin-top:12px;">
+                        <div class="sp-signals" style="gap:4px;">
+                            <div class="sp-signals-title">Сигналы</div>
+                            <div class="sp-signal-row"><span class="sp-signal-name">Авторизация</span><div class="sp-signal-bar-bg"><div class="sp-signal-bar-fill green" style="width:90%"></div></div><span class="sp-signal-val">90</span></div>
+                            <div class="sp-signal-row"><span class="sp-signal-name">Активность чата</span><div class="sp-signal-bar-bg"><div class="sp-signal-bar-fill green" style="width:85%"></div></div><span class="sp-signal-val">85</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sp-footer" style="opacity:0.3;">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">·</span>
+                    <a class="sp-footer-link" href="#">Обр.связь</a>
+                </div>
+            </div>
+        </div

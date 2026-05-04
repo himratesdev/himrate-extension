@@ -1,0 +1,61 @@
+# Wireframe screens index
+
+- **01.** [Not Streaming Site](01_not-streaming-site.html) — Реиспользование SearchOverlay из TASK-034
+- **02.** [Skeleton · Loading](02_skeleton-loading.html) — Все модули = shimmer
+- **03.** [Not Tracked · Live (registered)](03_not-tracked-live-registered.html) — CCV из Twitch + кнопка «Запросить»
+- **04.** [Not Tracked · Live (guest)](04_not-tracked-live-guest.html) — «Войдите» вместо «Запросить»
+- **05.** [Not Tracked · Offline](05_not-tracked-offline.html) — Нет CCV, только пояснение
+- **06.** [Cold Start · &lt;3 стримов](06_cold-start-3-strimov.html) — ERV Gauge серый, M3/M4 скрыты
+- **07.** [Cold Start · 3-6 стримов](07_cold-start-36-strimov.html) — Provisional badge, жёлтый dashed border
+- **08.** [Cold Start · 7-9 стримов](08_cold-start-79-strimov.html) — ERV полноценный, M4 = «Недостаточно данных»
+- **09.** [Cold Start · 30+ стримов (Streamer)](09_cold-start-30-strimov-streamer.html) — Полный Health Score + badge «Глубокая аналитика»
+- **10.** [Live · Guest · Green](10_live-guest-green.html) — Gauge + классификация видны · сигналы и репутация за paywall
+- **11.** [Live · Free · Green 85%](11_live-free-green-85.html) — Полные данные · аномалий нет
+- **12.** [Live · Free · Yellow 62%](12_live-free-yellow-62.html) — Аномалия онлайна · 50-79%
+- **13.** [Live · Free · Red 28%](13_live-free-red-28.html) — Значительная аномалия · &lt;50%
+- **14.** [Live · Premium · Green 91%](14_live-premium-green-91.html) — Все сигналы открыты · таб Trends/Audience доступны
+- **15.** [Live · Streamer · Own Channel](15_live-streamer-own-channel.html) — Все модули бесплатны + Streamer Mode
+- **16.** [Offline · &lt;18ч (данные доступны)](16_offline-18ch-dannye-dostupny.html) — PostStream Countdown активен
+- **17.** [Offline · &gt;18ч (Free, expired)](17_offline-18ch-free-expired.html) — Drill-down заblurен + dual CTA
+- **18.** [Offline · &lt;1ч осталось](18_offline-1ch-ostalos.html) — Countdown красный (warning)
+- **19.** [Error · Generic](19_error-generic.html) — API недоступен / таймаут
+- **20.** [Badge Modal](20_badge-modal.html) — SVG preview + HTML/MD/BBCode tabs
+- **21.** [Channel Card Modal](21_channel-card-modal.html) — Полная карточка канала + статистика + последние 5 стримов
+- **22.** [Запрос на&nbsp;проверку](22_zapros-na-proverku.html) — Форма запроса + лимит символов + счётчик запросов
+- **23.** [Запрос на&nbsp;проверку · Лимит исчерпан](23_zapros-na-proverku-limit-ischerpan.html) — 5/5 запросов — кнопка disabled
+- **24.** [Paywall Modal](24_paywall-modal.html) — Click на locked tab → overlay
+- **25.** [Channel Switch](25_channel-switch.html) — Overlay + Yes/No + progress bar (10s)
+- **26.** [Anomaly Dots · Premium · LIVE (ERV 62%)](26_anomaly-dots-premium-live-erv-62.html) — Жёлтая/красная точка пульсирует на табах с аномалиями
+- **27.** [Watchlist Dropdown · Premium · LIVE](27_watchlist-dropdown-premium-live.html) — Click «★ В списке» → dropdown. Overlay поверх контента
+- **28.** [Screen 1 · Trends Overview · Premium](28_screen-1-trends-overview-premium.html) — 9 module cards + 3 insight cards + period toggle
+- **29.** [Screen 2 · Реальные зрители (ERV) · Premium](29_screen-2-realnye-zriteli-erv-premium.html) — Hero + Area Chart + Прогноз + Тренд + Лучший/Худший
+- **30.** [Screen 3 · Восстановление рейтинга · Premium](30_screen-3-vosstanovlenie-reytinga-premium.html) — 15-segment progress, прогноз, бонус, история стримов
+- **31.** [Screen 4 · Аномальные события · Premium](31_screen-4-anomalnye-sobytiya-premium.html) — Частотность, распределение по дням, список событий
+- **32.** [Screen 5 · Paywall · Free &rarr; Premium](32_screen-5-paywall-free-premium.html) — Мотивация к покупке + тарифы
+- **33.** [Screen 6 · Paywall Guest · Авторизация](33_screen-6-paywall-guest-avtorizaciya.html) — Google + Twitch OAuth
+- **34.** [Screen 7 · Trends 7d · Меньше данных](34_screen-7-trends-7d-menshe-dannyh.html) — Короткий период, часть модулей недоступна
+- **35.** [Screen 8 · Trends 90d · Длинный период](35_screen-8-trends-90d-dlinnyy-period.html) — Больше данных, все модули доступны
+- **36.** [Screen 9 · Недостаточно данных](36_screen-9-nedostatochno-dannyh.html) — Менее 5 стримов — тренды недоступны
+- **37.** [Screen 10 · Рейтинг доверия (TI) · Premium](37_screen-10-reyting-doveriya-ti-premium.html) — Hero + Chart + Trend + Forecast + Best/Worst
+- **38.** [Screen 11 · Стабильность канала · Premium](38_screen-11-stabilnost-kanala-premium.html) — Score + History + Peer + Trend
+- **39.** [Screen 12 · Компоненты рейтинга · Premium](39_screen-12-komponenty-reytinga-premium.html) — Что влияет на Рейтинг доверия
+- **40.** [Screen 12 · Варианты индикаторов](40_screen-12-varianty-indikatorov.html) — Тип роста + Связь фолловеров: 3 статуса каждый
+- **41.** [Screen 13 · Сравнение с коллегами · Business](41_screen-13-sravnenie-s-kollegami-business.html) — Percentile bars + рейтинг + история
+- **42.** [Screen 14 · По категориям · Premium](42_screen-14-po-kategoriyam-premium.html) — Сравнение показателей в разных категориях
+- **43.** [Screen 15 · По дням недели · Premium](43_screen-15-po-dnyam-nedeli-premium.html) — 7-bar chart + лучший/худший день
+- **44.** [Screen 16 · Paywall Business · 365d](44_screen-16-paywall-business-365d.html) — Годовая история + Peer comparison
+- **45.** [Screen 16b · Trends 365d Default · Business](45_screen-16b-trends-365d-default-business.html) — Trends 365d · Business — годовая история
+- **46.** [Screen 17 · Данные обновляются](46_screen-17-dannye-obnovlyayutsya.html) — Yellow banner + контент с пониженной непрозрачностью
+- **47.** [Screen 18 · Доступ отозван](47_screen-18-dostup-otozvan.html) — Red banner + OAuth CTA + контент заблокирован
+- **48.** [Audience · Premium](48_audience-premium.html) — Полная аналитика аудитории
+- **49.** [Watchlists · Free · With Data](49_watchlists-free-with-data.html) — M1 Selector + Stats + Search + Cards (5) + Conversion Banner. Sort: LIVE first → ERV% desc. Filters/Sort = locked
+- **50.** [Watchlists · Guest](50_watchlists-guest.html) — Blur overlay + CTA. Нет доступа к&nbsp;M1/M2/M3
+- **51.** [Watchlists · Free · Empty](51_watchlists-free-empty.html) — Первый визит, дефолтный «Мой Watchlist» создан
+- **52.** [Watchlists · Skeleton](52_watchlists-skeleton.html) — Загрузка данных. Shimmer placeholders. Max 3s → Error
+- **53.** [Watchlists · Error](53_watchlists-error.html) — Ошибка загрузки. M1 tabs остаются для переключения
+- **54.** [Watchlists · Search · No Results](54_watchlists-search-no-results.html) — Client-side filter: ничего не найдено
+- **55.** [Watchlists · Premium · Bulk Actions](55_watchlists-premium-bulk-actions.html) — Filters + Sort active, 2 selected → M3 Bulk Bar (Compare, Export, Deselect)
+- **56.** [Compare · Premium · 2 канала](56_compare-premium-2-kanala.html) — Полное сравнение с реальными числами, HimRate/Twitch, + кнопка для 3го канала
+- **57.** [Overlap · Premium](57_overlap-premium.html) — Общие зрители, отсортированные по %, с историей пересечений
+- **58.** [BotRaid · Premium](58_botraid-premium.html) — Потоки зрителей при&nbsp;рейдах + история инцидентов
+- **59.** [Settings](59_settings.html) — Настройки · уведомления · аккаунт

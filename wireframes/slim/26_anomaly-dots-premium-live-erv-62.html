@@ -1,0 +1,91 @@
+<div class="screen-group tilted">
+            <div class="screen-label">Anomaly Dots · Premium · LIVE (ERV 62%)</div>
+            <div class="screen-sublabel">Жёлтая/красная точка пульсирует на табах с аномалиями</div>
+            <div class="panel" style="height:580px;">
+                <div class="sp-header">
+                    <button class="sp-header-back">←</button>
+                    <span class="sp-header-title">Overview</span>
+                    <span class="sp-header-streamer">suspect_streamer</span>
+                    <div class="sp-header-right">
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+                        <button class="sp-header-icon"><svg class="ico ico-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+                        <div class="sp-header-avatar">S</div>
+                    </div>
+                </div>
+                <!-- Tab Bar with REAL anomaly dots -->
+                <div class="sp-tab-bar" role="tablist">
+                    <button class="sp-tab active" style="position:relative;">Overview
+                        <span style="position:absolute;top:2px;right:0;width:6px;height:6px;background:var(--color-erv-yellow);border-radius:50%;animation:pulse 2s infinite;"></span>
+                    </button>
+                    <button class="sp-tab">Trends</button>
+                    <button class="sp-tab">Audience</button>
+                    <button class="sp-tab">Watchlists</button>
+                    <button class="sp-tab">Compare</button>
+                    <button class="sp-tab" style="position:relative;">Overlap
+                        <span style="position:absolute;top:2px;right:0;width:6px;height:6px;background:var(--color-erv-yellow);border-radius:50%;animation:pulse 2s infinite;"></span>
+                    </button>
+                    <button class="sp-tab">Bot-Raid</button>
+                    <button class="sp-tab">Settings</button>
+                </div>
+                <div class="sp-content">
+                    <!-- ERV Gauge — yellow channel (62%) -->
+                    <div class="sp-gauge-section" role="img" aria-label="ERV 62%">
+                        <div class="sp-gauge-wrap">
+                            <svg width="120" height="120" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" stroke-width="8"/>
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#F59E0B" stroke-width="8"
+                                    stroke-dasharray="314" stroke-dashoffset="119"
+                                    stroke-linecap="round" transform="rotate(-90 60 60)"/>
+                            </svg>
+                            <div class="sp-gauge-center">
+                                <span class="sp-gauge-percent yellow">62%</span>
+                                <span class="sp-gauge-sub" title="Estimated Real Viewers — оценка реальных зрителей">Реальные зрители</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sp-erv-hero yellow">~3,100 реальных зрителей</div>
+                    <div class="sp-erv-ccv">Twitch онлайн: 5,000</div>
+                    <div style="text-align:center;"><span class="sp-erv-label yellow"><span class="erv-dot"></span> Аномалия онлайна · 62%</span></div>
+
+                    <!-- TI Score -->
+                    <div class="sp-ti-section">
+                        <div class="sp-ti-header">
+                            <div class="sp-ti-left">
+                                <span class="sp-ti-label" title="Trust Index — комплексная оценка доверия к каналу">Рейтинг доверия</span>
+                                <span class="sp-ti-score yellow">58</span>
+                                <span class="sp-ti-classification">— Под наблюдением</span>
+                            </div>
+                            <button class="sp-ti-expand">▾</button>
+                        </div>
+                    </div>
+
+                    <!-- Alerts — anomalies detected. Dot is inline-block inside text span for natural first-line alignment -->
+                    <div style="background:var(--color-erv-yellow-bg);border:2px solid var(--color-erv-yellow);border-radius:10px;padding:10px 12px;margin-bottom:8px;">
+                        <div style="font-size:11px;font-weight:700;color:var(--color-erv-red);line-height:1.45;margin-bottom:4px;">
+                            <span style="display:inline-block;width:6px;height:6px;background:var(--color-erv-red);border-radius:50%;animation:pulse 2s infinite;vertical-align:middle;margin-right:6px;margin-top:-2px;"></span>BotRaid: подозрительный рейд обнаружен
+                        </div>
+                        <div style="font-size:10px;color:var(--ink-50);margin-bottom:6px;padding-left:12px;">+2,800 зрителей за&nbsp;45&nbsp;сек · Источник: новые аккаунты</div>
+                        <div style="font-size:11px;font-weight:600;color:#B45309;line-height:1.45;">
+                            <span style="display:inline-block;width:6px;height:6px;background:var(--color-erv-yellow);border-radius:50%;animation:pulse 2s infinite;vertical-align:middle;margin-right:6px;margin-top:-2px;"></span>Overlap: 38% общей аудитории с&nbsp;заблокированным каналом
+                        </div>
+                    </div>
+
+                    <!-- Mini signal bars -->
+                    <div class="sp-signals" style="gap:4px;">
+                        <div class="sp-signals-title">Сигналы · 11 компонентов</div>
+                        <div class="sp-signal-row"><span class="sp-signal-name">Авторизация</span><div class="sp-signal-bar-bg"><div class="sp-signal-bar-fill yellow" style="width:55%"></div></div><span class="sp-signal-val">55</span></div>
+                        <div class="sp-signal-row"><span class="sp-signal-name">Активность чата</span><div class="sp-signal-bar-bg"><div class="sp-signal-bar-fill yellow" style="width:48%"></div></div><span class="sp-signal-val">48</span></div>
+                        <div class="sp-signal-row"><span class="sp-signal-name">Совпадение ботов</span><div class="sp-signal-bar-bg"><div class="sp-signal-bar-fill red" style="width:30%"></div></div><span class="sp-signal-val">30</span></div>
+                    </div>
+
+                    <!-- Watchlist + Footer context -->
+                    <button class="sp-watchlist-btn">
+                        <svg class="ico ico-sm" viewBox="0 0 24 24" style="vertical-align:-0.2em;stroke-width:1.5;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> В список
+                    </button>
+                </div>
+                <div class="sp-footer">
+                    <a class="sp-footer-link" href="#">Поддержать</a><span class="sp-footer-sep">·</span>
+                    <a class="sp-footer-link" href="#">Обр.связь</a>
+                </div>
+            </div>
+        </div

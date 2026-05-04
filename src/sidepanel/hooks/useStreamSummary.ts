@@ -9,6 +9,9 @@
 //
 // Loading state: { loading: true } — caller может show spinner или сохранить fallback.
 // Locale forwarded to Accept-Language → backend formats `duration_text` ("3ч 0м" / "3h 0m").
+//
+// CR S-4: AbortController вместо cancelled flag — реальный network cancel при rapid
+// channelId/locale switching, не just stale-state ignore.
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -33,14 +36,14 @@ export function useStreamSummary(
       setData(null);
       return;
     }
-    let cancelled = false;
+    const ctrl = new AbortController();
     setLoading(true);
-    api.getStreamLatestSummary(channelId, i18n.language).then((resp) => {
-      if (cancelled) return;
+    api.getStreamLatestSummary(channelId, i18n.language, ctrl.signal).then((resp) => {
+      if (ctrl.signal.aborted) return;
       setData(resp);
       setLoading(false);
     });
-    return () => { cancelled = true; };
+    return () => ctrl.abort();
   }, [channelId, enabled, i18n.language]);
 
   return { data, loading };

@@ -1,11 +1,13 @@
 // TASK-085 PR-2: helper mapping AnomalyAlert → translated {title, detail} pair.
 // Frontend i18n catalog mirrors backend `config/locales/alerts.{ru,en}.yml` (FR-026).
-// Per alert.type, extracts metadata fields → t() interpolation values.
+// Per alert.type, extracts typed metadata fields → t() interpolation values.
 //
-// Rules:
-// - Returns null detail если alert.metadata доесн't supply required interpolation vars
-//   (renders title only — graceful degradation, no broken `{{N}}` placeholders).
-// - confirmed_raid uses detail_no_raider variant when raider_name absent.
+// Rules (per CR S-1/S-5/S-2):
+// - Discriminated union AnomalyAlert narrows metadata по type — no unsafe casts.
+// - Snake_case lookup only (backend SRS guarantees Rails convention) — no
+//   camelCase fallback (`?? meta.From` removed).
+// - value === null OR required metadata missing → returns detail: null
+//   (renders title only — graceful, no misleading "+0%" or broken `{{N}}` placeholders).
 
 import type { TFunction } from 'i18next';
 import type { AnomalyAlert } from '../../shared/api';
@@ -16,22 +18,30 @@ export interface FormattedAlert {
 }
 
 export function formatAnomalyAlert(alert: AnomalyAlert, t: TFunction): FormattedAlert {
-  const { type, value, metadata } = alert;
-  const meta = metadata ?? {};
-  const titleKey = `alert.${type}.title`;
+  const titleKey = `alert.${alert.type}.title`;
   const title = t(titleKey);
 
-  switch (type) {
+  switch (alert.type) {
     case 'ccv_spike': {
-      const N = Math.abs(value ?? 0).toFixed(0);
-      const From = meta.from_ccv ?? meta.From ?? '?';
-      const To = meta.to_ccv ?? meta.To ?? '?';
-      return { title, detail: t('alert.ccv_spike.detail', { N, M: alert.window_minutes, From, To }) };
+      if (alert.value == null) return { title, detail: null };
+      const From = alert.metadata.from_ccv;
+      const To = alert.metadata.to_ccv;
+      if (From == null || To == null) return { title, detail: null };
+      return {
+        title,
+        detail: t('alert.ccv_spike.detail', {
+          N: Math.abs(alert.value).toFixed(0),
+          M: alert.window_minutes,
+          From,
+          To,
+        }),
+      };
     }
 
     case 'confirmed_raid': {
-      const raider = meta.raider_name as string | undefined;
-      const viewers = meta.viewers ?? value ?? 0;
+      const raider = alert.metadata.raider_name;
+      const viewers = alert.metadata.viewers ?? alert.value;
+      if (viewers == null) return { title, detail: null };
       const detail = raider
         ? t('alert.confirmed_raid.detail', { raider, viewers })
         : t('alert.confirmed_raid.detail_no_raider', { viewers });
@@ -39,36 +49,66 @@ export function formatAnomalyAlert(alert: AnomalyAlert, t: TFunction): Formatted
     }
 
     case 'anomaly_wave': {
-      const N = meta.new_accounts ?? value ?? 0;
+      const N = alert.metadata.new_accounts ?? alert.value;
+      if (N == null) return { title, detail: null };
       return { title, detail: t('alert.anomaly_wave.detail', { N, M: alert.window_minutes }) };
     }
 
     case 'ti_drop': {
-      const From = meta.from_score ?? '?';
-      const To = meta.to_score ?? '?';
-      const N = Math.abs(value ?? 0).toFixed(0);
-      return { title, detail: t('alert.ti_drop.detail', { From, To, N, M: alert.window_minutes }) };
+      if (alert.value == null) return { title, detail: null };
+      const From = alert.metadata.from_score;
+      const To = alert.metadata.to_score;
+      if (From == null || To == null) return { title, detail: null };
+      return {
+        title,
+        detail: t('alert.ti_drop.detail', {
+          From,
+          To,
+          N: Math.abs(alert.value).toFixed(0),
+          M: alert.window_minutes,
+        }),
+      };
     }
 
     case 'chatter_to_ccv_anomaly': {
-      const N = (value ?? 0).toFixed(0);
-      const Category = meta.category ?? '—';
-      const Min = meta.baseline_min ?? '?';
-      const Max = meta.baseline_max ?? '?';
-      return { title, detail: t('alert.chatter_to_ccv_anomaly.detail', { N, Category, Min, Max }) };
+      if (alert.value == null) return { title, detail: null };
+      const Category = alert.metadata.category;
+      const Min = alert.metadata.baseline_min;
+      const Max = alert.metadata.baseline_max;
+      if (!Category || Min == null || Max == null) return { title, detail: null };
+      return {
+        title,
+        detail: t('alert.chatter_to_ccv_anomaly.detail', {
+          N: alert.value.toFixed(0),
+          Category,
+          Min,
+          Max,
+        }),
+      };
     }
 
     case 'chat_entropy_drop': {
-      const N = (value ?? 0).toFixed(2);
-      return { title, detail: t('alert.chat_entropy_drop.detail', { N }) };
+      const entropy = alert.metadata.entropy_bits ?? alert.value;
+      if (entropy == null) return { title, detail: null };
+      return { title, detail: t('alert.chat_entropy_drop.detail', { N: entropy.toFixed(2) }) };
     }
 
     case 'erv_divergence': {
-      const N = Math.abs(value ?? 0).toFixed(0);
-      return { title, detail: t('alert.erv_divergence.detail', { N, M: alert.window_minutes }) };
+      if (alert.value == null) return { title, detail: null };
+      return {
+        title,
+        detail: t('alert.erv_divergence.detail', {
+          N: Math.abs(alert.value).toFixed(0),
+          M: alert.window_minutes,
+        }),
+      };
     }
 
-    default:
+    default: {
+      // Exhaustive check — discriminated union ensures unreachable.
+      const _exhaustive: never = alert;
+      void _exhaustive;
       return { title, detail: null };
+    }
   }
 }

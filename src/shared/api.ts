@@ -99,27 +99,37 @@ export interface StreamerRating {
 
 // TASK-085: anomaly_alerts derivation per AnomalyAlertsPresenter (backend SRS §10A).
 // 7 type values + severity tier. Gated за :drill_down/:full views (Pundit ChannelPolicy).
-export type AnomalyAlertType =
-  | 'ccv_spike'
-  | 'confirmed_raid'
-  | 'anomaly_wave'
-  | 'ti_drop'
-  | 'chatter_to_ccv_anomaly'
-  | 'chat_entropy_drop'
-  | 'erv_divergence';
-
 export type AnomalySeverity = 'red' | 'yellow' | 'info';
 
-export interface AnomalyAlert {
+// Discriminated union per alert type — backend SRS guarantees specific metadata fields.
+// Each metadata interface mirrors AnomalyAlertsPresenter#build_* output (snake_case Rails convention).
+export interface CcvSpikeMetadata { from_ccv?: number; to_ccv?: number; signal_value?: number }
+export interface ConfirmedRaidMetadata { raider_name?: string; source_channel_id?: string; viewers?: number }
+export interface AnomalyWaveMetadata { new_accounts?: number; [key: string]: unknown }
+export interface TiDropMetadata { from_score?: number; to_score?: number }
+export interface ChatterCcvMetadata { category?: string; baseline_min?: number; baseline_max?: number }
+export interface ChatEntropyDropMetadata { entropy_bits?: number }
+export interface ErvDivergenceMetadata { from_erv_percent?: number; to_erv_percent?: number }
+
+interface BaseAlert {
   id: string;
-  type: AnomalyAlertType;
   severity: AnomalySeverity;
   value: number | null;
   threshold: number | null;
   window_minutes: number;
   created_at: string;
-  metadata: Record<string, unknown>;
 }
+
+export type AnomalyAlert =
+  | (BaseAlert & { type: 'ccv_spike'; metadata: CcvSpikeMetadata })
+  | (BaseAlert & { type: 'confirmed_raid'; metadata: ConfirmedRaidMetadata })
+  | (BaseAlert & { type: 'anomaly_wave'; metadata: AnomalyWaveMetadata })
+  | (BaseAlert & { type: 'ti_drop'; metadata: TiDropMetadata })
+  | (BaseAlert & { type: 'chatter_to_ccv_anomaly'; metadata: ChatterCcvMetadata })
+  | (BaseAlert & { type: 'chat_entropy_drop'; metadata: ChatEntropyDropMetadata })
+  | (BaseAlert & { type: 'erv_divergence'; metadata: ErvDivergenceMetadata });
+
+export type AnomalyAlertType = AnomalyAlert['type'];
 
 export interface TrustData {
   ti_score: number | null;

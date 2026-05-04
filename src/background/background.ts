@@ -6,6 +6,16 @@ import { API_BASE, EXT_VERSION, WS_URL, TRUST_CACHE_TTL_MS, WS_RECONNECT_BASE_MS
 import { extractChannel, formatCCV, getBadgeColor } from '../shared/utils';
 import { api, type TrustCache } from '../shared/api';
 import { searchUsers, getChattersCount } from '../shared/gql';
+import ruLocale from '../locales/ru.json';
+import enLocale from '../locales/en.json';
+
+const LOCALES = { ru: ruLocale, en: enLocale } as const;
+type LocaleKey = keyof typeof LOCALES;
+
+async function getLocale(): Promise<LocaleKey> {
+  const stored = ((await chrome.storage.local.get('himrate_locale')).himrate_locale as string) || 'en';
+  return stored === 'ru' ? 'ru' : 'en';
+}
 
 // =============================================
 // AUTH (unchanged from TASK-018)
@@ -271,8 +281,8 @@ async function updateBadgeFromCache(cache: TrustCache): Promise<void> {
   if (cache.is_tracked && cache.is_live && cache.ccv !== null) {
     await setBadge(formatCCV(cache.ccv), cache.ti_score);
   } else if (cache.is_tracked && !cache.is_live) {
-    const locale = ((await chrome.storage.local.get('himrate_locale')).himrate_locale as string) || 'en';
-    await setBadge(locale === 'ru' ? 'офф' : 'OFF', cache.ti_score);
+    const locale = await getLocale();
+    await setBadge(LOCALES[locale]['badge.offline'], cache.ti_score);
   } else if (!cache.is_tracked && cache.is_live && cache.ccv !== null) {
     await setBadge(formatCCV(cache.ccv), null); // grey for untracked
   } else {

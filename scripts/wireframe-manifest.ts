@@ -84,18 +84,29 @@ function loadManifest(): Manifest | null {
   return JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf-8')) as Manifest;
 }
 
+function stripVolatile(m: Manifest): Omit<Manifest, 'generated_at'> {
+  const { generated_at: _, ...rest } = m;
+  void _;
+  return rest;
+}
+
 function frameNumberFromFilename(filename: string): string | null {
   const base = path.basename(filename);
-  const match = base.match(/^(?:Frame|0?(\d+))[_]?(\d+)?/);
-  if (match) {
-    if (base.startsWith('Frame')) {
-      const m2 = base.match(/^Frame(\d+)/);
-      return m2 ? m2[1].padStart(2, '0') : null;
-    }
-    const m2 = base.match(/^(\d+)_/);
-    return m2 ? m2[1].padStart(2, '0') : null;
+  if (base.startsWith('Frame')) {
+    const m = base.match(/^Frame(\d+)/);
+    return m ? m[1].padStart(2, '0') : null;
   }
-  return null;
+  const m = base.match(/^(\d+)_/);
+  return m ? m[1].padStart(2, '0') : null;
+}
+
+function tsxFrameNumbersFor(manifest: Manifest): Set<string> {
+  const nums = new Set<string>();
+  for (const tsxPath of Object.keys(manifest.frames_tsx)) {
+    const num = frameNumberFromFilename(path.basename(tsxPath));
+    if (num) nums.add(num);
+  }
+  return nums;
 }
 
 function diffManifests(prior: Manifest, current: Manifest): {
@@ -132,19 +143,21 @@ function diffManifests(prior: Manifest, current: Manifest): {
   return { changedWireframes, changedFrameTsx, added, removed };
 }
 
-function verifyDriftMapping(diff: ReturnType<typeof diffManifests>): {
+function verifyDriftMapping(
+  diff: ReturnType<typeof diffManifests>,
+  current: Manifest,
+): {
   ok: boolean;
   errors: string[];
 } {
   const errors: string[] = [];
-  // Map changed wireframes to frame numbers
+  const isPerFrameWireframe = (p: string): boolean =>
+    p.startsWith('wireframes/') && !p.includes('/full/');
+
+  // 1. Changed wireframes: matching Frame*.tsx must also be changed
   const changedFrameNumbers = new Set<string>();
   for (const wfPath of diff.changedWireframes) {
-    if (wfPath.includes('/full/')) {
-      // Master SoT change → all frames potentially affected; can't enforce 1:1
-      // mapping here. Workflow comments warn but don't fail (require manual review).
-      continue;
-    }
+    if (!isPerFrameWireframe(wfPath)) continue; // master full → manual review
     const num = frameNumberFromFilename(path.basename(wfPath));
     if (num) changedFrameNumbers.add(num);
   }
@@ -158,12 +171,45 @@ function verifyDriftMapping(diff: ReturnType<typeof diffManifests>): {
   for (const num of changedFrameNumbers) {
     if (!changedFrameTsxNumbers.has(num)) {
       errors.push(
-        `Wireframe ${num} changed but matching Frame${num}*.tsx not updated. ` +
+        `Wireframe ${num} CHANGED but matching Frame${num}*.tsx not updated. ` +
           `Per literal-port discipline: wireframe edits propagate to React component within same PR. ` +
           `Override: label PR \`wireframe-only\` (defer Frame port to follow-up PR within 7 days per ADR-OQ-5).`,
       );
     }
   }
+
+  // 2. Added wireframes: matching Frame*.tsx must exist (added or pre-existing)
+  const addedWireframeNumbers = new Set<string>();
+  for (const wfPath of diff.added.filter(isPerFrameWireframe)) {
+    const num = frameNumberFromFilename(path.basename(wfPath));
+    if (num) addedWireframeNumbers.add(num);
+  }
+  const tsxNumbersInCurrent = tsxFrameNumbersFor(current);
+  for (const num of addedWireframeNumbers) {
+    if (!tsxNumbersInCurrent.has(num)) {
+      errors.push(
+        `Wireframe ${num} ADDED but no Frame${num}*.tsx exists в src/sidepanel/components/. ` +
+          `Per literal-port discipline: new wireframe = new Frame*.tsx в same PR. ` +
+          `Override: label PR \`wireframe-only\` (port в follow-up PR within 7 days per ADR-OQ-5).`,
+      );
+    }
+  }
+
+  // 3. Removed wireframes: matching Frame*.tsx must also be removed (no orphans)
+  const removedWireframeNumbers = new Set<string>();
+  for (const wfPath of diff.removed.filter(isPerFrameWireframe)) {
+    const num = frameNumberFromFilename(path.basename(wfPath));
+    if (num) removedWireframeNumbers.add(num);
+  }
+  for (const num of removedWireframeNumbers) {
+    if (tsxNumbersInCurrent.has(num)) {
+      errors.push(
+        `Wireframe ${num} REMOVED but Frame${num}*.tsx still exists (orphan component). ` +
+          `Either remove src/sidepanel/components/Frame${num}*.tsx or restore wireframe.`,
+      );
+    }
+  }
+
   return { ok: errors.length === 0, errors };
 }
 
@@ -193,9 +239,9 @@ function cmdCheck(): void {
     process.exit(1);
   }
 
-  // Compare
-  const priorBlob = JSON.stringify({ ...prior, generated_at: undefined }, null, 2);
-  const currentBlob = JSON.stringify({ ...current, generated_at: undefined }, null, 2);
+  // Compare (excluding volatile generated_at field)
+  const priorBlob = JSON.stringify(stripVolatile(prior), null, 2);
+  const currentBlob = JSON.stringify(stripVolatile(current), null, 2);
 
   if (priorBlob === currentBlob) {
     console.log('Wireframe manifest is current. No drift.');
@@ -217,7 +263,7 @@ function cmdCheck(): void {
       diff.changedFrameTsx,
     );
 
-  const driftCheck = verifyDriftMapping(diff);
+  const driftCheck = verifyDriftMapping(diff, current);
   if (!driftCheck.ok) {
     console.error('\nDrift mapping violations:');
     for (const e of driftCheck.errors) console.error(`  - ${e}`);

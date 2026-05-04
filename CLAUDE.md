@@ -66,7 +66,7 @@ e2e/
 wireframes/                   — Mirrored from verivio-clode SoT (committed, ~2.3MB)
   full/
     side-panel-wireframe-TASK-039.html — Master canonical wireframe (7297 lines)
-  frames/                     — Extracted per-frame canonical (62 files, NN_*.html)
+  frames/                     — Extracted per-frame canonical (60 files, NN_*.html)
                                 — Primary reference для tooling (i18n drift, manifest)
   slim/                       — Quick-reference views (59 files + _INDEX.md)
                                 — Secondary; используется для visual QA side-by-side
@@ -75,9 +75,11 @@ docs/
   global-claude-md-mirror.md  — Mirrored §FRONTEND из verivio-clode/CLAUDE.md
                                 (CI cross-repo drift guard)
 scripts/
-  wireframe-manifest-update.ts — Recompute SHA256 hashes
-spec/
+  wireframe-manifest.ts       — SHA256 manifest tool (subcommands: update | check)
+  i18n-drift-snapshot.ts      — Recompute baseline для src/test/i18n-drift-known.json
+src/test/
   i18n-drift.test.ts          — Vitest test wireframe text vs i18n value verbatim
+  i18n-drift-known.json       — Baseline pre-existing drift (decreases per Batch 1-8)
 dist/                         — Build output (gitignored)
 ```
 
@@ -175,11 +177,29 @@ dist/                         — Build output (gitignored)
     (per §Visual QA Workflow inline discipline)
 [ ] frame-port-progress.md обновлён (если literal port)
 [ ] i18n keys: ru.json и en.json sync (одинаковый набор keys)
-[ ] grep кириллицы вне locales: 0 matches
-    rg '[А-Яа-яЁё]' src/ --glob '!*/locales/*' → empty
+[ ] grep кириллицы вне locales: 0 matches (или только known violations baseline ниже)
+    rg '[А-Яа-яЁё]' src/ --glob '!*/locales/*' → empty или ⊆ known baseline
+[ ] i18n drift (`npm test`) — зелёный (Phase 1 sync + Phase 2 verbatim ≤ baseline)
+[ ] wireframe manifest (`npm run wireframe-manifest:check`) — зелёный
 ```
 
 **Запрещено push без всех зелёных.** Если что-то fail — фикс inline в той же ветке, не «потом».
+
+### Known cyrillic violations baseline (cleaning up в Batches 1-8)
+
+Audit 2026-05-04 (TASK-089 Batch 0): **86 файлов** имеют cyrillic вне `src/locales/` — endemic inherited tech debt от pre-discipline ports.
+
+| Группа | Файлов | Cleanup batch | Reason |
+|---|---|---|---|
+| `src/sidepanel/components/Frame*.tsx` (TASK-083 ports) | ~48 | Per-frame в Batches 1-8 | Literal port pre-discipline; texts в SVG/inline JSX hardcoded RU вместо `t()` |
+| `src/sidepanel/components/tabs/trends/*` (TASK-039 D1/D2) | ~15 | Batch 6 (Trends frames 28-47) | TASK-039 D1/D2 ports pre-discipline |
+| Overview / Misc UI компоненты (NotTwitchOverview, SkeletonOverview, AlertCounter, etc.) | ~10 | Incidental в Batches 1-7 при touch | Hardcoded strings до discipline |
+| `src/shared/components/LangSwitcher.tsx`, `src/shared/trends-*.ts` | ~3 | Batch 8b cleanup | Shared utilities |
+| `src/sidepanel/SidePanel.tsx` (state machine) | 1 | Batch 1 (refactor для hierarchical routing) | Mixed: developer comments OK, JSX-bound strings → i18n |
+
+**Refactor-as-you-touch rule:** когда Batch N касается file → в same PR удаляются cyrillic literals (всё user-facing через `t()`, comments на RU допустимы).
+
+**New code rule:** новые cyrillic literals в новом коде ЗАПРЕЩЕНЫ. Pre-push grep показывает ⊆ baseline (не растёт). i18n drift test (`src/test/i18n-drift.test.ts`) Phase 1 + Phase 2 enforces invariant CI side. Каждый Batch 1-8 уменьшает таблицу; goal: empty по завершении TASK-089.
 
 ---
 
@@ -227,7 +247,7 @@ Incident reference: 2026-04-30 — 19 dead chevrons (Signal/Rep/Health) нако
 | **Interpolation** | i18next default `{{var}}` (double brace). Не `{var}` (single) — ломает react-i18next |
 | **Pluralization** | Использовать `i18next` plurals API (`key_one`, `key_other`), не conditional rendering на frontend |
 | **No translation drift** | При изменении wireframe text — обновить i18n value СРАЗУ. Не оставлять stale translation |
-| **Wireframe HTML = source** | Если PO хочет изменить user-facing text: сначала правится `wireframes/full/side-panel-wireframe-TASK-039.html` (master SoT), затем regenerate `wireframes/frames/` и `wireframes/slim/`, затем i18n value re-syncs к новому wireframe literal. **Запрещено** менять i18n value напрямую без update wireframe HTML — это silent divergence от literal-port discipline. CI guard: `spec/i18n-drift.test.ts` + `wireframes/wireframe-manifest.json` SHA256 |
+| **Wireframe HTML = source** | Если PO хочет изменить user-facing text: сначала правится `wireframes/full/side-panel-wireframe-TASK-039.html` (master SoT), затем regenerate `wireframes/frames/` и `wireframes/slim/`, затем i18n value re-syncs к новому wireframe literal. **Запрещено** менять i18n value напрямую без update wireframe HTML — это silent divergence от literal-port discipline. CI guard: `src/test/i18n-drift.test.ts` + `e2e/visual-qa/wireframe-manifest.json` SHA256 |
 
 ---
 
@@ -263,7 +283,7 @@ Incident reference: 2026-04-30 — 19 dead chevrons (Signal/Rep/Health) нако
 4. **Click-test inline** после каждого frame port — не batch QA в конце.
 5. Каждый видимый текст = i18n ключ. `grep` для кириллицы вне `src/locales/` должен возвращать 0.
 6. `manifest_version = 3`. Не менять permissions без ADR.
-7. Bundle size < 500 KB. Проверяется в CI.
+7. Bundle size < 1024 KB (1 MB). Проверяется в CI (`.github/workflows/ci.yml::build`). Headroom для self-hosted fonts (~200KB) + future Phase 2/3 (API client, charts, tab content).
 8. Блокер → стоп. Создать `❌ Заблокировано` задачу в Notion с конкретным описанием. Не «придумать обход».
 9. Недостаточно данных → вернуть задачу. Список чего не хватает. Не додумывать.
 10. Нет debug кода в коммитах (`console.log` для prod paths) — eslint поймает.

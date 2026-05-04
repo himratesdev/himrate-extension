@@ -29,6 +29,8 @@ function flattenKeys(obj: unknown, prefix = ''): FlatLocale {
   return out;
 }
 
+const NON_TEXT_TAGS = 'script, style, head, meta, title, link, noscript';
+
 function loadAllWireframeText(): Set<string> {
   const texts = new Set<string>();
   for (const dir of WIREFRAMES_DIRS) {
@@ -37,7 +39,9 @@ function loadAllWireframeText(): Set<string> {
     for (const f of files) {
       const html = fs.readFileSync(path.join(dir, f), 'utf-8');
       const $ = cheerio.load(html);
-      $('*').each((_idx, el) => {
+      // Strip non-text tags first so their content (raw JS, CSS rules, meta) doesn't pollute matching pool
+      $(NON_TEXT_TAGS).remove();
+      $('body *').each((_idx, el) => {
         const directText = $(el)
           .contents()
           .filter((_, node) => (node as { type?: string }).type === 'text')
@@ -96,9 +100,10 @@ describe('i18n drift guard', () => {
         if (!/[А-Яа-яЁё]/.test(value)) continue;
         const stripped = value.replace(/\{\{[^}]+\}\}/g, '').trim();
         if (!stripped) continue;
-        const found = [...wireframeTexts].some(
-          (wf) => wf.includes(stripped) || stripped.includes(wf),
-        );
+        // Strict direction: i18n value MUST be substring of wireframe text.
+        // Reverse direction (wireframe substring of i18n value) is too loose —
+        // any short wireframe word would match any longer i18n value.
+        const found = [...wireframeTexts].some((wf) => wf.includes(stripped));
         if (!found) {
           violations.push({ key, value });
         }

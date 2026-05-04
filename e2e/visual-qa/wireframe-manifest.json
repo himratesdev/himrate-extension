@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-05-04T14:14:24.340Z",
+  "generated_at": "2026-05-04T23:16:42.957Z",
   "schema_version": 1,
   "wireframes_full": {
-    "wireframes/full/side-panel-wireframe-TASK-039.html": "sha256:18daf29ed032f90b18bebbf42d80069e25e79e909188294eb72ad77fc3fac06e"
+    "wireframes/full/side-panel-wireframe-TASK-039.html": "sha256:23913b341c231cb9d9d9fd9572cb8de2c5649baf40906b5fe8e1c8042fd90599"
   },
   "wireframes_frames": {
-    "wireframes/frames/01_NotStreaming_Site.html": "sha256:2765ed3e1c54cea117250e3a8ca0fb928fece13804748883a1777916a6f4027a",
-    "wireframes/frames/02_Skeleton_Loading.html": "sha256:47c6cfed91a4b46e74205b2c43721335bf9ba98ec360a9b3024cfc4da4cf198e",
-    "wireframes/frames/03_NotTracked_LiveRegistered.html": "sha256:718d196dcdade77a71bff93574dbd4a586f101b42ea36f325a50095de77a530d",
-    "wireframes/frames/04_NotTracked_LiveGuest.html": "sha256:91409b4c537e935adc27eda873738b493e8875a2cd2508c46bdd95897f98556b",
-    "wireframes/frames/05_NotTracked_Offline.html": "sha256:d863f314e9fbb9c47034d1de16484783f4980b37779660120ce2422a9cc3fdd4",
+    "wireframes/frames/01_NotStreaming_Site.html": "sha256:b7cb0f8d35475d89b52973c108828d8214b76bbe4db9e5c6bff3a0f80e8450e7",
+    "wireframes/frames/02_Skeleton_Loading.html": "sha256:d2aad27843c0502cb3ac57a7f61fdc68c4cc3f8cb336c6c42ddcb057df79e4fa",
+    "wireframes/frames/03_NotTracked_LiveRegistered.html": "sha256:3f0e41b59153f94ae4c7dcbc9c502fc007b5d7d3faf69203b260c3264c699f32",
+    "wireframes/frames/04_NotTracked_LiveGuest.html": "sha256:1bbf4a2894bb222d5a78ce4d8d9f10fc13d38c25f5d21871e5135878ae2d3a5f",
+    "wireframes/frames/05_NotTracked_Offline.html": "sha256:6645a63a2540cf705a656c6ed20c469248980bd535ab2780079738373f2b8fb6",
     "wireframes/frames/06_ColdStart_LT3.html": "sha256:37e99515f9caad7201b5ed7e274cbee8c68958d24bc7691e0de82dc06bd85bda",
     "wireframes/frames/07_ColdStart_3to6.html": "sha256:4cf0dcbd6b1c30a7d32f66f85ac73c3c6abc353d3136789a4d0ed99c692be414",
     "wireframes/frames/08_ColdStart_7to9.html": "sha256:684df57296ff0c4649897ccf1651bdb1b8626fede48c5c2a869b5010d1d1fdbf",
@@ -67,11 +67,11 @@
     "wireframes/frames/_template-header.html": "sha256:4de147e834cd77c3c1a50b0bf1e08da13b34239086bcb773e0020a672060c933"
   },
   "wireframes_slim": {
-    "wireframes/slim/01_not-streaming-site.html": "sha256:fcbeb5a1ef8e4025572ceffc5700760e5397ee1dbdd698ceb4afd57ba5269c08",
-    "wireframes/slim/02_skeleton-loading.html": "sha256:4ae5989a6fbc78313280038549dfe711a56ef3d4c1f51d53912fc10542348e03",
-    "wireframes/slim/03_not-tracked-live-registered.html": "sha256:3c07ef996b6c6c99d4f207823c7fb79a06848c7f5bf4a329a9a625cde9b3b75f",
-    "wireframes/slim/04_not-tracked-live-guest.html": "sha256:1f835d357f44bf3eb6a7b9eba93174a5d2bc0b2c2a9046cd74572d3aa0f2b80e",
-    "wireframes/slim/05_not-tracked-offline.html": "sha256:a7e00228f9ae61f117fa780a87c36c08b81228ee523c5f893a094304ac82c5ca",
+    "wireframes/slim/01_not-streaming-site.html": "sha256:19d816007dca811fada34d06611e445d07f3d2d8ebb246402b71a34a7b6a4110",
+    "wireframes/slim/02_skeleton-loading.html": "sha256:f883d551f0cd883aa205016e8781d5c15098af684f98d517286db56826dc30d8",
+    "wireframes/slim/03_not-tracked-live-registered.html": "sha256:13b2c1c9cff9f9d54d2844973d42f2a4fd6eb632c8a0cfd67eb524336b351c34",
+    "wireframes/slim/04_not-tracked-live-guest.html": "sha256:4d16768d5b860f9c1d4882340a94b68eacd65ddd6297f2d4423765ec8869b77f",
+    "wireframes/slim/05_not-tracked-offline.html": "sha256:a8f080ddc617ad5e2c6faad86eaf26c7740101024b2bffc0679fc7ff66f4aada",
     "wireframes/slim/06_cold-start-3-strimov.html": "sha256:a6e9ccd8fa1cb7f5a7095136a4bd9b7b05b18b603c48c63abdb30294b9397a54",
     "wireframes/slim/07_cold-start-36-strimov.html": "sha256:ccc9b61dbb024835e1622f27c40f22c15de6086de4eeff41644ab2daea6acd0b",
     "wireframes/slim/08_cold-start-79-strimov.html": "sha256:acf7bdee61c5762c49da7ed230ea6a3af48b34c61769d8577a41dcb663e523be",
@@ -128,6 +128,11 @@
     "wireframes/slim/59_settings.html": "sha256:a5c06b3a4e61157d659228da16d1a13bd490203e94a0f7f26a4dd762790fdbfc"
   },
   "frames_tsx": {
+    "src/sidepanel/components/Frame01NotStreamingSite.tsx": "sha256:ddc4df374447cdf889b9911680f43843ca55049e1e34340d3fb06121064c6d87",
+    "src/sidepanel/components/Frame02SkeletonLoading.tsx": "sha256:6a22606c450d7d71a33a226b90a6d4e9322c9eda20a095c3ae1c8f239c0876b5",
+    "src/sidepanel/components/Frame03NotTrackedLiveRegistered.tsx": "sha256:66e1072634e7c835104b656083e69010256b86b1a5da87178c09493da4a1295c",
+    "src/sidepanel/components/Frame04NotTrackedLiveGuest.tsx": "sha256:640597281535b8023e6c4ede700b78d433ba3f02b49828dcc77ec1ce48ea0728",
+    "src/sidepanel/components/Frame05NotTrackedOffline.tsx": "sha256:7510c161931225f1818d3e7c0f560e7c4d6222ba9ebccd9133db271ed218b446",
     "src/sidepanel/components/Frame06ColdStartInsufficient.tsx": "sha256:5bb518e9833329b0ad091dbc76dfc76295baaac3fec712436ddd5bf82ac897e5",
     "src/sidepanel/components/Frame07ColdStartProvisionalLow.tsx": "sha256:358df67be9e5768909909a50527370f2a307b5dd819def9b3b191eb1053f2fdb",
     "src/sidepanel/components/Frame08ColdStartProvisional.tsx": "sha256:f23227362d383e495675ff9ae1a44c69c4fc45308d07ba2cc0892bd66f7cec73",

@@ -16,10 +16,7 @@ import { StreamerModeButtons } from './StreamerModeButtons';
 import { WatchlistButton } from './WatchlistButton';
 import { PostStreamCountdown } from './PostStreamCountdown';
 import { StreamSummaryCard } from './StreamSummaryCard';
-import { SkeletonOverview } from './SkeletonOverview';
-import { ErrorOverview } from './ErrorOverview';
-import { NotTrackedOverview } from './NotTrackedOverview';
-import { NotTwitchOverview } from './NotTwitchOverview';
+import { GlobalStateRouter, resolveGlobalState } from './GlobalStateRouter';
 import { Frame06ColdStartInsufficient } from './Frame06ColdStartInsufficient';
 import { Frame07ColdStartProvisionalLow } from './Frame07ColdStartProvisionalLow';
 import { Frame08ColdStartProvisional } from './Frame08ColdStartProvisional';
@@ -72,25 +69,30 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
     // Currently just close modal — UI feedback only
   };
 
-  // Screen determination (FR-019 state machine, ordered):
-  // 1. currentChannel undefined OR loading + has channel → Skeleton (frame 02)
-  // 2. currentChannel === null → user not on Twitch (frame 01 NotTwitchOverview)
-  // 3. Trust data error → ErrorOverview (frame 19)
-  // 4. Channel exists but not tracked → NotTrackedOverview (frames 03-05)
-  if (currentChannel === undefined) return <SkeletonOverview />;
-  if (currentChannel === null) return <NotTwitchOverview />;
-  if (loading || !trustCache) return <SkeletonOverview />;
-  if (trustCache.error) return <ErrorOverview />;
-  if (!trustCache.login) return <NotTwitchOverview />;
-  if (!trustCache.is_tracked) {
+  // Global state routing per ADR-089 D-1 (TASK-089 Batch 1):
+  // GlobalStateRouter resolves NotStreaming / Skeleton / NotTracked variants
+  // / Error → Frame01-05/19. Returns null fall-through к cold-start / live /
+  // offline drill-down логике ниже. Legacy components (NotTwitchOverview /
+  // SkeletonOverview / NotTrackedOverview / ErrorOverview) untouched, slated
+  // для Batch 8b cleanup (per ADR-089 D-7).
+  const globalState = resolveGlobalState({
+    currentChannel,
+    trustCache,
+    loading,
+    authLoggedIn: authState.loggedIn,
+  });
+  if (globalState) {
     return (
-      <NotTrackedOverview
-        ccv={trustCache.is_live ? trustCache.ccv : null}
-        login={trustCache.login}
-        loggedIn={authState.loggedIn}
+      <GlobalStateRouter
+        state={globalState}
+        trustCache={trustCache}
+        authLoggedIn={authState.loggedIn}
       />
     );
   }
+  // Per resolveGlobalState contract: globalState === null implies trustCache
+  // is non-null + tracked. TS narrow assertion для downstream usage.
+  if (!trustCache) return null;
 
   // Frame 06 — Cold Start <3 streams (insufficient): full literal port from
   // wireframe slim/06. Replaces abstract ERVGauge/TIBadge composition.

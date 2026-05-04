@@ -108,6 +108,7 @@
   "not_twitch.subtitle": "Open a streamer's channel on\u00a0twitch.tv or find one using search",
   "not_twitch.open_panel": "Open side panel",
 
+  "skeleton.loading_label": "Loading data",
 
   "classification.trusted": "Trusted",
   "classification.fully_trusted": "Fully Trusted",

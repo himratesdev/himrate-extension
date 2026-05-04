@@ -196,8 +196,11 @@ Audit 2026-05-04 (TASK-089 Batch 0): **86 файлов** имеют cyrillic в�
 | Overview / Misc UI компоненты (NotTwitchOverview, SkeletonOverview, AlertCounter, etc.) | ~10 | Incidental в Batches 1-7 при touch | Hardcoded strings до discipline |
 | `src/shared/components/LangSwitcher.tsx`, `src/shared/trends-*.ts` | ~3 | Batch 8b cleanup | Shared utilities |
 | `src/sidepanel/SidePanel.tsx` (state machine) | 1 | Batch 1 (refactor для hierarchical routing) | Mixed: developer comments OK, JSX-bound strings → i18n |
+| `src/background/background.ts` (Background-layer) | 1 | **Permanent (no wireframe)** | `BG_BADGE_TEXT.offline.ru = 'офф'` — bg layer не имеет wireframe, literal-port discipline N/A. Const map чтобы избежать bundling full locale JSONs в SW (PG W-1). Permanent acknowledged. |
 
 **Refactor-as-you-touch rule:** когда Batch N касается file → в same PR удаляются cyrillic literals (всё user-facing через `t()`, comments на RU допустимы).
+
+**Permanent acknowledged exceptions:** code paths без wireframe (background.ts badge text) — const map с inline comment, listed в этой таблице как «Permanent».
 
 **New code rule:** новые cyrillic literals в новом коде ЗАПРЕЩЕНЫ. Pre-push grep показывает ⊆ baseline (не растёт). i18n drift test (`src/test/i18n-drift.test.ts`) Phase 1 + Phase 2 enforces invariant CI side. Каждый Batch 1-8 уменьшает таблицу; goal: empty по завершении TASK-089.
 

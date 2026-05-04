@@ -6,11 +6,23 @@ import { API_BASE, EXT_VERSION, WS_URL, TRUST_CACHE_TTL_MS, WS_RECONNECT_BASE_MS
 import { extractChannel, formatCCV, getBadgeColor } from '../shared/utils';
 import { api, type TrustCache } from '../shared/api';
 import { searchUsers, getChattersCount } from '../shared/gql';
-import ruLocale from '../locales/ru.json';
-import enLocale from '../locales/en.json';
 
-const LOCALES = { ru: ruLocale, en: enLocale } as const;
-type LocaleKey = keyof typeof LOCALES;
+// Background-layer literal map for badge text. Service worker MV3 loads
+// на каждом extension activation — full locale JSONs (~30KB each) bundling
+// для одной строки = bloat. Const map = lightweight (PG W-1).
+//
+// NOTE: bg layer не имеет wireframe (badge — Chrome toolbar UI, не side panel)
+// → literal-port discipline N/A здесь. Cyrillic literal acceptable, listed
+// в CLAUDE.md known-violations table (категория "Background-layer").
+//
+// Sync invariant: эти значения должны matchить locales/{ru,en}.json
+// badge.offline (i18n drift test Phase 1 verifies ru/en sync). Если ключ
+// в locales переименуется/удалится → обновить ОБА.
+const BG_BADGE_TEXT = {
+  offline: { ru: 'офф', en: 'OFF' },
+} as const;
+
+type LocaleKey = keyof typeof BG_BADGE_TEXT.offline;
 
 async function getLocale(): Promise<LocaleKey> {
   const stored = ((await chrome.storage.local.get('himrate_locale')).himrate_locale as string) || 'en';
@@ -282,7 +294,7 @@ async function updateBadgeFromCache(cache: TrustCache): Promise<void> {
     await setBadge(formatCCV(cache.ccv), cache.ti_score);
   } else if (cache.is_tracked && !cache.is_live) {
     const locale = await getLocale();
-    await setBadge(LOCALES[locale]['badge.offline'], cache.ti_score);
+    await setBadge(BG_BADGE_TEXT.offline[locale], cache.ti_score);
   } else if (!cache.is_tracked && cache.is_live && cache.ccv !== null) {
     await setBadge(formatCCV(cache.ccv), null); // grey for untracked
   } else {

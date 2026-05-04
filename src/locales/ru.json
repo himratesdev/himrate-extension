@@ -108,6 +108,7 @@
   "not_twitch.subtitle": "Откройте канал стримера на\u00a0twitch.tv или\u00a0найдите его через поиск",
   "not_twitch.open_panel": "Открыть боковую панель",
 
+  "skeleton.loading_label": "Загрузка данных",
 
   "classification.trusted": "Порядочный",
   "classification.fully_trusted": "Доверенный",

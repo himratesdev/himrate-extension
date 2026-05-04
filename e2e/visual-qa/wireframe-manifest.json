@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-04T14:14:24.340Z",
+  "generated_at": "2026-05-04T22:48:32.219Z",
   "schema_version": 1,
   "wireframes_full": {
     "wireframes/full/side-panel-wireframe-TASK-039.html": "sha256:18daf29ed032f90b18bebbf42d80069e25e79e909188294eb72ad77fc3fac06e"
@@ -128,6 +128,11 @@
     "wireframes/slim/59_settings.html": "sha256:a5c06b3a4e61157d659228da16d1a13bd490203e94a0f7f26a4dd762790fdbfc"
   },
   "frames_tsx": {
+    "src/sidepanel/components/Frame01NotStreamingSite.tsx": "sha256:7f60109552715316c5eee9f7eabddebb3a79a05e0a3a745b11cd75a3dcbef44a",
+    "src/sidepanel/components/Frame02SkeletonLoading.tsx": "sha256:6a22606c450d7d71a33a226b90a6d4e9322c9eda20a095c3ae1c8f239c0876b5",
+    "src/sidepanel/components/Frame03NotTrackedLiveRegistered.tsx": "sha256:66e1072634e7c835104b656083e69010256b86b1a5da87178c09493da4a1295c",
+    "src/sidepanel/components/Frame04NotTrackedLiveGuest.tsx": "sha256:640597281535b8023e6c4ede700b78d433ba3f02b49828dcc77ec1ce48ea0728",
+    "src/sidepanel/components/Frame05NotTrackedOffline.tsx": "sha256:7510c161931225f1818d3e7c0f560e7c4d6222ba9ebccd9133db271ed218b446",
     "src/sidepanel/components/Frame06ColdStartInsufficient.tsx": "sha256:5bb518e9833329b0ad091dbc76dfc76295baaac3fec712436ddd5bf82ac897e5",
     "src/sidepanel/components/Frame07ColdStartProvisionalLow.tsx": "sha256:358df67be9e5768909909a50527370f2a307b5dd819def9b3b191eb1053f2fdb",
     "src/sidepanel/components/Frame08ColdStartProvisional.tsx": "sha256:f23227362d383e495675ff9ae1a44c69c4fc45308d07ba2cc0892bd66f7cec73",

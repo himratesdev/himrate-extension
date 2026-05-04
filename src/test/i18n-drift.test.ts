@@ -30,6 +30,8 @@ function flattenKeys(obj: unknown, prefix = ''): FlatLocale {
 }
 
 const NON_TEXT_TAGS = 'script, style, head, meta, title, link, noscript';
+// User-facing string-bearing attributes (rendered by screen readers / placeholder / tooltip).
+const USER_FACING_ATTRS = ['aria-label', 'placeholder', 'title', 'alt'] as const;
 
 function loadAllWireframeText(): Set<string> {
   const texts = new Set<string>();
@@ -42,7 +44,8 @@ function loadAllWireframeText(): Set<string> {
       // Strip non-text tags first so their content (raw JS, CSS rules, meta) doesn't pollute matching pool
       $(NON_TEXT_TAGS).remove();
       $('body *').each((_idx, el) => {
-        const directText = $(el)
+        const $el = $(el);
+        const directText = $el
           .contents()
           .filter((_, node) => (node as { type?: string }).type === 'text')
           .text();
@@ -51,6 +54,11 @@ function loadAllWireframeText(): Set<string> {
           .map((s) => s.trim())
           .filter(Boolean)
           .forEach((t) => texts.add(t));
+        // User-facing attribute values (aria-label / placeholder / title / alt)
+        for (const attr of USER_FACING_ATTRS) {
+          const val = $el.attr(attr);
+          if (val && val.trim()) texts.add(val.trim());
+        }
       });
     }
   }

@@ -97,6 +97,30 @@ export interface StreamerRating {
   classification: string;
 }
 
+// TASK-085: anomaly_alerts derivation per AnomalyAlertsPresenter (backend SRS §10A).
+// 7 type values + severity tier. Gated за :drill_down/:full views (Pundit ChannelPolicy).
+export type AnomalyAlertType =
+  | 'ccv_spike'
+  | 'confirmed_raid'
+  | 'anomaly_wave'
+  | 'ti_drop'
+  | 'chatter_to_ccv_anomaly'
+  | 'chat_entropy_drop'
+  | 'erv_divergence';
+
+export type AnomalySeverity = 'red' | 'yellow' | 'info';
+
+export interface AnomalyAlert {
+  id: string;
+  type: AnomalyAlertType;
+  severity: AnomalySeverity;
+  value: number | null;
+  threshold: number | null;
+  window_minutes: number;
+  created_at: string;
+  metadata: Record<string, unknown>;
+}
+
 export interface TrustData {
   ti_score: number | null;
   classification: string | null;
@@ -117,6 +141,28 @@ export interface TrustData {
   streamer_reputation?: ReputationData | null;
   health_score?: HealthScoreData | null;
   top_countries?: Array<{ country_code: string; percentage: number; viewer_count: number }> | null;
+  // TASK-085: anomaly alerts (drill_down/full scope only — headline view does NOT include this key)
+  anomaly_alerts?: AnomalyAlert[];
+}
+
+// TASK-085 FR-001..006: GET /api/v1/channels/:id/streams/latest/summary response shape.
+export interface StreamSummaryData {
+  session_id: string;
+  started_at: string;
+  ended_at: string;
+  duration_seconds: number;
+  duration_text: string;          // formatted backend per Accept-Language ("3ч 0м" / "3h 0m")
+  peak_viewers: number | null;
+  avg_ccv: number | null;
+  erv_percent_final: number | null;
+  erv_count_final: number | null;
+  category: string | null;
+  partial: boolean;
+}
+
+export interface StreamSummaryResponse {
+  data: StreamSummaryData;
+  meta: { preliminary: boolean }; // true когда post_stream_report ещё не сгенерирован
 }
 
 export interface ChannelData {
@@ -157,6 +203,8 @@ export interface TrustCache {
   streamer_reputation: ReputationData | null;
   health_score: HealthScoreData | null;
   top_countries: Array<{ country_code: string; percentage: number; viewer_count: number }> | null;
+  // TASK-085: anomaly alerts (drill_down/full scope only)
+  anomaly_alerts?: AnomalyAlert[];
   ws_connected: boolean;
   error: string | null;
   loading: boolean;
@@ -381,6 +429,32 @@ export const api = {
       if (!res.ok) return null;
       const json = await res.json();
       return json.data || null;
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * TASK-085 FR-001..006: Get latest completed stream summary.
+   * Pundit gates: registered + 18h post-stream window OR Premium tracked OR own channel.
+   * Returns null on 4xx/5xx (e.g., 401/403 gates, 404 no completed streams, 503 Flipper kill).
+   * Backend formats `duration_text` per Accept-Language header (i18n.language passed via locale).
+   */
+  getStreamLatestSummary: async (
+    channelId: string,
+    locale?: string,
+    signal?: AbortSignal
+  ): Promise<StreamSummaryResponse | null> => {
+    try {
+      const headers: Record<string, string> = {};
+      if (locale) headers['Accept-Language'] = locale;
+      const res = await apiFetch(
+        `/api/v1/channels/${encodeURIComponent(channelId)}/streams/latest/summary`,
+        { headers },
+        signal
+      );
+      if (!res.ok) return null;
+      return res.json();
     } catch {
       return null;
     }

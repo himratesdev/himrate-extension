@@ -71,6 +71,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
   const summaryDuration = streamSummary?.data.duration_text ?? null;
   const summaryPeak = streamSummary?.data.peak_viewers ?? null;
   const summaryAvg = streamSummary?.data.avg_ccv ?? null;
+  const summaryPreliminary = streamSummary?.meta.preliminary ?? false;
 
   // Streamer Tools modal state — frames 20/21/22/23
   type ModalKey = 'badge' | 'card' | 'verification' | 'verificationLimit' | null;
@@ -317,6 +318,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         streamDuration={summaryDuration}
         peakViewers={summaryPeak}
         avgCcv={summaryAvg}
+        summaryPreliminary={summaryPreliminary}
         signals={trustCache.signal_breakdown ?? []}
         reputation={trustCache.streamer_reputation}
       />
@@ -346,6 +348,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         streamDuration={summaryDuration}
         peakViewers={summaryPeak}
         avgCcv={summaryAvg}
+        summaryPreliminary={summaryPreliminary}
         channelId={trustCache.channel_id}
         isWatched={trustCache.is_watched_by_user}
         signals={trustCache.signal_breakdown ?? []}
@@ -464,6 +467,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
           avgCcv={summaryAvg}
           ervPercent={streamSummary?.data.erv_percent_final ?? trustCache.erv_percent}
           ervLabelColor={trustCache.erv_label_color as 'green' | 'yellow' | 'red' | null}
+          preliminary={summaryPreliminary}
         />
       )}
 

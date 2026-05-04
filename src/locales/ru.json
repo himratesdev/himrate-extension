@@ -815,5 +815,8 @@
   "alert.severity.info.aria": "Информация",
   "alert.severity.yellow.aria": "Внимание",
   "alert.severity.red.aria": "Критическая аномалия",
-  "alert.dismiss": "Скрыть"
+  "alert.dismiss": "Скрыть",
+
+  "sp.stream_summary_preliminary_badge": "предварительно",
+  "sp.stream_summary_preliminary_hint": "Финальный отчёт ещё генерируется. ERV и реальные зрители появятся через несколько минут."
 }

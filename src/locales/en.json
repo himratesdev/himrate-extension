@@ -815,5 +815,8 @@
   "alert.severity.info.aria": "Info",
   "alert.severity.yellow.aria": "Caution",
   "alert.severity.red.aria": "Critical anomaly",
-  "alert.dismiss": "Dismiss"
+  "alert.dismiss": "Dismiss",
+
+  "sp.stream_summary_preliminary_badge": "preliminary",
+  "sp.stream_summary_preliminary_hint": "Final report still generating. ERV and real-viewer counts will appear in a few minutes."
 }

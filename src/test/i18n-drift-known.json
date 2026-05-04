@@ -245,16 +245,6 @@
     "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
   },
   {
-    "key": "not_twitch.subtitle",
-    "value": "Откройте канал стримера на twitch.tv или найдите его через поиск",
-    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
-  },
-  {
-    "key": "not_twitch.title",
-    "value": "Вы не на Twitch",
-    "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."
-  },
-  {
     "key": "notification.stream_ended",
     "value": "Стрим завершён. {{name}}: ERV {{erv}}%, TI {{ti}}",
     "reason": "TASK-089 Batch 0 baseline — pre-existing drift inherited from earlier commits (TASK-083/BUG-016/etc). Resolve in Batch 1-8 frame refactors."

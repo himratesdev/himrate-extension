@@ -6,23 +6,14 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface Props {
-  /** Optional override для navigation; default = chrome.tabs.create к twitch search. */
-  onSearch?: (term: string) => void;
-}
-
-export function Frame01NotStreamingSite({ onSearch }: Props = {}) {
+export function Frame01NotStreamingSite() {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
 
   const submitSearch = () => {
     const term = query.trim();
     if (!term) return;
-    if (onSearch) {
-      onSearch(term);
-    } else {
-      chrome.tabs.create({ url: `https://www.twitch.tv/search?term=${encodeURIComponent(term)}` });
-    }
+    chrome.tabs.create({ url: `https://www.twitch.tv/search?term=${encodeURIComponent(term)}` });
   };
 
   return (

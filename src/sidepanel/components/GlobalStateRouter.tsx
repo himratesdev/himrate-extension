@@ -51,8 +51,10 @@ export function resolveGlobalState(opts: ResolveOptions): GlobalState | null {
   if (!trustCache.login) return 'not_streaming';
 
   if (!trustCache.is_tracked) {
-    const isLive = trustCache.is_live && trustCache.ccv != null;
-    if (isLive) {
+    // is_live alone gates live vs offline; ccv null/undefined → 0 default
+    // в Frame03/04 callsite (avoids transient Frame05 misroute when EventSub
+    // sends is_live=true ahead of CCV snapshot). Per CR S-2 fix.
+    if (trustCache.is_live) {
       return authLoggedIn ? 'not_tracked_live_registered' : 'not_tracked_live_guest';
     }
     return 'not_tracked_offline';

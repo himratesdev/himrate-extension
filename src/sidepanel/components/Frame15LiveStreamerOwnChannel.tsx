@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 import { useSparkline } from '../hooks/useSparkline';
+import { formatAnomalyAlert } from '../utils/formatAnomalyAlert';
+import type { AnomalyAlert } from '../../shared/api';
 
 interface Signal {
   type: string;
@@ -57,6 +59,8 @@ interface Props {
   topCountries?: Country[] | null;
   /** Verification requests used this month (out of 5). */
   verificationRequestsUsed?: number;
+  /** TASK-085 PR-2 (CR S-NEW-2): real anomaly_alerts от full Pundit view (Streamer own channel). */
+  anomalyAlerts?: AnomalyAlert[];
   onNavigate?: (tab: string) => void;
   onOpenBadgeModal?: () => void;
   onOpenChannelCardModal?: () => void;
@@ -89,7 +93,7 @@ function flagEmoji(code: string): string {
 export function Frame15LiveStreamerOwnChannel({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, percentile, streamsCount,
   channelId = null, signals = [], reputation = null, healthScore = null, topCountries = null,
-  verificationRequestsUsed = 0, onNavigate,
+  verificationRequestsUsed = 0, anomalyAlerts = [], onNavigate,
   onOpenBadgeModal, onOpenChannelCardModal, onOpenVerificationModal,
 }: Props) {
   const { t, i18n } = useTranslation();
@@ -117,6 +121,11 @@ export function Frame15LiveStreamerOwnChannel({
 
   // TI expand state — wireframe slim/15 chevron `open` by default → percentile visible
   const [tiExpanded, setTiExpanded] = useState(true);
+
+  // TASK-085 PR-2 (CR S-NEW-2): per-alert dismiss by alert.id для anomaly alerts.
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(() => new Set());
+  const visibleAlerts = anomalyAlerts.filter((a) => !dismissedAlerts.has(a.id));
+  const dismissAlert = (id: string) => setDismissedAlerts((p) => { const n = new Set(p); n.add(id); return n; });
 
   // Per slim/15: первый signal row open, остальные closed
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['auth_ratio']));
@@ -158,6 +167,24 @@ export function Frame15LiveStreamerOwnChannel({
     <div className="sp-content" role="tabpanel">
       {/* Streamer Disclaimer */}
       <div className="sp-streamer-disclaimer">{t('sp.streamer_disclaimer')}</div>
+
+      {/* TASK-085 PR-2 (CR S-NEW-2): anomaly_alerts section conditional. Streamer own channel
+          получает full Pundit view → backend sends anomaly_alerts. Per-alert severity class +
+          per-alert dismiss. Empty → no section. */}
+      {visibleAlerts.length > 0 && (
+        <div className="sp-alert-stack">
+          {visibleAlerts.map((alert) => {
+            const formatted = formatAnomalyAlert(alert, t);
+            return (
+              <div key={alert.id} className={`sp-alert ${alert.severity}`} role="alert">
+                <span className="sp-alert-dot"></span>
+                <span>{formatted.detail ? `${formatted.title}: ${formatted.detail}` : formatted.title}</span>
+                <button className="sp-alert-dismiss" aria-label={t('alert.dismiss')} onClick={() => dismissAlert(alert.id)}>×</button>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Gauge 160×160 */}
       <div className="sp-gauge-section" role="img" aria-label={`ERV ${pct}%`}>

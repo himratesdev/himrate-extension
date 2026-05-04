@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { formatNumber } from '../../shared/format';
 import { useSparkline } from '../hooks/useSparkline';
 import { WatchlistButton } from './WatchlistButton';
+import { formatAnomalyAlert } from '../utils/formatAnomalyAlert';
+import type { AnomalyAlert } from '../../shared/api';
 
 interface Signal {
   type: string;
@@ -43,6 +45,8 @@ interface Props {
   signals?: Signal[];
   reputation?: ReputationData | null;
   topCountries?: Country[] | null;
+  /** TASK-085 PR-2 (CR S-NEW-2): real anomaly_alerts от drill_down/full view (Premium ⊇ both). */
+  anomalyAlerts?: AnomalyAlert[];
   onWatchlistToggle?: () => void;
   onNavigate?: (tab: string) => void;
 }
@@ -65,7 +69,8 @@ function flagEmoji(code: string): string {
 
 export function Frame14LivePremiumGreen({
   ervPercent, ervCount, ccv, ervLabelColor, tiScore, classification: _classification, percentile, isWatched,
-  channelId = null, signals = [], reputation = null, topCountries = null, onWatchlistToggle: _onWatchlistToggle, onNavigate,
+  channelId = null, signals = [], reputation = null, topCountries = null,
+  anomalyAlerts = [], onWatchlistToggle: _onWatchlistToggle, onNavigate,
 }: Props) {
   const { t, i18n } = useTranslation();
   const chart = useSparkline(channelId, true, true); // Premium = full access
@@ -99,6 +104,11 @@ export function Frame14LivePremiumGreen({
   const [repExpanded, setRepExpanded] = useState<Set<string>>(() => new Set(['growth', 'quality', 'loyalty']));
   const toggleRep = (k: string) => setRepExpanded(p => { const n = new Set(p); if (n.has(k)) n.delete(k); else n.add(k); return n; });
 
+  // TASK-085 PR-2 (CR S-NEW-2): per-alert dismiss by alert.id для anomaly alerts.
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(() => new Set());
+  const visibleAlerts = anomalyAlerts.filter((a) => !dismissedAlerts.has(a.id));
+  const dismissAlert = (id: string) => setDismissedAlerts((p) => { const n = new Set(p); n.add(id); return n; });
+
   // Reputation
   const repGrowth = reputation?.growth_pattern_score ?? 85;
   const repQuality = reputation?.follower_quality_score ?? 92;
@@ -117,6 +127,24 @@ export function Frame14LivePremiumGreen({
 
   return (
     <div className="sp-content" role="tabpanel">
+      {/* TASK-085 PR-2 (CR S-NEW-2): anomaly_alerts section conditional. Premium получает
+          drill_down/full Pundit view → backend sends anomaly_alerts. Wireframe slim/14 (green ERV)
+          designed для healthy state без alerts визуально, но real backend данные требуют render
+          когда aномalies detected. Per-alert severity class + per-alert dismiss. */}
+      {visibleAlerts.length > 0 && (
+        <div className="sp-alert-stack">
+          {visibleAlerts.map((alert) => {
+            const formatted = formatAnomalyAlert(alert, t);
+            return (
+              <div key={alert.id} className={`sp-alert ${alert.severity}`} role="alert">
+                <span className="sp-alert-dot"></span>
+                <span>{formatted.detail ? `${formatted.title}: ${formatted.detail}` : formatted.title}</span>
+                <button className="sp-alert-dismiss" aria-label={t('alert.dismiss')} onClick={() => dismissAlert(alert.id)}>×</button>
+              </div>
+            );
+          })}
+        </div>
+      )}
       <div className="sp-gauge-section" role="img" aria-label={`ERV ${pct}%`}>
         <div className="sp-gauge-wrap">
           <svg className="sp-gauge-ring" width="120" height="120" viewBox="0 0 120 120">

@@ -38,7 +38,6 @@ import { Frame22VerificationModal } from './Frame22VerificationModal';
 import { Frame23VerificationLimitModal } from './Frame23VerificationLimitModal';
 import { LiveTrendIndicator } from './LiveTrendIndicator';
 import { AudiencePreview } from './AudiencePreview';
-import { AlertsBlock, type AnomalyAlert } from './AlertsBlock';
 import { useStreamSummary } from '../hooks/useStreamSummary';
 import type { TrustCache } from '../../shared/api';
 
@@ -168,6 +167,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         signals={trustCache.signal_breakdown ?? []}
         reputation={trustCache.streamer_reputation}
         topCountries={trustCache.top_countries}
+        anomalyAlerts={trustCache.anomaly_alerts ?? []}
         onNavigate={onNavigate}
       />
     );
@@ -195,6 +195,7 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
           healthScore={trustCache.health_score}
           topCountries={trustCache.top_countries}
           verificationRequestsUsed={verificationRequestsUsed}
+          anomalyAlerts={trustCache.anomaly_alerts ?? []}
           onNavigate={onNavigate}
           onOpenBadgeModal={() => setActiveModal('badge')}
           onOpenChannelCardModal={() => setActiveModal('card')}
@@ -439,24 +440,11 @@ export function Overview({ trustCache, loading, currentChannel, tier, isOwnChann
         </div>
       )}
 
-      {/* M-Anomaly: Persistent anomaly attribution (frame 26 — Premium Live ERV<80%).
-          Real-data slot: trustCache.anomaly_alerts array (backend integration pending).
-          Without it, render placeholder alerts so canonical structure visible per wireframe. */}
-      {isLive && isPremium && trustCache.erv_percent != null && trustCache.erv_percent < 80 && (
-        <AlertsBlock
-          alerts={
-            (trustCache as TrustCache & { anomaly_alerts?: AnomalyAlert[] }).anomaly_alerts ??
-            (trustCache.erv_percent < 50
-              ? [
-                  { id: 'pl-raid', severity: 'red', title: t('sp.alert_anomaly_raid_title'), detail: t('sp.alert_anomaly_raid_detail') },
-                  { id: 'pl-overlap', severity: 'yellow', title: t('sp.alert_anomaly_overlap_title'), detail: t('sp.alert_anomaly_overlap_detail') },
-                ]
-              : [
-                  { id: 'pl-anomaly', severity: 'yellow', title: t('sp.alert_anomaly_audience_title'), detail: t('sp.alert_anomaly_audience_detail') },
-                ])
-          }
-        />
-      )}
+      {/* TASK-085 PR-2 (CR M-NEW-1): removed dead AlertsBlock branch — unreachable в actual
+          control flow (Frame14 для !own+premium+live, Frame15 для own+live перехватывают
+          isLive=true до этого catch-all). AlertsBlock imported here used api.AnomalyAlert vs
+          AlertsBlock-local AnomalyAlert через unsafe cast — type collision. Real anomaly_alerts
+          rendering moved в Frame12/13/14/15 inline (per-frame ownership matches wireframe ports). */}
 
       {/* TASK-085 PR-2: Stream Summary wired to /streams/latest/summary endpoint.
           Returns null когда нет PSR (preliminary state) или 4xx — StreamSummaryCard renders `—`. */}
